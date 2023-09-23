@@ -11,11 +11,13 @@ TOPICS=(
     "IoT/room1/humidity"
     "IoT/room1/fan1"
     "IoT/room1/fan2"
+    "IoT/room1/brightness"
     "IoT/room2/light1"
     "IoT/room2/light2"
     "IoT/room2/temperature"
     "IoT/room2/humidity"
     "IoT/room2/fan1"
+    "IoT/room2/brigtness"
     "IoT/garage/light1"
     "IoT/garage/light2"
     "IoT/garage/door"
@@ -41,6 +43,7 @@ TOPICS=(
     "IoT/hall/light4"
     "IoT/hall/temperature"
     "IoT/hall/humidity"
+    ""IoT/room2/brigtness""
     "IoT/auxiliary/tankLevel"
     "IoT/lawn/soilMoisture"
     "IoT/lawn/light1"
@@ -57,7 +60,15 @@ TOPICS=(
     "IoT/lawn/airQuality"
     "IoT/lawn/temperature"
     "IoT/lawn/humidity"
-    
+    "IoT/washroom/light1"
+    "IoT/store/light1"
+    "IoT/store/fireIndicator"
+    "IoT/store/light2"
+    "IoT/garage/light1"
+    "IoT/garage/light2"
+    "IoT/garage/door"
+    "IoT/garage/occupancy"
+    "IoT/washroom/gyser"
 )
 
 # Loop through topics and publish random values
@@ -75,8 +86,12 @@ for topic in "${TOPICS[@]}"; do
     *"humidity"*)
         random_value=$(shuf -i 0-100 -n 1) # Generate random value between 0 and 100 for humidity
         ;;
+    *"brightness"*)
+        random_value=$(shuf -i 0-100 -n 1) # Generate random value between 0 and 100 for brightness
+        ;;
+
     *)
-        random_value=0 # Default to 0 for other topics
+        random_value=$(shuf -i 0-1 -n 1) # Default to 0 for other topics
         ;;
 
     esac

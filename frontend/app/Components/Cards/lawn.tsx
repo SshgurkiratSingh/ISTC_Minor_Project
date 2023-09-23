@@ -52,7 +52,8 @@ const LawnDashboard = ({
           (item: IoTData) => item.topic === `IoT/lawn/airQuality`
         );
         const rainStatus = data.find(
-          (item: IoTData) => item.topic === `IoT/lawn/rainStatus`)
+          (item: IoTData) => item.topic === `IoT/lawn/rainStatus`
+        );
         if (airQualityData) {
           setAirQuality(airQualityData.value);
           setLastUpdated(airQualityData.lastUpdate);
@@ -98,7 +99,7 @@ const LawnDashboard = ({
         style={{ minHeight: "200px", minWidth: "290px" }}
       >
         <div className="flex flex-col p-2">
-          <div className="flex xl:flex-row flex-col m-2 p-2 mb-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 place-content-between">
             {Array.from({ length: noOfLights }).map((_, index) => (
               <ToggleButton
                 key={index}
@@ -112,7 +113,7 @@ const LawnDashboard = ({
               />
             ))}
           </div>
-          <div className="flex xl:flex-row flex-col m-2 p-2 mb-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 place-content-between ">
             <ToggleButton
               key={4}
               topic="IoT/lawn/light4"
@@ -141,11 +142,11 @@ const LawnDashboard = ({
               }
             />
           </div>
-          <div className="flex xl:flex-row flex-col m-2 p-2 mb-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 place-content-between">
             <ToggleButton
               key={7}
               topic="IoT/lawn/autonomousMode"
-              subTitle="Autonomous Watering"
+              subTitle="Auto Watering"
               value={
                 ServerData?.find(
                   (item) => item.topic === `IoT/lawn/autonomousMode`
@@ -155,7 +156,7 @@ const LawnDashboard = ({
             <ToggleButton
               key={8}
               topic="IoT/lawn/autonomousLighting"
-              subTitle="Autonomous Light COntrol"
+              subTitle="Autonomous Lighting"
               value={
                 ServerData?.find(
                   (item) => item.topic === `IoT/lawn/autonomousLighting`
@@ -165,7 +166,7 @@ const LawnDashboard = ({
             <ToggleButton
               key={9}
               topic="IoT/lawn/disengageIndruderDetector"
-              subTitle="Disengage IndruderDetector"
+              subTitle="Disengage InDet"
               value={
                 ServerData?.find(
                   (item) => item.topic === `IoT/lawn/disengageIndruderDetector`
@@ -173,7 +174,7 @@ const LawnDashboard = ({
               }
             />
           </div>
-          <div className="mb-14">
+          <div className="mb-14 grid grid-cols-1 lg:grid-cols-2 p-4 m-2 place-content-between">
             <FanSpeedSelector
               key={2}
               topic={`IoT/lawn/brightness`}
@@ -204,6 +205,11 @@ const LawnDashboard = ({
             <div>
               <p className="text-tiny text-white/80">
                 Air Quality: <span className="font-bold">{airQualityD}</span>
+                <br />
+                Temperature: <span className="font-bold">
+                  {temperature}°C
+                </span>{" "}
+                Humidity: <span className="font-bold">{humidity}%</span>
                 <br /> Last Updated{" "}
                 <span className="font-bold">
                   {lastUpdatedText(lastUpdated)}

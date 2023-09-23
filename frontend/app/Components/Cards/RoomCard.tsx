@@ -89,7 +89,7 @@ const RoomDashBoard = ({
         style={{ minHeight: "200px", minWidth: "290px" }}
       >
         <div className="flex flex-col p-2">
-          <div className="flex xl:flex-row flex-col m-2 p-2 mb-8">
+          <div className=" grid grid-cols-1 lg:grid-cols-3 p-4 m-2 place-content-between">
             {Array.from({ length: noOfLights }).map((_, index) => (
               <ToggleButton
                 key={index}
@@ -103,8 +103,18 @@ const RoomDashBoard = ({
                 }
               />
             ))}
+            <ToggleButton
+              key={3}
+              topic={`IoT/room${roomId}/switchBoard1`}
+              subTitle={`Switch Board 1`}
+              value={
+                ServerData?.find(
+                  (item) => item.topic === `IoT/room${roomId}/switchBoard1`
+                )?.value === "1"
+              }
+            />
           </div>
-          <div className="mb-14">
+          <div className="mb-14 grid gap-5 grid-cols-1 lg:grid-cols-2 p-4 m-2 place-content-between">
             {Array.from({ length: noOfFans }).map((_, index) => (
               <FanSpeedSelector
                 key={index}
@@ -117,6 +127,17 @@ const RoomDashBoard = ({
                 )}
               />
             ))}
+            <FanSpeedSelector
+              key={2}
+              topic={`IoT/room${roomId}/brightness`}
+              subTitle={`Light Brightness `}
+              value={Number(
+                ServerData?.find(
+                  (item) => item.topic === `IoT/room${roomId}/brightness`
+                )?.value
+              )}
+              customHeading="Brightness"
+            />
           </div>
         </div>
 

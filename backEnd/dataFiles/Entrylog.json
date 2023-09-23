@@ -1,3 +1,15 @@
-{
-    
-}
+[
+  {
+    "UID": "25 97 8f 52 65",
+    "timestamp": "2023-09-23T16:27:16.627Z",
+    "description": "Entry was Approved",
+    "status": "approved",
+    "userName": "Test User1"
+  },
+  {
+    "UID": "545",
+    "timestamp": "2023-09-23T16:29:45.436Z",
+    "description": "Entry was Denied because of an unknown card",
+    "status": "unknown"
+  }
+]

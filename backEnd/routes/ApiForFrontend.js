@@ -14,11 +14,13 @@ client.on("connect", () => {
   client.subscribe("IoT/room1/humidity");
   client.subscribe("IoT/room1/fan1");
   client.subscribe("IoT/room1/fan2");
+  client.subscribe("IoT/room1/switchBoard1");
   client.subscribe("IoT/room2/light1");
   client.subscribe("IoT/room2/light2");
   client.subscribe("IoT/room2/temperature");
   client.subscribe("IoT/room2/humidity");
   client.subscribe("IoT/room2/fan1");
+  client.subscribe("IoT/room2/switchBoard1");
   client.subscribe("IoT/garage/light1");
   client.subscribe("IoT/garage/light2");
   client.subscribe("IoT/garage/door");
@@ -64,8 +66,8 @@ client.on("connect", () => {
   client.subscribe("IoT/lawn/airQuality");
   client.subscribe("IoT/lawn/temperature");
   client.subscribe("IoT/lawn/humidity");
-  
   client.subscribe("IoT/washroom/light1");
+  client.subscribe("IoT/washroom/gyser");
   client.subscribe("IoT/store/light1");
   client.subscribe("IoT/store/light2");
   client.subscribe("IoT/store/fireIndicator");
@@ -145,6 +147,13 @@ router.get("/getSpecificData/:UserDemand", (req, res) => {
     res.json({ status: "No Data Found", message: "Its empty out here" });
   }
 });
+/**
+ * Filters the dataArray to find items matching the topic pattern specified by the userDemand parameter.
+ *
+ * @param {string} userDemand - The topic pattern specified by the user.
+ * @param {Array} dataArray - The array of data to be filtered.
+ * @return {Array} The filtered array of data items matching the topic pattern.
+ */
 function getDataByTopic(userDemand, dataArray) {
   // Filter the dataArray to find items matching the topic pattern
   const filteredData = dataArray.filter((item) => {

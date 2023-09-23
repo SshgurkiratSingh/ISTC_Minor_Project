@@ -95,7 +95,7 @@ const KitchenCard = ({
         style={{ minHeight: "200px", minWidth: "290px" }}
       >
         <div className="flex flex-col p-2">
-          <div className="flex xl:flex-row flex-col m-2 p-2 mb-8">
+          <div className=" grid grid-cols-1 lg:grid-cols-3 p-4 m-2 place-content-between">
             {Array.from({ length: noOfLights }).map((_, index) => (
               <ToggleButton
                 key={index}
@@ -119,7 +119,7 @@ const KitchenCard = ({
               }
             />
           </div>
-          <div className="mb-14">
+          <div className="mb-14 gap-5 grid grid-cols-1 lg:grid-cols-2 p-4 m-2 place-content-between">
             {Array.from({ length: noOfFans }).map((_, index) => (
               <FanSpeedSelector
                 key={index}
@@ -132,6 +132,17 @@ const KitchenCard = ({
                 )}
               />
             ))}
+            <FanSpeedSelector
+              key={2}
+              topic={`IoT/kitchen/brightness`}
+              subTitle={`Light Brightness`}
+              value={Number(
+                ServerData?.find(
+                  (item) => item.topic === `IoT/kitchen/brightness`
+                )?.value
+              )}
+              customHeading="Brightness"
+            />
           </div>
         </div>
 

@@ -89,7 +89,7 @@ const HallCardDashBoard = ({
         style={{ minHeight: "200px", minWidth: "290px" }}
       >
         <div className="flex flex-col p-2">
-          <div className="flex xl:flex-row flex-col m-2 p-2 mb-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 place-content-between">
             {Array.from({ length: noOfLights }).map((_, index) => (
               <ToggleButton
                 key={index}
@@ -103,7 +103,7 @@ const HallCardDashBoard = ({
               />
             ))}
           </div>{" "}
-          <div className="flex xl:flex-row flex-col m-2 p-2 mb-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 place-content-between">
             {Array.from({ length: noOfAmbient }).map((_, index) => (
               <ToggleButton
                 key={index}
@@ -137,7 +137,7 @@ const HallCardDashBoard = ({
               slideVersion
             />
           </div>
-          <div className="mb-14">
+          <div className="mb-14 grid gap-5 grid-cols-1 lg:grid-cols-2 p-4 m-2 place-content-between">
             {Array.from({ length: noOfFans }).map((_, index) => (
               <FanSpeedSelector
                 key={index}
