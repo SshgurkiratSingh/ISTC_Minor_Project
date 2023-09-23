@@ -1,0 +1,45 @@
+{
+  "name": "stein-js-client",
+  "version": "0.0.2",
+  "description": "JavaScript client library to interact with the Stein API",
+  "main": "index.js",
+  "unpkg": "dist/bundle.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "browserify --standalone SteinStore index.js -o dist/bundle.js -t babelify"
+  },
+  "repository": {
+    "type": "git"
+  },
+  "keywords": [
+    "stein",
+    "google sheets",
+    "form",
+    "javascript",
+    "js",
+    "client",
+    "api"
+  ],
+  "author": "Stein <hello@steinhq.com>",
+  "babel": {
+    "presets": [
+      "@babel/preset-env",
+      "minify"
+    ]
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@babel/core": "^7.4.4",
+    "@babel/preset-env": "^7.4.3",
+    "babel-preset-minify": "^0.5.0",
+    "babelify": "^10.0.0",
+    "browserify": "^16.2.3",
+    "deamdify": "^0.3.0",
+    "deglobalify": "^0.2.0",
+    "uglifyify": "^5.0.1"
+  },
+  "dependencies": {
+    "isomorphic-unfetch": "^3.0.0",
+    "universal-base64": "^2.0.1"
+  }
+}

@@ -1,0 +1,29 @@
+{
+   "tags": [
+       {
+        "UID":"1",
+        "userName":"Test User",
+        "userType":"",
+        "userDescription":"",
+        "permissions":1,
+        "email":""
+       }
+       ,{
+        "UID":"2",
+        "userName":"Test User",
+        "userType":"",
+        "userDescription":"",
+        "permissions":0,
+        "email":""
+
+       },
+       {
+        "UID":"3",
+        "userName":"Test User",
+        "userType":"",
+        "userDescription":"",
+        "permissions":0,
+        "email":""
+       }
+   ]
+}
