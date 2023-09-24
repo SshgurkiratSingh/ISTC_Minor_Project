@@ -1,6 +1,6 @@
 import { ChangeEvent, useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { BsFan } from "react-icons/bs";
+import { BsBrightnessAltLow, BsFan } from "react-icons/bs";
 import { Card, CardHeader, CardBody, Divider } from "@nextui-org/react";
 import API_BASE_URL from "@/APIconfig";
 
@@ -11,6 +11,7 @@ interface FanSpeedProps {
   subTitle?: string;
   style?: number;
   customHeading?: string;
+  customIcon?: Boolean;
 }
 
 const FanSpeedSelector = ({
@@ -20,6 +21,7 @@ const FanSpeedSelector = ({
   subTitle,
   style,
   customHeading = "Fan Speed",
+  customIcon = false,
 }: FanSpeedProps) => {
   const [fanSpeed, setFanSpeed] = useState<number>(value);
 
@@ -61,7 +63,8 @@ const FanSpeedSelector = ({
   return (
     <Card className="max-w-[400px] dark ">
       <CardHeader className="flex gap-3 dark">
-        <BsFan size={30} />
+        {customIcon ? <BsFan size={30} /> : <BsBrightnessAltLow size={30} />}
+
         <div className="flex flex-col">
           <p className="text-md">{customHeading}</p>
           <p className="text-small text-default-500">{subTitle}</p>

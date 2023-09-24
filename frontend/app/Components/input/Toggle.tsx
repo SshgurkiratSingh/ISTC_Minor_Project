@@ -4,6 +4,7 @@ import { use, useEffect, useState } from "react";
 import ClientOnly from "../clientOnly";
 import { toast } from "react-toastify";
 
+
 interface ToggleButtonProps {
   topic: string;
   value: boolean;
@@ -87,22 +88,20 @@ const ToggleButton = ({
           className="flex flex-col items-center justify-center ml-5"
           id={topic}
         >
-          <div className="sw">
-            <input
-              className="switch-check"
-              id={`switchBoard1-${subTitle.split(" ").join("")}`}
-              type="checkbox"
-              checked={isToggled}
-              onChange={handleCheckboxChange}
-            />
-            <label
-              className="switch-lb"
-              htmlFor={`switchBoard1-${subTitle.split(" ").join("")}`}
-            >
-              Check
-              <span></span>
-            </label>
+          <div className="fx-block">
+            <div className="toggle">
+              <div>
+                <input
+                  type="checkbox"
+                  id="toggles"
+                  checked={isToggled}
+                  onChange={handleCheckboxChange}
+                />
+                <div data-unchecked="On" data-checked="Off"></div>
+              </div>
+            </div>
           </div>
+
           <div className="text-sm font-bold text-gray-300">{subTitle}</div>
         </div>
       </ClientOnly>
@@ -114,12 +113,13 @@ const ToggleButton = ({
           className="flex flex-col items-center justify-center ml-5"
           id={topic}
         >
-          <input
-            className="togglesw"
-            type="checkbox"
-            checked={isToggled}
-            onChange={handleCheckboxChange}
-          />
+          <div className="checkbox-wrapper-25">
+            <input
+              type="checkbox"
+              checked={isToggled}
+              onChange={handleCheckboxChange}
+            />
+          </div>
 
           <div className="text-sm font-bold text-gray-300">{subTitle}</div>
         </div>
