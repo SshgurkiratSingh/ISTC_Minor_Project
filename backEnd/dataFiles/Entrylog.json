@@ -7,8 +7,152 @@
     "userName": "Test User1"
   },
   {
-    "UID": "545",
-    "timestamp": "2023-09-23T16:29:45.436Z",
+    "UID": "15 63 1D 85",
+    "timestamp": "2023-09-25T16:38:51.177Z",
+    "nodeLocation": "Entrance",
+    "description": "Entry was Denied due to lack of permissions",
+    "status": "denied",
+    "userName": "Gurkirat SIngh"
+  },
+  {
+    "UID": "15 63 1D 85",
+    "timestamp": "2023-09-25T16:41:33.252Z",
+    "description": "Entry was Approved",
+    "status": "approved",
+    "userName": "Gurkirat SIngh",
+    "nodeLocation": "Entrance"
+  },
+  {
+    "UID": " 13 70 1D 85",
+    "nodeLocation": "Entrance",
+    "timestamp": "2023-09-25T16:41:49.029Z",
+    "description": "Entry was Denied because of an unknown card",
+    "status": "unknown"
+  },
+  {
+    "UID": " C3 AA 0E 31",
+    "nodeLocation": "Entrance",
+    "timestamp": "2023-09-25T16:42:00.709Z",
+    "description": "Entry was Denied because of an unknown card",
+    "status": "unknown"
+  },
+  {
+    "UID": " 08 07 E9 4B",
+    "nodeLocation": "Entrance",
+    "timestamp": "2023-09-25T16:42:14.015Z",
+    "description": "Entry was Denied because of an unknown card",
+    "status": "unknown"
+  },
+  {
+    "UID": "15 63 1D 85",
+    "timestamp": "2023-09-25T16:42:40.844Z",
+    "description": "Entry was Approved",
+    "status": "approved",
+    "userName": "Gurkirat SIngh",
+    "nodeLocation": "Entrance"
+  },
+  {
+    "UID": "15 63 1D 85",
+    "timestamp": "2023-09-25T16:44:14.851Z",
+    "description": "Entry was Approved",
+    "status": "approved",
+    "userName": "Gurkirat SIngh",
+    "nodeLocation": "Entrance"
+  },
+  {
+    "UID": "15 63 1D 85",
+    "timestamp": "2023-09-25T16:44:26.114Z",
+    "description": "Entry was Approved",
+    "status": "approved",
+    "userName": "Gurkirat SIngh",
+    "nodeLocation": "Entrance"
+  },
+  {
+    "UID": "15 63 1D 85",
+    "timestamp": "2023-09-25T16:49:36.586Z",
+    "description": "Entry was Approved",
+    "status": "approved",
+    "userName": "Gurkirat SIngh",
+    "nodeLocation": "Entrance"
+  },
+  {
+    "UID": " C3 AA 0E 31",
+    "nodeLocation": "Entrance",
+    "timestamp": "2023-09-25T16:49:44.977Z",
+    "description": "Entry was Denied because of an unknown card",
+    "status": "unknown"
+  },
+  {
+    "UID": " 08 93 11 E4",
+    "nodeLocation": "Entrance",
+    "timestamp": "2023-09-25T16:49:49.760Z",
+    "description": "Entry was Denied because of an unknown card",
+    "status": "unknown"
+  },
+  {
+    "UID": " 13 70 1D 85",
+    "nodeLocation": "Entrance",
+    "timestamp": "2023-09-25T16:49:56.468Z",
+    "description": "Entry was Denied because of an unknown card",
+    "status": "unknown"
+  },
+  {
+    "UID": " 13 70 1D 85",
+    "nodeLocation": "Entrance",
+    "timestamp": "2023-09-25T16:50:01.491Z",
+    "description": "Entry was Denied because of an unknown card",
+    "status": "unknown"
+  },
+  {
+    "UID": " C3 AA 0E 31",
+    "nodeLocation": "Entrance",
+    "timestamp": "2023-09-25T16:50:05.269Z",
+    "description": "Entry was Denied because of an unknown card",
+    "status": "unknown"
+  },
+  {
+    "UID": "15 63 1D 85",
+    "timestamp": "2023-09-25T16:50:10.214Z",
+    "description": "Entry was Approved",
+    "status": "approved",
+    "userName": "Gurkirat SIngh",
+    "nodeLocation": "Entrance"
+  },
+  {
+    "UID": "15 63 1D 85",
+    "timestamp": "2023-09-25T16:51:03.345Z",
+    "description": "Entry was Approved",
+    "status": "approved",
+    "userName": "Gurkirat SIngh",
+    "nodeLocation": "Entrance"
+  },
+  {
+    "UID": " 13 70 1D 85",
+    "nodeLocation": "Entrance",
+    "timestamp": "2023-09-25T16:51:11.136Z",
+    "description": "Entry was Denied because of an unknown card",
+    "status": "unknown"
+  },
+  {
+    "UID": "C3 AA 0e 31",
+    "timestamp": "2023-09-25T16:51:16.367Z",
+    "description": "Entry was Approved",
+    "status": "approved",
+    "userName": "QuaTrope",
+    "nodeLocation": "Entrance"
+  },
+  {
+    "UID": "C3 AA 0e 31",
+    "timestamp": "2023-09-25T16:51:25.364Z",
+    "description": "Entry was Approved",
+    "status": "approved",
+    "userName": "QuaTrope",
+    "nodeLocation": "Entrance"
+  },
+  {
+    "UID": " 08 52 1D B0",
+    "nodeLocation": "Entrance",
+    "timestamp": "2023-09-25T16:51:33.346Z",
     "description": "Entry was Denied because of an unknown card",
     "status": "unknown"
   }

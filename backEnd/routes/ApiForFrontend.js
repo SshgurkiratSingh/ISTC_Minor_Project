@@ -23,10 +23,14 @@ client.on("connect", () => {
   client.subscribe("IoT/room2/fan1");
   client.subscribe("IoT/room2/switchBoard1");
   client.subscribe("IoT/room2/brightness1");
+  // Garage Topic //
   client.subscribe("IoT/garage/light1");
   client.subscribe("IoT/garage/light2");
   client.subscribe("IoT/garage/door");
   client.subscribe("IoT/garage/occupancy");
+  client.subscribe("IoT/garage/personMonitoring");
+  client.subscribe("IoT/garage/door");
+  //   Kitchen Topic //
   client.subscribe("IoT/kitchen/light1");
   client.subscribe("IoT/kitchen/light2");
   client.subscribe("IoT/kitchen/switchBoard1");
@@ -35,6 +39,7 @@ client.on("connect", () => {
   client.subscribe("IoT/kitchen/fan1");
   client.subscribe("IoT/kitchen/airQuality");
   client.subscribe("IoT/kitchen/brightness1");
+  // Entrance Topic //
   client.subscribe("IoT/entrance/door");
   client.subscribe("IoT/entrance/light1");
   client.subscribe("IoT/entrance/light2");
@@ -42,6 +47,7 @@ client.on("connect", () => {
   client.subscribe("IoT/entrance/lightIntensity");
   client.subscribe("IoT/entrance/temperature");
   client.subscribe("IoT/entrance/brightness1");
+  // Hall Topic //
   client.subscribe("IoT/hall/light1");
   client.subscribe("IoT/hall/light2");
   client.subscribe("IoT/hall/ambientLight");
@@ -71,7 +77,6 @@ client.on("connect", () => {
   client.subscribe("IoT/lawn/temperature");
   client.subscribe("IoT/lawn/humidity");
   client.subscribe("IoT/lawn/brightness1");
-
   client.subscribe("IoT/washroom/light1");
   client.subscribe("IoT/washroom/gyser");
   client.subscribe("IoT/store/light1");
@@ -167,6 +172,31 @@ router.get("/getSpecificData/:UserDemand", (req, res) => {
       .status(404)
       .json({ status: "No Data Found", message: "It's empty out here" });
   }
+});
+
+// Get Security Data
+router.get("/getSecurityData", async (req, res) => {
+  const intrusionDetection = logs.find(
+    (item) => item.topic === "IoT/lawn/disengageIndruderDetector"
+  );
+  const rainCheck = logs.find(
+    (item) => item.topic === "IoT/entrance/rainCheck"
+  );
+  const garageStatus = logs.find((item) => item.topic === "IoT/garage/door");
+  const entranceStatus = logs.find((i) => i.topic === "IoT/entrance/door");
+  const fileData = await fs.promises.readFile(
+    "dataFiles/Entrylog.json",
+    "utf-8"
+  );
+  const data = JSON.parse(fileData);
+  const responseData = {
+    intrusionDetection: intrusionDetection.value === "1",
+    rainCheck: rainCheck.value === "1",
+    garageStatus: garageStatus.value === "1",
+    entranceStatus: entranceStatus.value === "1",
+    entryLog: data.reverse().splice(0, 5),
+  };
+  res.json(responseData);
 });
 
 module.exports = router;

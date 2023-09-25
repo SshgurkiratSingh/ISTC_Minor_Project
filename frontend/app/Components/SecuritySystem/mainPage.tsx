@@ -10,15 +10,43 @@ import {
   Spacer,
 } from "@nextui-org/react";
 import { Chip } from "@nextui-org/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FcCancel } from "react-icons/fc";
 import { TiTickOutline } from "react-icons/ti";
 import AddUserModal from "./AddUser";
 import EngageDisengage from "./EnDisenIntr";
+import API_BASE_URL from "@/APIconfig";
+import EntryLogTable, { EntryLogItem } from "./LastLog";
+import { set } from "date-fns";
 const SecuritySystemPage = () => {
   const [intrusionSystem, setIntrusionSystem] = useState(false);
-  const [entranceDoor, setEntranceDoor] = useState(true);
-  const [garageDoor, setGarageDoor] = useState(true);
+  const [entranceDoor, setEntranceDoor] = useState(false);
+  const [garageDoor, setGarageDoor] = useState(false);
+  const [historyData, setHistoryData] = useState<EntryLogItem[]>([]);
+  const fetchData = () => {
+    fetch(`${API_BASE_URL}/api/frontend/getSecurityData`)
+      .then((response) => response.json())
+      .then((data) => {
+        // Convert the "value" field to a boolean
+
+        setIntrusionSystem(!data["intrusionDetection"]);
+        setEntranceDoor(data["entranceStatus"]);
+        setGarageDoor(data["garageStatus"]);
+        setHistoryData(data["entryLog"]);
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+      });
+  };
+
+  useEffect(() => {
+    fetchData(); // Initial fetch
+    const intervalId = setInterval(fetchData, 5000); // Fetch data every 5 seconds
+
+    // Clean up the interval when the component unmounts
+    return () => clearInterval(intervalId);
+  }, []);
+
   return (
     <div className="flex flex-1 justify-center items-center gap-4  self-center place-items-center min-h-[600px]">
       {" "}
@@ -35,7 +63,13 @@ const SecuritySystemPage = () => {
         <CardBody>
           <div className="flex flex-row gap-2">
             <AddUserModal />
-            <EngageDisengage />
+            <EngageDisengage
+              current={intrusionSystem}
+              topic="IoT/lawn/disengageIndruderDetector"
+              onClick={fetchData}
+            />
+            <Divider orientation="vertical" />
+            <EntryLogTable data={historyData} />
           </div>
         </CardBody>
         <Divider />

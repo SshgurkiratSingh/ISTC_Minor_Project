@@ -15,7 +15,7 @@ import "react-toastify/dist/ReactToastify.css";
 
 interface EngageDisengageProps {
   current?: boolean;
-  onClick?: () => void;
+  onClick: () => void;
   className?: string;
   heading?: string;
   subHeading?: string;
@@ -39,13 +39,39 @@ const EngageDisengage = ({
   const handleClose = () => {
     setIsOpen(false);
   };
-  const onSubmit = () => {
-      
-  }
+  const makeGetRequest = () => {
+    const invertedValue = current; // Invert the current value
+    const encodedTopic = encodeURIComponent(topic || ""); // Encode the topic (if provided)
+
+    // Construct the URL
+    const url = `${API_BASE_URL}/api/frontend/publish?value=${
+      invertedValue ? "1" : "0"
+    }&topic=${encodedTopic}`;
+
+    // Make the GET request
+    fetch(url)
+      .then((response) => response.json())
+      .then((data) => {
+        // Handle the response data as needed
+        console.log("GET request successful:", data);
+        toast.success(`Switch toggled: ${data.message}`);
+      })
+
+      .catch((error) => {
+        toast.error("HTTP GET request failed");
+        console.error("Error making GET request:", error);
+      });
+    handleClose();
+    onClick();
+  };
 
   return (
     <div className="dark">
-      <Button color="primary" onClick={() => setIsOpen(true)} variant="shadow">
+      <Button
+        color={current ? "warning" : "primary"}
+        onClick={() => setIsOpen(true)}
+        variant="shadow"
+      >
         {current ? "Disengage Intrusion" : "Engage Intrusion"}
       </Button>
       <Modal backdrop="blur" isOpen={isOpen} onClose={handleClose}>
@@ -54,7 +80,10 @@ const EngageDisengage = ({
             {current ? "Disengage Intrusion System" : "Engage Intrusion System"}
           </ModalHeader>
           <ModalBody>
-            <button className="btn  text-blue-700 font-bold">
+            <button
+              className="btn  text-blue-700 font-bold"
+              onClick={makeGetRequest}
+            >
               {current ? "Disengage" : "Engage"}
             </button>
           </ModalBody>

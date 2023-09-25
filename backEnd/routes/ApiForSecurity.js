@@ -16,9 +16,10 @@ router.post("/validateUser", async (req, res) => {
   try {
     const fileData = await fs.readFile("dataFiles/RFID.json", "utf-8");
     const data = JSON.parse(fileData);
+    console.log(req.body);
 
-    // Check if userRFID exists in the request body
-    if (!req.body.userRFID) {
+    // Check if UID exists in the request body
+    if (!req.body.UID) {
       return res.json({
         status: "error",
         description: "No UID provided",
@@ -26,11 +27,13 @@ router.post("/validateUser", async (req, res) => {
       });
     }
 
-    const { userRFID } = req.body;
+    const { UID, nodeLocation } = req.body;
 
-    // Check if userRFID exists in the tags array (case-insensitive)
+    // Check if UID exists in the tags array (case-insensitive)
     const user = data.tags.find(
-      (tag) => tag.UID.toLowerCase() === userRFID.toLowerCase()
+      (tag) =>
+        tag.UID.toLowerCase().split(" ").join("") ===
+        UID.toLowerCase().split(" ").join("")
     );
 
     const logFileData = await fs.readFile("dataFiles/Entrylog.json", "utf-8");
@@ -38,7 +41,7 @@ router.post("/validateUser", async (req, res) => {
     const timestamp = new Date().toISOString();
 
     if (user) {
-      if (user.permissions === 1) {
+      if (user.permissions == true) {
         // Handle entry approval logic
         entryLog.push({
           UID: user.UID,
@@ -46,6 +49,7 @@ router.post("/validateUser", async (req, res) => {
           description: "Entry was Approved",
           status: "approved",
           userName: user.userName,
+          nodeLocation,
         });
 
         await fs.writeFile(
@@ -57,6 +61,7 @@ router.post("/validateUser", async (req, res) => {
           permissionToUnlock: true,
           isValid: true,
           ...user,
+          nodeLocation,
           timestamp,
           code: 1, // Status code for entry approved
         });
@@ -65,6 +70,7 @@ router.post("/validateUser", async (req, res) => {
         entryLog.push({
           UID: user.UID,
           timestamp,
+          nodeLocation,
           description: "Entry was Denied due to lack of permissions",
           status: "denied",
           userName: user.userName,
@@ -78,6 +84,7 @@ router.post("/validateUser", async (req, res) => {
         return res.json({
           permissionToUnlock: false,
           isValid: true,
+          nodeLocation,
           ...user,
           timestamp,
           code: 2, // Status code for entry denied
@@ -86,7 +93,8 @@ router.post("/validateUser", async (req, res) => {
     } else {
       // Handle unknown card logic
       entryLog.push({
-        UID: userRFID,
+        UID: UID,
+        nodeLocation,
         timestamp,
         description: "Entry was Denied because of an unknown card",
         status: "unknown",
@@ -99,6 +107,7 @@ router.post("/validateUser", async (req, res) => {
 
       return res.json({
         isValid: false,
+        nodeLocation,
         timestamp,
         code: 3, // Status code for unknown card
       });
