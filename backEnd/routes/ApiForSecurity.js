@@ -108,46 +108,28 @@ router.post("/validateUser", async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
-// Validating user using get request
-// router.post("/validateUser", async (req, res) => {
-//   try {
-//     const fileData = await fs.readFile("dataFiles/RFID.json", "utf-8");
-//     const data = JSON.parse(fileData);
-//     console.log(data);
-//     const { UID } = req.body;
-
-//     // Check if userRFID exists in the tags array
-//     const user = data.tags.find((tag) => tag.UID === UID);
-
-//     if (user) {
-//       if (user.permissions === 1) {
-//         res.json({ permissionToUnlock: true, isValid: true, user });
-//       } else {
-//         res.json({ permissionToUnlock: false, isValid: true, user });
-//       }
-//     } else {
-//       res.json({ isValid: false });
-//     }
-//   } catch (error) {
-//     console.error("Error validating user:", error);
-//     res.status(500).json({ error: "Internal Server Error" });
-//   }
-// });
 
 // adding User using Post request
+
 router.post("/addUser", async (req, res) => {
   try {
+    // Validate user input
+    const { UID, userType, userName, email, permissions, userDescription } =
+      req.body;
+
+    if (!UID || !userType || !userName || !email) {
+      return res.status(400).json({ error: "Invalid user data" });
+    }
+
     const fileData = await fs.readFile("dataFiles/RFID.json", "utf-8");
     const data = JSON.parse(fileData);
 
-    const { UID, userType, userName, email, permissions, userDescription } =
-      req.body;
-    // Check if userRFID exists in the tags array
-    const user = data.tags.find((tag) => tag.UID === userRFID);
+    // Check if userUID exists in the tags array
+    const user = data.tags.find((tag) => tag.UID === UID);
 
     if (user) {
-      res.json({
-        message: "User already exists",
+      return res.status(409).json({
+        error: "User already exists",
         user: user,
       });
     } else {
@@ -159,10 +141,13 @@ router.post("/addUser", async (req, res) => {
         permissions: permissions,
         email: email,
       });
+
+      // Write updated data back to the file
       await fs.writeFile("dataFiles/RFID.json", JSON.stringify(data));
-      res.json({
+
+      return res.status(201).json({
         message: "User added successfully",
-        user: data.tags.find((tag) => tag.UID === userRFID),
+        user: data.tags.find((tag) => tag.UID === UID),
       });
     }
   } catch (error) {
@@ -170,6 +155,7 @@ router.post("/addUser", async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
+
 // Get all User List
 router.get("/getAllUser", async (req, res) => {
   const fileData = await fs.readFile("dataFiles/RFID.json", "utf-8");

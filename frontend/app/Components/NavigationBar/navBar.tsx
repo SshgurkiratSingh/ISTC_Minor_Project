@@ -62,12 +62,29 @@ const NavBar = () => {
 
       <NavbarContent justify="end">
         <NavbarItem>
-          <Button as={Link} color="warning" href="/" variant="bordered">
-            Home
-          </Button>
+          {" "}
+          <Link href="/">
+            <Button
+              as={Link}
+              color="secondary"
+              variant="bordered"
+              className="font-bold"
+            >
+              Home
+            </Button>
+          </Link>
         </NavbarItem>
         <NavbarItem>
-          <Link href="#">About</Link>
+          <Link href="/securitySystem">
+            <Button
+              as={Link}
+              color="secondary"
+              variant="shadow"
+              className="font-bold"
+            >
+              Security Sys
+            </Button>
+          </Link>
         </NavbarItem>
       </NavbarContent>
 

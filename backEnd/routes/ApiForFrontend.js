@@ -15,12 +15,14 @@ client.on("connect", () => {
   client.subscribe("IoT/room1/fan1");
   client.subscribe("IoT/room1/fan2");
   client.subscribe("IoT/room1/switchBoard1");
+  client.subscribe("IoT/room1/brightness1");
   client.subscribe("IoT/room2/light1");
   client.subscribe("IoT/room2/light2");
   client.subscribe("IoT/room2/temperature");
   client.subscribe("IoT/room2/humidity");
   client.subscribe("IoT/room2/fan1");
   client.subscribe("IoT/room2/switchBoard1");
+  client.subscribe("IoT/room2/brightness1");
   client.subscribe("IoT/garage/light1");
   client.subscribe("IoT/garage/light2");
   client.subscribe("IoT/garage/door");
@@ -32,12 +34,14 @@ client.on("connect", () => {
   client.subscribe("IoT/kitchen/humidity");
   client.subscribe("IoT/kitchen/fan1");
   client.subscribe("IoT/kitchen/airQuality");
+  client.subscribe("IoT/kitchen/brightness1");
   client.subscribe("IoT/entrance/door");
   client.subscribe("IoT/entrance/light1");
   client.subscribe("IoT/entrance/light2");
   client.subscribe("IoT/entrance/rainCheck");
   client.subscribe("IoT/entrance/lightIntensity");
   client.subscribe("IoT/entrance/temperature");
+  client.subscribe("IoT/entrance/brightness1");
   client.subscribe("IoT/hall/light1");
   client.subscribe("IoT/hall/light2");
   client.subscribe("IoT/hall/ambientLight");
@@ -66,6 +70,8 @@ client.on("connect", () => {
   client.subscribe("IoT/lawn/airQuality");
   client.subscribe("IoT/lawn/temperature");
   client.subscribe("IoT/lawn/humidity");
+  client.subscribe("IoT/lawn/brightness1");
+
   client.subscribe("IoT/washroom/light1");
   client.subscribe("IoT/washroom/gyser");
   client.subscribe("IoT/store/light1");
@@ -106,6 +112,21 @@ router.post("/publish", (req, res) => {
   });
 });
 // publish data using get request
+
+// Add input validation function
+function isValidBoolean(value) {
+  return (
+    typeof value === "boolean" ||
+    (typeof value === "string" &&
+      ["true", "false"].includes(value.toLowerCase()))
+  );
+}
+
+function isValidPercentage(value) {
+  const numberValue = Number(value);
+  return !isNaN(numberValue) && numberValue >= 0 && numberValue <= 100;
+}
+
 router.get("/publish", (req, res) => {
   const { value, topic } = req.query;
 
@@ -113,17 +134,15 @@ router.get("/publish", (req, res) => {
 
   let messageToSend;
 
-  if (value === "0" || value === "false" || value === false) {
-    messageToSend = "0";
-  } else if (value === "1" || value === "true" || value === true) {
-    messageToSend = "1";
-  } else if (Number(value) >= 0 && Number(value) <= 100) {
-    // Fix the range condition
-    messageToSend = String(value); // Convert the number to a string
+  if (isValidBoolean(value)) {
+    messageToSend = Boolean(value) ? "1" : "0";
+  } else if (isValidPercentage(value)) {
+    messageToSend = String(value);
   } else {
     return res.status(400).json({ message: "Bad Request" });
   }
 
+  // Assuming you have a MQTT client instance named 'client'
   client.publish(topic, messageToSend, { retain: true }, (error) => {
     if (error) {
       console.error("Error publishing message:", error);
@@ -144,9 +163,14 @@ router.get("/getSpecificData/:UserDemand", (req, res) => {
   if (responseData.length > 0) {
     res.json(responseData);
   } else {
-    res.json({ status: "No Data Found", message: "Its empty out here" });
+    res
+      .status(404)
+      .json({ status: "No Data Found", message: "It's empty out here" });
   }
 });
+
+module.exports = router;
+
 /**
  * Filters the dataArray to find items matching the topic pattern specified by the userDemand parameter.
  *

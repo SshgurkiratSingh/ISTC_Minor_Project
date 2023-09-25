@@ -81,7 +81,6 @@ const MainBoardCard = ({
     }
   }, [data, tempAndHum, roomTag, humidity, temperature]);
 
-  console.log(data);
   const lastUpdatedText = (lastUpdate: string | undefined) => {
     if (lastUpdate) {
       return formatDistanceToNow(new Date(lastUpdate), { addSuffix: true });
@@ -157,8 +156,8 @@ const MainBoardCard = ({
                   topic={item.topic}
                   subTitle={item.subTitle}
                   value={
-                    ServerData?.find((item) => item.topic === item.topic)
-                      ?.value === "1"
+                    ServerData?.find((i) => i.topic === item.topic)?.value ===
+                    "1"
                   }
                 />
               ))}

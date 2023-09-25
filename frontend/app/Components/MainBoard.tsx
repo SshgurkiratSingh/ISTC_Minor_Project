@@ -95,6 +95,8 @@ const MainBoard = () => {
               tempAndHum
             />
             <MainBoardCard
+              tempAndHum
+              airQuality
               roomName="Lawn"
               roomId={5}
               data={ServerData}
