@@ -155,5 +155,13 @@
     "timestamp": "2023-09-25T16:51:33.346Z",
     "description": "Entry was Denied because of an unknown card",
     "status": "unknown"
+  },
+  {
+    "UID": "15 63 1D 85",
+    "timestamp": "2023-09-25T17:07:26.204Z",
+    "description": "Entry was Approved",
+    "status": "approved",
+    "userName": "Gurkirat SIngh",
+    "nodeLocation": "Entrance"
   }
 ]

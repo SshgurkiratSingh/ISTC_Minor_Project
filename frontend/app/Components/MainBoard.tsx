@@ -102,6 +102,7 @@ const MainBoard = () => {
               data={ServerData}
               roomTag={"lawn"}
               noOfLights={4}
+              noOfBrightness={2}
               isCustomPresent
               customData={[
                 {
@@ -109,26 +110,17 @@ const MainBoard = () => {
                   subTitle: "Lawn Pump 1",
                   identity: "Lawn Pump 1",
                 },
-                {
-                  topic: "IoT/lawn/pump2",
-                  subTitle: "Lawn Pump 2",
-                  identity: "Lawn Pump 2",
-                },
+
                 {
                   topic: "IoT/lawn/autonomousLighting",
                   subTitle: "Autonomous Lighting",
                   identity: "Lawn Autonomous Lighting",
                 },
-                {
-                  topic: "IoT/lawn/autonomousMode",
-                  subTitle: "Autonomous Watering",
-                  identity: "Lawn Autonomous Mode",
-                },
-                {
-                  topic: "IoT/lawn/disengageIndruderDetector",
-                  subTitle: "Disengage InDet",
-                  identity: "Lawn Disengage InDet",
-                },
+                // {
+                //   topic: "IoT/lawn/autonomousMode",
+                //   subTitle: "Autonomous Watering",
+                //   identity: "Lawn Autonomous Mode",
+                // },
               ]}
             />
 

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # MQTT broker address
-MQTT_BROKER="localhost"
+MQTT_BROKER="broker.hivemq.com"
 
 # List of topics
 TOPICS=(

@@ -68,11 +68,13 @@ const EngageDisengage = ({
   return (
     <div className="dark">
       <Button
-        color={current ? "warning" : "primary"}
+        color={current ? "warning" : "danger"}
         onClick={() => setIsOpen(true)}
         variant="shadow"
       >
-        {current ? "Disengage Intrusion" : "Engage Intrusion"}
+        {current
+          ? "Disengage Intrusion Detection"
+          : "Engage Intrusion Detection"}
       </Button>
       <Modal backdrop="blur" isOpen={isOpen} onClose={handleClose}>
         <ModalContent>
