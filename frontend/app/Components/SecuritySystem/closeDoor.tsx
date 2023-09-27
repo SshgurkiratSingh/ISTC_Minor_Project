@@ -58,7 +58,7 @@ const CloseOpenDoor = ({
       .then((data) => {
         // Handle the response data as needed
         console.log("GET request successful:", data);
-        toast.success(`Switch toggled: ${data.message}`);
+        toast.success(`Switch toggled: ${location ? location : "door"}`);
       })
 
       .catch((error) => {

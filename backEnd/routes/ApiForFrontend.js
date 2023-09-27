@@ -104,6 +104,7 @@ router.post("/publish", (req, res) => {
     return res.status(400).json({ message: "Bad Request" });
   }
   const messageToPublish = JSON.stringify(message);
+  console.log(messageToPublish);
 
   const options = { retain: true }; // Ensure retain is a boolean
 
@@ -139,8 +140,9 @@ router.get("/publish", (req, res) => {
 
   let messageToSend;
 
-  if (isValidBoolean(value)) {
-    messageToSend = Boolean(value) ? "1" : "0";
+  if (value === "true" || value === "false") {
+    messageToSend = value === "true" ? "1" : "0";
+    console.log(messageToSend);
   } else if (isValidPercentage(value)) {
     messageToSend = String(value);
   } else {
