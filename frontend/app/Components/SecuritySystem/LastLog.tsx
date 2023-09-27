@@ -23,8 +23,8 @@ const EntryLogTable = ({ data }: SecuritySystemProps) => {
     <div>
       <Table
         color={"secondary"}
-        selectionMode="single"
-        defaultSelectedKeys={["2"]}
+        selectionMode="multiple"
+        defaultSelectedKeys={["0"]}
         aria-label="History Table"
       >
         <TableHeader>

@@ -18,6 +18,7 @@ import EngageDisengage from "./EnDisenIntr";
 import API_BASE_URL from "@/APIconfig";
 import EntryLogTable, { EntryLogItem } from "./LastLog";
 import { set } from "date-fns";
+import CloseOpenDoor from "./closeDoor";
 const SecuritySystemPage = () => {
   const [intrusionSystem, setIntrusionSystem] = useState(false);
   const [entranceDoor, setEntranceDoor] = useState(false);
@@ -61,13 +62,27 @@ const SecuritySystemPage = () => {
         </CardHeader>
         <Divider />
         <CardBody>
-          <div className="flex flex-row gap-2">
-            <AddUserModal />
-            <EngageDisengage
-              current={intrusionSystem}
-              topic="IoT/lawn/disengageIndruderDetector"
-              onClick={fetchData}
-            />
+          <div className="flex flex-col gap-2">
+            <div className="flex flex-col xl:flex-row gap-2 flex-1 align-middle justify-center items-center">
+              <AddUserModal />
+              <EngageDisengage
+                current={intrusionSystem}
+                topic="IoT/lawn/disengageIndruderDetector"
+                onClick={fetchData}
+              />
+              <CloseOpenDoor
+                current={entranceDoor}
+                onClick={fetchData}
+                topic="IoT/entrance/door"
+                location="Front Door"
+              />
+              <CloseOpenDoor
+                current={garageDoor}
+                onClick={fetchData}
+                topic="IoT/garage/door"
+                location="Garage Door"
+              />
+            </div>
             <Divider orientation="vertical" />
             <EntryLogTable data={historyData} />
           </div>
