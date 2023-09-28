@@ -71,12 +71,19 @@ const uint8_t maxValues[MAX_ITEMS] = {1, 1, 10, 10, 1};
 bool needUpdate = true;
 void callback(char *topic, byte *payload, unsigned int length)
 {
+
     String message;
+
     for (int i = 0; i < length; i++)
     {
         message += (char)payload[i];
     }
-
+#if DEBUG_MODE
+    Serial.print("Message arrived [");
+    Serial.print(topic);
+    Serial.print("] ");
+    Serial.println(message);
+#endif
     for (int i = 0; i < MAX_ITEMS; i++)
     {
         if (String(topics[i]) == String(topic))
@@ -263,10 +270,10 @@ void checkButtons()
             lastDebounceTime = currentTime;
             inItem = !inItem;
         }
-        if (inItem)
+        if (!inItem)
         {
             String payload = String(currentValue[selectedItem]);
-            client.publish(topics[selectedItem], payload.c_str());
+            client.publish(topics[selectedItem], payload.c_str(), true);
 #if DEBUG_MODE
             Serial.print("Published to ");
             Serial.print(topics[selectedItem]);
