@@ -1,10 +1,13 @@
 #include <Arduino.h>
 #include <Wire.h>
 #include <Adafruit_GFX.h>
-
-#include "./Adafruit_SH1106.h"
+#include <PubSubClient.h>
+#include <Adafruit_SH1106.h>
+#include <WiFi.h>
 #define OLED_RESET 4
-Adafruit_SH1106 display(OLED_RESET);
+Adafruit_SH1106 display(22, 21);
+WiFiClient wifi;
+PubSubClient client(wifi);
 /* CONFIGURATION Parameters */
 #define MAX_ITEMS 5
 #define DEBUG_MODE true
@@ -51,6 +54,7 @@ bool inItem = false;
 uint8_t selectedItem = 0;
 uint8_t upItem;
 uint8_t downItem;
+const char *mqtt_server = "mqtt://broker.hivemq.com";
 
 // Items Configuration starts here
 const char selectableItems[MAX_ITEMS][15] = {
@@ -61,7 +65,41 @@ const char selectableItems[MAX_ITEMS][15] = {
     "Plug 1",
 };
 const bool toggleItems[MAX_ITEMS] = {true, true, false, false, true};
+int currentValue[MAX_ITEMS] = {0, 0, 0, 0, 0};
+const char topics[MAX_ITEMS][30] = {"IoT/room1/light1", "IoT/room1/light2", "IoT/room1/brightness1", "IoT/room1/fan1", "IoT/room1/switchBoard1"};
 const uint8_t maxValues[MAX_ITEMS] = {1, 1, 10, 10, 1};
+bool needUpdate = true;
+void callback(char *topic, byte *payload, unsigned int length)
+{
+    String message;
+    for (int i = 0; i < length; i++)
+    {
+        message += (char)payload[i];
+    }
+
+    for (int i = 0; i < MAX_ITEMS; i++)
+    {
+        if (String(topics[i]) == String(topic))
+        {
+            if (maxValues[i] == 1)
+            {
+                // For topics that can only have "0" or "1"
+                if (message == "1" || message == "0")
+                {
+                    currentValue[i] = message.toInt();
+                    needUpdate = true;
+                }
+            }
+            else
+            {
+                // For topics that can have other values
+                currentValue[i] = message.toInt();
+                needUpdate = true;
+            }
+            break;
+        }
+    }
+}
 
 void setup()
 {
@@ -70,6 +108,44 @@ void setup()
 
     display.begin(SH1106_SWITCHCAPVCC, 0x3C);
     display.clearDisplay();
+    WiFi.begin("Node ", "whyitellyou");
+    client.setServer(mqtt_server, 1883);
+    client.setCallback(callback);
+    while (WiFi.status() != WL_CONNECTED)
+    {
+
+#if DEBUG_MODE
+        Serial.println("Connecting to WiFi..");
+#endif
+        display.setTextSize(1);
+        display.setCursor(5, 32);
+        display.print("Connecting to WiFi..");
+        display.display();
+        delay(1000);
+    }
+
+    if (client.connect("ESP8266Client"))
+    {
+
+#if DEBUG_MODE
+        Serial.println("connected");
+#endif
+        for (int i = 0; i < MAX_ITEMS; i++)
+        {
+#if DEBUG_MODE
+            Serial.print("Subscribing to: ");
+            Serial.println(topics[i]);
+#endif
+            client.subscribe(topics[i]);
+        }
+    }
+    else
+    {
+#if DEBUG_MODE
+        Serial.println("failed, rc=" + client.state());
+#endif
+    }
+
     pinMode(NEXT_BUTTON, INPUT_PULLUP);
     pinMode(PREV_BUTTON, INPUT_PULLUP);
     pinMode(SELECT_BUTTON, INPUT_PULLUP);
@@ -78,39 +154,48 @@ void setup()
 
 void displayItems()
 {
-    if (!inItem)
+    if (needUpdate)
     {
-        display.clearDisplay();
-        display.setTextSize(1);
-        display.setTextColor(WHITE);
-        // Up Item
-        display.setCursor(24, 4);
-        display.print(selectableItems[upItem]);
-        display.drawBitmap(5, 0, logoArray[upItem], 16, 16, WHITE);
+        if (!inItem)
+        {
+            display.clearDisplay();
+            display.setTextSize(1);
+            display.setTextColor(WHITE);
+            // Up Item
+            display.setCursor(24, 4);
+            display.print(selectableItems[upItem]);
+            display.drawBitmap(5, 0, logoArray[upItem], 16, 16, WHITE);
 
-        // Center Item
-        display.drawLine(5, 16, 122, 16, WHITE);
-        display.drawLine(122, 16, 122, 31, WHITE);
-        display.drawLine(5, 31, 122, 31, WHITE);
-        display.drawLine(5, 16, 5, 31, WHITE);
-        display.setCursor(24, 20);
-        display.print(selectableItems[selectedItem]);
-        display.drawBitmap(5, 16, logoArray[selectedItem], 16, 16, WHITE);
+            // Center Item
+            display.drawLine(5, 16, 122, 16, WHITE);
+            display.drawLine(122, 16, 122, 31, WHITE);
+            display.drawLine(5, 31, 122, 31, WHITE);
+            display.drawLine(5, 16, 5, 31, WHITE);
+            display.setCursor(24, 20);
+            display.print(selectableItems[selectedItem]);
+            display.drawBitmap(5, 16, logoArray[selectedItem], 16, 16, WHITE);
 
-        // Down Item
-        display.setCursor(24, 36);
-        display.print(selectableItems[downItem]);
-        display.drawBitmap(5, 32, logoArray[downItem], 16, 16, WHITE);
+            // Down Item
+            display.setCursor(24, 36);
+            display.print(selectableItems[downItem]);
+            display.drawBitmap(5, 32, logoArray[downItem], 16, 16, WHITE);
 
-        display.display();
-    }
-    else
-    {
-        display.clearDisplay();
-        display.setTextSize(1);
-        display.setTextColor(WHITE);
-        // Center Item
-        display.drawLine(5, 16, 122, 16, WHITE);
+            display.display();
+        }
+        else
+        {
+            display.clearDisplay();
+            display.setTextSize(1);
+            display.setCursor(5, 32);
+            display.print(selectableItems[selectedItem]);
+            display.print(":");
+            display.print(currentValue[selectedItem]);
+            display.setTextColor(WHITE);
+
+            display.drawLine(5, 16, 122, 16, WHITE);
+            display.display();
+        }
+        needUpdate = false;
     }
 }
 
@@ -133,12 +218,14 @@ void checkButtons()
         if ((currentTime - lastDebounceTime) >= debounceDelay)
         {
             lastDebounceTime = currentTime;
+            needUpdate = true;
             if (!inItem)
             {
                 selectedItem = (selectedItem + 1) % MAX_ITEMS;
             }
             else
             {
+                currentValue[selectedItem] = (currentValue[selectedItem] + 1) % maxValues[selectedItem];
             }
         }
     }
@@ -151,6 +238,7 @@ void checkButtons()
 #endif
         if ((currentTime - lastDebounceTime) >= debounceDelay)
         {
+            needUpdate = true;
             lastDebounceTime = currentTime;
             if (!inItem)
             {
@@ -158,6 +246,7 @@ void checkButtons()
             }
             else
             {
+                currentValue[selectedItem] = (currentValue[selectedItem] == 0) ? maxValues[selectedItem] : (currentValue[selectedItem] - 1);
             }
         }
     }
@@ -170,17 +259,28 @@ void checkButtons()
 #endif
         if ((currentTime - lastDebounceTime) >= debounceDelay)
         {
+            needUpdate = true;
             lastDebounceTime = currentTime;
             inItem = !inItem;
         }
+        if (inItem)
+        {
+            String payload = String(currentValue[selectedItem]);
+            client.publish(topics[selectedItem], payload.c_str());
+#if DEBUG_MODE
+            Serial.print("Published to ");
+            Serial.print(topics[selectedItem]);
+            Serial.print(": ");
+            Serial.println(payload);
+#endif
+        }
     }
-}
 
-void loop()
-{
-    fixNumbering();
-    displayItems();
-    checkButtons();
-
-    delay(100); // Adjust the delay as needed
-}
+    void loop()
+    {
+        client.loop();
+        fixNumbering();
+        displayItems();
+        checkButtons();
+        delay(100);
+    }
