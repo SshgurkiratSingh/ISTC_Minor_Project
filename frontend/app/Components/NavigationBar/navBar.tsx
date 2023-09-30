@@ -17,7 +17,7 @@ import {
 const NavBar = () => {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
 
-  const menuItems = ["Home Page", "panel 2", "Settings", "About"];
+  const menuItems = ["", "historyPage", "securitySystem", "About"];
 
   return (
     <Navbar
@@ -86,12 +86,24 @@ const NavBar = () => {
             </Button>
           </Link>
         </NavbarItem>
+        <NavbarItem className="hidden xl:block">
+          <Link href="/historyPage">
+            <Button
+              as={Link}
+              color="secondary"
+              variant="light"
+              className="font-bold"
+            >
+              History Page
+            </Button>
+          </Link>
+        </NavbarItem>
       </NavbarContent>
 
       <NavbarMenu>
         {menuItems.map((item, index) => (
           <NavbarMenuItem key={`${item}-${index}`}>
-            <Link className="w-full" href="#" size="lg">
+            <Link className="w-full" href={item} size="lg">
               {item}
             </Link>
           </NavbarMenuItem>

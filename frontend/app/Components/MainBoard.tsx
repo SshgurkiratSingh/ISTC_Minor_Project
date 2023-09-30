@@ -6,6 +6,7 @@ import ClientOnly from "./clientOnly";
 
 import HeadingCard from "./Cards/HeadCard";
 import MainBoardCard from "./Cards/MainBoardCard";
+import mainPageConfig from "@/MainPageConfig";
 export interface IoTData {
   topic: string;
   value: string;
@@ -47,123 +48,23 @@ const MainBoard = () => {
 "
         >
           <ClientOnly>
-            <MainBoardCard
-              roomName="Room 1"
-              roomId={1}
-              roomTag="room1"
-              data={ServerData}
-              noOfFans={1}
-              noOfLights={2}
-              noOfSwitchBoards={1}
-              noOfBrightness={1}
-              tempAndHum
-            />
-            <MainBoardCard
-              roomName="Room 2"
-              roomId={2}
-              roomTag="room2"
-              data={ServerData}
-              noOfFans={1}
-              noOfLights={2}
-              noOfSwitchBoards={1}
-              noOfBrightness={1}
-              tempAndHum
-            />
-            <MainBoardCard
-              roomName="Kitchen"
-              roomId={2}
-              roomTag="kitchen"
-              data={ServerData}
-              noOfFans={1}
-              noOfLights={2}
-              noOfSwitchBoards={1}
-              noOfBrightness={1}
-              tempAndHum
-              airQuality
-            />
-            <MainBoardCard
-              roomName="Hall"
-              roomId={3}
-              roomTag="hall"
-              data={ServerData}
-              noOfFans={2}
-              noOfLights={3}
-              noOfSwitchBoards={1}
-              noOfAmbient={1}
-              noOfBrightness={0}
-              isTvPresent
-              tempAndHum
-            />
-            <MainBoardCard
-              tempAndHum
-              airQuality
-              roomName="Lawn"
-              roomId={5}
-              data={ServerData}
-              roomTag={"lawn"}
-              noOfLights={4}
-              noOfBrightness={2}
-              isCustomPresent
-              customData={[
-                {
-                  topic: "IoT/lawn/pump1",
-                  subTitle: "Lawn Pump 1",
-                  identity: "Lawn Pump 1",
-                },
-
-                {
-                  topic: "IoT/lawn/autonomousLighting",
-                  subTitle: "Autonomous Lighting",
-                  identity: "Lawn Autonomous Lighting",
-                },
-                // {
-                //   topic: "IoT/lawn/autonomousMode",
-                //   subTitle: "Autonomous Watering",
-                //   identity: "Lawn Autonomous Mode",
-                // },
-              ]}
-            />
-
-            <MainBoardCard
-              roomName="Garage Washroom Store"
-              roomTag="garage"
-              roomId={6}
-              noOfBrightness={1}
-              data={ServerData}
-              isCustomPresent
-              customData={[
-                {
-                  topic: "IoT/garage/light1",
-                  subTitle: "Garage Light 1",
-                  identity: "Garage Light 1",
-                },
-                {
-                  topic: "IoT/garage/light2",
-                  subTitle: "Garage Light 2",
-                  identity: "Garage Light 2",
-                },
-                {
-                  topic: "IoT/store/light1",
-                  subTitle: "Store Light 1",
-                  identity: "Store Light 1",
-                },
-                {
-                  topic: "IoT/store/light2",
-                  subTitle: "Store Light 2",
-                  identity: "Store Light 2",
-                },
-                {
-                  topic: "IoT/washroom/light1",
-                  subTitle: "Washroom Light 1",
-                  identity: "Washroom Light 1",
-                },
-                {
-                  topic: "IoT/washroom/gyser",
-                  subTitle: "Washroom Gyser",
-                  identity: "Washroom Gyser",
-                },
-              ]}
-            />
+            {mainPageConfig.map((room) => (
+              <MainBoardCard
+                roomName={room.roomName}
+                roomId={room.roomId}
+                roomTag={room.roomTag}
+                data={ServerData}
+                noOfFans={room.noOfFans}
+                noOfLights={room.noOfLights}
+                noOfSwitchBoards={room.noOfSwitchBoards}
+                noOfBrightness={room.noOfBrightness}
+                tempAndHum={room.tempAndHum}
+                airQuality={room.airQuality}
+                isTvPresent={room.isTvPresent}
+                isCustomPresent={room.isCustomPresent}
+                customData={room.customData}
+              />
+            ))}
           </ClientOnly>
         </div>
       </div>

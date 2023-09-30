@@ -28,6 +28,7 @@ interface RoomCardProps {
   customData?: ElementInfo[];
 }
 
+
 const MainBoardCard = ({
   roomName,
   roomId,

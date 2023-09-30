@@ -1,19 +1,5 @@
 [
-  {
-    "UID": "25 97 8f 52 65",
-    "timestamp": "2023-09-23T16:27:16.627Z",
-    "description": "Entry was Approved",
-    "status": "approved",
-    "userName": "Test User1"
-  },
-  {
-    "UID": "15 63 1D 85",
-    "timestamp": "2023-09-25T16:38:51.177Z",
-    "nodeLocation": "Entrance",
-    "description": "Entry was Denied due to lack of permissions",
-    "status": "denied",
-    "userName": "Gurkirat SIngh"
-  },
+  
   {
     "UID": "15 63 1D 85",
     "timestamp": "2023-09-25T16:41:33.252Z",

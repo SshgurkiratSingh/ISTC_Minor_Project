@@ -7,92 +7,182 @@ let logs = [];
 const mqtt = require("mqtt");
 const client = mqtt.connect("mqtt://localhost:1883");
 const fs = require("fs");
+const sensorTopicToStore = [
+  "IoT/garage/personMonitoring",
+  "IoT/kitchen/airQuality",
+  "IoT/entrance/sunlight",
+  "IoT/entrance/airQuality",
+  "IoT/room1/temperature",
+  "IoT/room1/humidity",
+  "IoT/room2/temperature",
+  "IoT/room2/humidity",
+  "IoT/garage/temperature",
+  "IoT/garage/humidity",
+  "IoT/kitchen/temperature",
+  "IoT/kitchen/humidity",
+  "IoT/entrance/temperature",
+  "IoT/entrance/humidity",
+  "IoT/hall/temperature",
+  "IoT/hall/humidity",
+  "IoT/lawn/temperature",
+  "IoT/lawn/humidity",
+];
+const topicsByArea = {
+  room1: [
+    "light1",
+    "light2",
+    "temperature",
+    "humidity",
+    "fan1",
+    "fan2",
+    "switchBoard1",
+    "brightness1",
+  ],
+  room2: [
+    "light1",
+    "light2",
+    "temperature",
+    "humidity",
+    "fan1",
+    "switchBoard1",
+    "brightness1",
+  ],
+  garage: ["light1", "light2", "door", "occupancy", "personMonitoring"],
+  kitchen: [
+    "light1",
+    "light2",
+    "switchBoard1",
+    "temperature",
+    "humidity",
+    "fan1",
+    "airQuality",
+    "brightness1",
+  ],
+  entrance: [
+    "door",
+    "light1",
+    "light2",
+    "rainCheck",
+    "lightIntensity",
+    "temperature",
+    "brightness1",
+  ],
+  hall: [
+    "light1",
+    "light2",
+    "ambientLight",
+    "TV",
+    "fan1",
+    "light3",
+    "temperature",
+    "humidity",
+    "airQuality",
+    "switchBoard1",
+  ],
+  lawn: [
+    "soilMoisture",
+    "light1",
+    "light2",
+    "light3",
+    "light4",
+    "sunlight",
+    "rainStatus",
+    "soilMoisture1",
+    "soilMoisture2",
+    "pump1",
+    "pump2",
+    "autonomousMode",
+    "autonomousLighting",
+    "disengageIndruderDetector",
+    "airQuality",
+    "temperature",
+    "humidity",
+    "brightness1",
+  ],
+  washroom: ["light1", "gyser"],
+  store: ["light1", "light2", "fireIndicator"],
+  auxiliary: ["tankLevel"],
+};
 client.on("connect", () => {
-  client.subscribe("IoT/room1/light1");
-  client.subscribe("IoT/room1/light2");
-  client.subscribe("IoT/room1/temperature");
-  client.subscribe("IoT/room1/humidity");
-  client.subscribe("IoT/room1/fan1");
-  client.subscribe("IoT/room1/fan2");
-  client.subscribe("IoT/room1/switchBoard1");
-  client.subscribe("IoT/room1/brightness1");
-  client.subscribe("IoT/room2/light1");
-  client.subscribe("IoT/room2/light2");
-  client.subscribe("IoT/room2/temperature");
-  client.subscribe("IoT/room2/humidity");
-  client.subscribe("IoT/room2/fan1");
-  client.subscribe("IoT/room2/switchBoard1");
-  client.subscribe("IoT/room2/brightness1");
-  // Garage Topic //
-  client.subscribe("IoT/garage/light1");
-  client.subscribe("IoT/garage/light2");
-  client.subscribe("IoT/garage/door");
-  client.subscribe("IoT/garage/occupancy");
-  client.subscribe("IoT/garage/personMonitoring");
-  client.subscribe("IoT/garage/door");
-  //   Kitchen Topic //
-  client.subscribe("IoT/kitchen/light1");
-  client.subscribe("IoT/kitchen/light2");
-  client.subscribe("IoT/kitchen/switchBoard1");
-  client.subscribe("IoT/kitchen/temperature");
-  client.subscribe("IoT/kitchen/humidity");
-  client.subscribe("IoT/kitchen/fan1");
-  client.subscribe("IoT/kitchen/airQuality");
-  client.subscribe("IoT/kitchen/brightness1");
-  // Entrance Topic //
-  client.subscribe("IoT/entrance/door");
-  client.subscribe("IoT/entrance/light1");
-  client.subscribe("IoT/entrance/light2");
-  client.subscribe("IoT/entrance/rainCheck");
-  client.subscribe("IoT/entrance/lightIntensity");
-  client.subscribe("IoT/entrance/temperature");
-  client.subscribe("IoT/entrance/brightness1");
-  // Hall Topic //
-  client.subscribe("IoT/hall/light1");
-  client.subscribe("IoT/hall/light2");
-  client.subscribe("IoT/hall/ambientLight");
-  client.subscribe("IoT/hall/TV");
-  client.subscribe("IoT/hall/fan1");
-  client.subscribe("IoT/hall/light3");
-  client.subscribe("IoT/hall/temperature");
-  client.subscribe("IoT/hall/humidity");
-  client.subscribe("IoT/hall/airQuality");
-  client.subscribe("IoT/hall/switchBoard1");
-  client.subscribe("IoT/auxiliary/tankLevel");
-  client.subscribe("IoT/lawn/soilMoisture");
-  client.subscribe("IoT/lawn/light1");
-  client.subscribe("IoT/lawn/light2");
-  client.subscribe("IoT/lawn/light3");
-  client.subscribe("IoT/lawn/light4");
-  client.subscribe("IoT/lawn/sunlight");
-  client.subscribe("IoT/lawn/rainStatus");
-  client.subscribe("IoT/lawn/soilMoisture1");
-  client.subscribe("IoT/lawn/soilMoisture2");
-  client.subscribe("IoT/lawn/pump1");
-  client.subscribe("IoT/lawn/pump2");
-  client.subscribe("IoT/lawn/autonomousMode");
-  client.subscribe("IoT/lawn/autonomousLighting");
-  client.subscribe("IoT/lawn/disengageIndruderDetector");
-  client.subscribe("IoT/lawn/airQuality");
-  client.subscribe("IoT/lawn/temperature");
-  client.subscribe("IoT/lawn/humidity");
-  client.subscribe("IoT/lawn/brightness1");
-  client.subscribe("IoT/washroom/light1");
-  client.subscribe("IoT/washroom/gyser");
-  client.subscribe("IoT/store/light1");
-  client.subscribe("IoT/store/light2");
-  client.subscribe("IoT/store/fireIndicator");
+  for (const [area, topics] of Object.entries(topicsByArea)) {
+    for (const topic of topics) {
+      client.subscribe(`IoT/${area}/${topic}`);
+    }
+  }
 });
 client.on("message", (topic, message) => {
-  //   console.log(message.toString());
-  //   delete previous topic data if in list
   logs = logs.filter((log) => log.topic !== topic);
   logs.push({
     topic: topic,
     value: message.toString(),
     lastUpdate: new Date().toISOString(),
   });
+  // if topic is from sensorTopicToStore, store the message in fie named SensorLogs.json
+  if (sensorTopicToStore.includes(topic)) {
+    let fileData;
+    let sensorLogs;
+
+    try {
+      fileData = fs.readFileSync("dataFiles/SensorLogs.json", "utf-8");
+      sensorLogs = JSON.parse(fileData);
+    } catch (e) {
+      console.error("Couldn't read or parse SensorLogs.json:", e);
+      sensorLogs = []; // Initialize as empty array if reading or parsing fails
+    }
+
+    // Check if sensorLogs is actually an array
+    if (Array.isArray(sensorLogs)) {
+      sensorLogs.push({
+        topic: topic,
+        value: message.toString(),
+        lastUpdate: new Date().toISOString(),
+      });
+
+      try {
+        fs.writeFileSync(
+          "dataFiles/SensorLogs.json",
+          JSON.stringify(sensorLogs)
+        );
+      } catch (e) {
+        console.error("Couldn't write to SensorLogs.json:", e);
+      }
+    } else {
+      console.error("SensorLogs is not an array. It's a:", typeof sensorLogs);
+    }
+  }
 });
+router.get("/", (req, res) => {
+  res.json({
+    message:
+      "Hello from the frontend API Srvice.it is part of our minor project!",
+  });
+});
+router.get("/getSensorHistory", (req, res) => {
+  let fileData;
+  let sensorLogs;
+
+  try {
+    fileData = fs.readFileSync("dataFiles/SensorLogs.json", "utf-8");
+    sensorLogs = JSON.parse(fileData);
+  } catch (e) {
+    console.error("Couldn't read or parse SensorLogs.json:", e);
+    sensorLogs = []; // Initialize as empty array if reading or parsing fails
+  }
+
+  if (!req.query.topic) {
+    return res.status(400).json({ message: "Bad Request" });
+  }
+
+  const sensorHistory = sensorLogs.filter(
+    (log) => log.topic === req.query.topic
+  );
+  if (sensorHistory) {
+    res.json(sensorHistory.splice(-10));
+  } else {
+    res.json({ message: "No data found" });
+  }
+});
+
 router.get("/logs", (req, res) => {
   res.json(logs);
 });
@@ -118,16 +208,6 @@ router.post("/publish", (req, res) => {
   });
 });
 // publish data using get request
-
-// Add input validation function
-function isValidBoolean(value) {
-  return (
-    typeof value === "boolean" ||
-    (typeof value === "string" &&
-      ["true", "false"].includes(value.toLowerCase()))
-  );
-}
-
 function isValidPercentage(value) {
   const numberValue = Number(value);
   return !isNaN(numberValue) && numberValue >= 0 && numberValue <= 100;
