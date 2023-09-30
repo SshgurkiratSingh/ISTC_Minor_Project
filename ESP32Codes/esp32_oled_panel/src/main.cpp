@@ -54,7 +54,7 @@ bool inItem = false;
 uint8_t selectedItem = 0;
 uint8_t upItem;
 uint8_t downItem;
-const char *mqtt_server = "mqtt://broker.hivemq.com";
+const char *mqtt_server = "192.168.1.100";
 
 // Items Configuration starts here
 const char selectableItems[MAX_ITEMS][15] = {
@@ -67,16 +67,23 @@ const char selectableItems[MAX_ITEMS][15] = {
 const bool toggleItems[MAX_ITEMS] = {true, true, false, false, true};
 int currentValue[MAX_ITEMS] = {0, 0, 0, 0, 0};
 const char topics[MAX_ITEMS][30] = {"IoT/room1/light1", "IoT/room1/light2", "IoT/room1/brightness1", "IoT/room1/fan1", "IoT/room1/switchBoard1"};
-const uint8_t maxValues[MAX_ITEMS] = {1, 1, 10, 10, 1};
+const uint8_t maxValues[MAX_ITEMS] = {1, 1, 100, 100, 1};
 bool needUpdate = true;
 void callback(char *topic, byte *payload, unsigned int length)
 {
+
     String message;
+
     for (int i = 0; i < length; i++)
     {
         message += (char)payload[i];
     }
-
+#if DEBUG_MODE
+    Serial.print("Message arrived [");
+    Serial.print(topic);
+    Serial.print("] ");
+    Serial.println(message);
+#endif
     for (int i = 0; i < MAX_ITEMS; i++)
     {
         if (String(topics[i]) == String(topic))
@@ -108,6 +115,8 @@ void setup()
 
     display.begin(SH1106_SWITCHCAPVCC, 0x3C);
     display.clearDisplay();
+    display.setTextSize(1);
+    display.setTextColor(WHITE);
     WiFi.begin("Node ", "whyitellyou");
     client.setServer(mqtt_server, 1883);
     client.setCallback(callback);
@@ -154,49 +163,49 @@ void setup()
 
 void displayItems()
 {
-    if (needUpdate)
+    if (!needUpdate)
+        return;
+
+    if (!inItem)
     {
-        if (!inItem)
-        {
-            display.clearDisplay();
-            display.setTextSize(1);
-            display.setTextColor(WHITE);
-            // Up Item
-            display.setCursor(24, 4);
-            display.print(selectableItems[upItem]);
-            display.drawBitmap(5, 0, logoArray[upItem], 16, 16, WHITE);
+        display.clearDisplay();
+        display.setTextSize(1);
+        display.setTextColor(WHITE);
+        // Up Item
+        display.setCursor(24, 4);
+        display.print(selectableItems[upItem]);
+        display.drawBitmap(5, 0, logoArray[upItem], 16, 16, WHITE);
 
-            // Center Item
-            display.drawLine(5, 16, 122, 16, WHITE);
-            display.drawLine(122, 16, 122, 31, WHITE);
-            display.drawLine(5, 31, 122, 31, WHITE);
-            display.drawLine(5, 16, 5, 31, WHITE);
-            display.setCursor(24, 20);
-            display.print(selectableItems[selectedItem]);
-            display.drawBitmap(5, 16, logoArray[selectedItem], 16, 16, WHITE);
+        // Center Item
+        display.drawLine(5, 16, 122, 16, WHITE);
+        display.drawLine(122, 16, 122, 31, WHITE);
+        display.drawLine(5, 31, 122, 31, WHITE);
+        display.drawLine(5, 16, 5, 31, WHITE);
+        display.setCursor(24, 20);
+        display.print(selectableItems[selectedItem]);
+        display.drawBitmap(5, 16, logoArray[selectedItem], 16, 16, WHITE);
 
-            // Down Item
-            display.setCursor(24, 36);
-            display.print(selectableItems[downItem]);
-            display.drawBitmap(5, 32, logoArray[downItem], 16, 16, WHITE);
+        // Down Item
+        display.setCursor(24, 36);
+        display.print(selectableItems[downItem]);
+        display.drawBitmap(5, 32, logoArray[downItem], 16, 16, WHITE);
 
-            display.display();
-        }
-        else
-        {
-            display.clearDisplay();
-            display.setTextSize(1);
-            display.setCursor(5, 32);
-            display.print(selectableItems[selectedItem]);
-            display.print(":");
-            display.print(currentValue[selectedItem]);
-            display.setTextColor(WHITE);
-
-            display.drawLine(5, 16, 122, 16, WHITE);
-            display.display();
-        }
-        needUpdate = false;
+        display.display();
     }
+    else
+    {
+        display.clearDisplay();
+        display.setTextSize(1);
+        display.setCursor(5, 32);
+        display.print(selectableItems[selectedItem]);
+        display.print(":");
+        display.print(currentValue[selectedItem]);
+        display.setTextColor(WHITE);
+
+        display.drawLine(5, 16, 122, 16, WHITE);
+        display.display();
+    }
+    needUpdate = false;
 }
 
 void fixNumbering()
@@ -209,6 +218,7 @@ void checkButtons()
 {
     unsigned long currentTime = millis();
 
+    // Check the next button
     // Check the next button
     if (digitalRead(NEXT_BUTTON) == LOW)
     {
@@ -225,7 +235,14 @@ void checkButtons()
             }
             else
             {
-                currentValue[selectedItem] = (currentValue[selectedItem] + 1) % maxValues[selectedItem];
+                if (maxValues[selectedItem] == 100)
+                {
+                    currentValue[selectedItem] = min(100, currentValue[selectedItem] + 10); // Increment by 10, max 100
+                }
+                else
+                {
+                    currentValue[selectedItem] = (currentValue[selectedItem] + 1) % maxValues[selectedItem];
+                }
             }
         }
     }
@@ -246,7 +263,14 @@ void checkButtons()
             }
             else
             {
-                currentValue[selectedItem] = (currentValue[selectedItem] == 0) ? maxValues[selectedItem] : (currentValue[selectedItem] - 1);
+                if (maxValues[selectedItem] == 100)
+                {
+                    currentValue[selectedItem] = max(0, currentValue[selectedItem] - 10); // Decrement by 10, min 0
+                }
+                else
+                {
+                    currentValue[selectedItem] = (currentValue[selectedItem] == 0) ? maxValues[selectedItem] : (currentValue[selectedItem] - 1);
+                }
             }
         }
     }
@@ -263,10 +287,10 @@ void checkButtons()
             lastDebounceTime = currentTime;
             inItem = !inItem;
         }
-        if (inItem)
+        if (!inItem)
         {
             String payload = String(currentValue[selectedItem]);
-            client.publish(topics[selectedItem], payload.c_str());
+            client.publish(topics[selectedItem], payload.c_str(), true);
 #if DEBUG_MODE
             Serial.print("Published to ");
             Serial.print(topics[selectedItem]);
@@ -275,12 +299,13 @@ void checkButtons()
 #endif
         }
     }
+}
 
-    void loop()
-    {
-        client.loop();
-        fixNumbering();
-        displayItems();
-        checkButtons();
-        delay(100);
-    }
+void loop()
+{
+    client.loop();
+    fixNumbering();
+    displayItems();
+    checkButtons();
+    delay(100);
+}
