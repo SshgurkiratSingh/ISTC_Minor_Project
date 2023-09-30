@@ -21,13 +21,11 @@ interface RoomCardProps {
   airQuality?: boolean;
   noOfSwitchBoards?: number;
   noOfBrightness?: number;
-  noOfAmbient?: number;
   isTvPresent?: boolean;
   isAirConditionerPresent?: boolean;
   isCustomPresent?: boolean;
   customData?: ElementInfo[];
 }
-
 
 const MainBoardCard = ({
   roomName,
@@ -40,7 +38,7 @@ const MainBoardCard = ({
   airQuality,
   noOfSwitchBoards = 0,
   noOfBrightness = 0,
-  noOfAmbient,
+
   isTvPresent,
   isAirConditionerPresent,
   customData,
@@ -112,18 +110,6 @@ const MainBoardCard = ({
                 }
               />
             ))}{" "}
-            {noOfAmbient && (
-              <ToggleButton
-                topic={`IoT/${roomTag}/ambientLight`}
-                subTitle={`Ambient `}
-                value={
-                  ServerData?.find(
-                    (item) => item.topic === `IoT/${roomTag}/ambientLight`
-                  )?.value === "1"
-                }
-                ambientVariant
-              />
-            )}
             {isTvPresent && (
               <ToggleButton
                 topic={`IoT/${roomTag}/TV`}
@@ -154,12 +140,11 @@ const MainBoardCard = ({
               customData.map((item, index) => (
                 <ToggleButton
                   key={index}
-                  topic={item.topic}
-                  subTitle={item.subTitle}
                   value={
                     ServerData?.find((i) => i.topic === item.topic)?.value ===
                     "1"
                   }
+                  {...item}
                 />
               ))}
           </div>

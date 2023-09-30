@@ -52,8 +52,13 @@ const mainPageConfig = [
       "tempAndHum": true,
       "airQuality": false,
       "isTvPresent": true,
-      "isCustomPresent": false,
-      "customData": []
+      "isCustomPresent": true,
+      "customData": [{
+        "topic": "IoT/hall/ambientLight",
+        "subTitle": "Ambient Light",
+        "identity": "Ambient Light",
+        "slideVersion": true
+      }]
     },
     {
       "roomName": "Lawn",
@@ -75,8 +80,9 @@ const mainPageConfig = [
         },
         {
           "topic": "IoT/lawn/autonomousLighting",
-          "subTitle": "Autonomous Lighting",
-          "identity": "Lawn Autonomous Lighting"
+          "subTitle": "AutoLumus",
+          "identity": "Lawn Autonomous Lighting",
+         
         }
       ]
     },

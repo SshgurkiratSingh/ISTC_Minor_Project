@@ -4,7 +4,6 @@ import { use, useEffect, useState } from "react";
 import ClientOnly from "../clientOnly";
 import { toast } from "react-toastify";
 
-
 interface ToggleButtonProps {
   topic: string;
   value: boolean;
@@ -64,24 +63,7 @@ const ToggleButton = ({
     }
   };
 
-  if (ambientVariant) {
-    return (
-      <ClientOnly>
-        <div className="flex flex-col items-center justify-center" id={topic}>
-          <input
-            type="checkbox"
-            id="checkbox"
-            onChange={handleCheckboxChange}
-            checked={isToggled}
-          />
-          <label htmlFor="checkbox" className="switch">
-            <div className="powersign"></div>
-          </label>
-          <div className="text-sm font-bold text-gray-300">{subTitle}</div>
-        </div>{" "}
-      </ClientOnly>
-    );
-  } else if (plantVersion) {
+  if (plantVersion) {
     return (
       <ClientOnly>
         <div

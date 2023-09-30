@@ -265,19 +265,32 @@ router.get("/getSecurityData", async (req, res) => {
     (item) => item.topic === "IoT/entrance/rainCheck"
   );
   const garageStatus = logs.find((item) => item.topic === "IoT/garage/door");
-  const entranceStatus = logs.find((i) => i.topic === "IoT/entrance/door");
+  const entranceStatus = logs.find(
+    (item) => item.topic === "IoT/entrance/door"
+  );
+
+  // Check if the variables are defined before accessing the 'value' property
+  const intrusionDetectionValue = intrusionDetection
+    ? intrusionDetection.value
+    : "";
+  const rainCheckValue = rainCheck ? rainCheck.value : "";
+  const garageStatusValue = garageStatus ? garageStatus.value : "";
+  const entranceStatusValue = entranceStatus ? entranceStatus.value : "";
+
   const fileData = await fs.promises.readFile(
     "dataFiles/Entrylog.json",
     "utf-8"
   );
   const data = JSON.parse(fileData);
+
   const responseData = {
-    intrusionDetection: intrusionDetection.value === "1",
-    rainCheck: rainCheck.value === "1",
-    garageStatus: garageStatus.value === "1",
-    entranceStatus: entranceStatus.value === "1",
+    intrusionDetection: intrusionDetectionValue === "1",
+    rainCheck: rainCheckValue === "1",
+    garageStatus: garageStatusValue === "1",
+    entranceStatus: entranceStatusValue === "1",
     entryLog: data.reverse().splice(0, 5),
   };
+
   res.json(responseData);
 });
 

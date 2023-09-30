@@ -8,6 +8,7 @@ import {
   TableCell,
 } from "@nextui-org/react";
 export interface EntryLogItem {
+  nodeLocation: string;
   UID: string;
   timestamp: string;
   description: string;
@@ -23,14 +24,15 @@ const EntryLogTable = ({ data }: SecuritySystemProps) => {
     <div>
       <Table
         color={"secondary"}
-        selectionMode="multiple"
-        defaultSelectedKeys={["0"]}
+        // selectionMode="multiple"
+        // defaultSelectedKeys={["0"]}
         aria-label="History Table"
       >
         <TableHeader>
           <TableColumn>UID</TableColumn>
           <TableColumn>LOG</TableColumn>
           <TableColumn>STATUS</TableColumn>
+          <TableColumn>Location</TableColumn>
         </TableHeader>
         <TableBody>
           {data ? (
@@ -51,10 +53,12 @@ const EntryLogTable = ({ data }: SecuritySystemProps) => {
                 <TableCell>
                   <Chip
                     color={entry.status === "approved" ? "success" : "danger"}
+                    className="font-bold"
                   >
                     {entry.status}
                   </Chip>
                 </TableCell>
+                <TableCell>{entry.nodeLocation}</TableCell>
               </TableRow>
             ))
           ) : (
@@ -64,11 +68,6 @@ const EntryLogTable = ({ data }: SecuritySystemProps) => {
               <TableCell>Loading</TableCell>
             </TableRow>
           )}
-          {/* <TableRow key="1">
-            <TableCell>Tony Reichert</TableCell>
-            <TableCell>CEO</TableCell>
-            <TableCell>Active</TableCell>
-          </TableRow> */}
         </TableBody>
       </Table>
     </div>

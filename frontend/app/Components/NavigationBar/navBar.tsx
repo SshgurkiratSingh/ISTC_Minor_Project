@@ -16,7 +16,12 @@ import {
 
 const NavBar = () => {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
-
+  const mainMenuItems = [
+    { heading: "Home", to: "/" },
+    { heading: "Security System", to: "/securitySystem" },
+    { heading: "Sensor History", to: "/historyPage" },
+    { heading: "About", to: "/about" },
+  ];
   const menuItems = ["", "historyPage", "securitySystem", "About"];
 
   return (
@@ -74,12 +79,12 @@ const NavBar = () => {
             </Button>
           </Link>
         </NavbarItem>
-        <NavbarItem>
+        <NavbarItem className="hidden xl:block">
           <Link href="/securitySystem">
             <Button
               as={Link}
               color="secondary"
-              variant="shadow"
+              variant="bordered"
               className="font-bold"
             >
               Security Sys
@@ -91,7 +96,7 @@ const NavBar = () => {
             <Button
               as={Link}
               color="secondary"
-              variant="light"
+              variant="bordered"
               className="font-bold"
             >
               History Page
@@ -101,10 +106,10 @@ const NavBar = () => {
       </NavbarContent>
 
       <NavbarMenu>
-        {menuItems.map((item, index) => (
+        {mainMenuItems.map((item, index) => (
           <NavbarMenuItem key={`${item}-${index}`}>
-            <Link className="w-full" href={item} size="lg">
-              {item}
+            <Link className="w-full" href={item.to} size="lg">
+              {item.heading}
             </Link>
           </NavbarMenuItem>
         ))}
