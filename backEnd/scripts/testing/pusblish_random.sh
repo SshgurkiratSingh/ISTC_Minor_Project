@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # MQTT broker address
-MQTT_BROKER="localhost"
+MQTT_BROKER="ec2-3-88-49-62.compute-1.amazonaws.com"
 
 # List of topics
 TOPICS=(
@@ -69,6 +69,7 @@ TOPICS=(
     "IoT/garage/door"
     "IoT/garage/occupancy"
     "IoT/washroom/gyser"
+
 )
 
 # Loop through topics and publish random values

@@ -30,7 +30,7 @@ const NavBar = () => {
       isMenuOpen={isMenuOpen}
       onMenuOpenChange={setIsMenuOpen}
       shouldHideOnScroll
-      className="bg-black"
+      className="dark"
     >
       <NavbarContent className="sm:hidden" justify="start">
         <NavbarMenuToggle

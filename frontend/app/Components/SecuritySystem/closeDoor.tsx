@@ -83,7 +83,7 @@ const CloseOpenDoor = ({
       <Modal backdrop="blur" isOpen={isOpen} onClose={handleClose}>
         <ModalContent>
           <ModalHeader className="flex flex-col gap-1 text-black">
-            {current ? "Disengage Intrusion System" : "Engage Intrusion System"}
+            {current ? "Open Door" : "Close Door"}
           </ModalHeader>
           <ModalBody>
             <button
