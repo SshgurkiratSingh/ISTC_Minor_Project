@@ -21,9 +21,7 @@ const SecuritySystemPage = () => {
 
   const fetchData = async () => {
     try {
-      const response = await fetch(
-        `${API_BASE_URL}/api/frontend/getSecurityData`
-      );
+      const response = await fetch(`/api/frontend/getSecurityData`);
       const { intrusionDetection, entranceStatus, garageStatus, entryLog } =
         await response.json();
 

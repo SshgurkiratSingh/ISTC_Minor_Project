@@ -48,7 +48,7 @@ const CloseOpenDoor = ({
     const encodedTopic = encodeURIComponent(topic || ""); // Encode the topic (if provided)
 
     // Construct the URL
-    const url = `${API_BASE_URL}/api/frontend/publish?value=${
+    const url = `/api/frontend/publish?value=${
       invertedValue ? "0" : "1"
     }&topic=${encodedTopic}`;
 

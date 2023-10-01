@@ -65,7 +65,7 @@ const HistoryCard: React.FC<HistoryPageCardProps> = ({
       try {
         const encodedTopic = encodeURIComponent(topic);
         const response = await fetch(
-          `${API_BASE_URL}/api/frontend/getSensorHistory?topic=${encodedTopic}`
+          `/api/frontend/getSensorHistory?topic=${encodedTopic}`
         );
 
         if (response.ok) {

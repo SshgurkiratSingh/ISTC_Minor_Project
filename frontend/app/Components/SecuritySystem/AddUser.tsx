@@ -50,7 +50,7 @@ const AddUserModal = () => {
       }),
     };
 
-    fetch(`${API_BASE_URL}/api/security/addUser`, requestOptions)
+    fetch(`/api/security/addUser`, requestOptions)
       .then((response) => {
         if (!response.ok) {
           throw new Error("Network response was not ok");

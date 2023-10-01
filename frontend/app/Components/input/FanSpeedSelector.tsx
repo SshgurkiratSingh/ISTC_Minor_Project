@@ -33,7 +33,7 @@ const FanSpeedSelector = ({
 
     try {
       const response = await fetch(
-        `${API_BASE_URL}/api/frontend/publish?value=${newFanSpeed}&topic=${encodedTopic}`,
+        `/api/frontend/publish?value=${newFanSpeed}&topic=${encodedTopic}`,
         {
           method: "GET",
           headers: {

@@ -41,7 +41,7 @@ const ToggleButton = ({
     try {
       // Make the HTTP GET request to your server with the inverted value and topic as query parameters
       const response = await fetch(
-        `${API_BASE_URL}/api/frontend/publish?value=${invertedValue}&topic=${encodedTopic}`,
+        `/api/frontend/publish?value=${invertedValue}&topic=${encodedTopic}`,
         {
           method: "GET",
           headers: {
