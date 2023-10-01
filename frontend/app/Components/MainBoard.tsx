@@ -10,7 +10,7 @@ import mainPageConfig from "@/MainPageConfig";
 export interface IoTData {
   topic: string;
   value: string;
-  lastUpdate: Date; // You might want to use a Date type here if you plan to work with dates.
+  lastUpdate: Date;
 }
 
 export type IoTDataArray = IoTData[];
@@ -49,21 +49,7 @@ const MainBoard = () => {
         >
           <ClientOnly>
             {mainPageConfig.map((room) => (
-              <MainBoardCard
-                roomName={room.roomName}
-                roomId={room.roomId}
-                roomTag={room.roomTag}
-                data={ServerData}
-                noOfFans={room.noOfFans}
-                noOfLights={room.noOfLights}
-                noOfSwitchBoards={room.noOfSwitchBoards}
-                noOfBrightness={room.noOfBrightness}
-                tempAndHum={room.tempAndHum}
-                airQuality={room.airQuality}
-                isTvPresent={room.isTvPresent}
-                isCustomPresent={room.isCustomPresent}
-                customData={room.customData}
-              />
+              <MainBoardCard {...room} data={ServerData} />
             ))}
           </ClientOnly>
         </div>

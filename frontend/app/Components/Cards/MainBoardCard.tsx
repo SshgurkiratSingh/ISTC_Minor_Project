@@ -25,6 +25,8 @@ interface RoomCardProps {
   isAirConditionerPresent?: boolean;
   isCustomPresent?: boolean;
   customData?: ElementInfo[];
+  customSelector?: boolean;
+  SelectorData?: ElementInfo[];
 }
 
 const MainBoardCard = ({
@@ -38,7 +40,8 @@ const MainBoardCard = ({
   airQuality,
   noOfSwitchBoards = 0,
   noOfBrightness = 0,
-
+  customSelector = false,
+  SelectorData,
   isTvPresent,
   isAirConditionerPresent,
   customData,
@@ -176,6 +179,17 @@ const MainBoardCard = ({
                 customHeading="Brightness"
               />
             ))}
+            {customSelector &&
+              SelectorData &&
+              SelectorData.map((item, index) => (
+                <FanSpeedSelector
+                  key={index}
+                  {...item}
+                  value={Number(
+                    ServerData?.find((i) => i.topic === item.topic)?.value
+                  )}
+                />
+              ))}
           </div>
         </div>
 

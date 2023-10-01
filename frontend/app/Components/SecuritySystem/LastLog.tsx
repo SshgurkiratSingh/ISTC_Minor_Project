@@ -3,10 +3,10 @@ import {
   TableHeader,
   TableColumn,
   TableBody,
-  Chip,
   TableRow,
   TableCell,
 } from "@nextui-org/react";
+import StatusChip from "../StatusChip";
 export interface EntryLogItem {
   nodeLocation: string;
   UID: string;
@@ -19,6 +19,15 @@ export interface EntryLogItem {
 interface SecuritySystemProps {
   data: EntryLogItem[];
 }
+const formatDate = (timestamp: string) =>
+  new Date(timestamp).toLocaleString("en-US", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  });
 const EntryLogTable = ({ data }: SecuritySystemProps) => {
   return (
     <div>
@@ -41,22 +50,15 @@ const EntryLogTable = ({ data }: SecuritySystemProps) => {
                 <TableCell>{entry.UID}</TableCell>
                 <TableCell>
                   {entry.description} of {entry.userName} at{" "}
-                  {new Date(entry.timestamp || "").toLocaleString("en-US", {
-                    year: "numeric",
-                    month: "2-digit",
-                    day: "2-digit",
-                    hour: "2-digit",
-                    minute: "2-digit",
-                    second: "2-digit",
-                  })}
+                  {formatDate(entry.timestamp)}
                 </TableCell>
                 <TableCell>
-                  <Chip
-                    color={entry.status === "approved" ? "success" : "danger"}
-                    className="font-bold"
-                  >
-                    {entry.status}
-                  </Chip>
+                  <StatusChip
+                    status={entry.status === "approved"}
+                    label={entry.status}
+                    trueText=""
+                    falseText=""
+                  />
                 </TableCell>
                 <TableCell>{entry.nodeLocation}</TableCell>
               </TableRow>

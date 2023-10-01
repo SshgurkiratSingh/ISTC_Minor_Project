@@ -9,6 +9,7 @@ import {
 } from "@nextui-org/react";
 import HistoryCard from "./historycard";
 import sensorTopics from "@/HistoryConfig";
+import BackGroundCard from "../Cards/BackgroundCard";
 
 const HistoryPageCard = () => {
   const [selectedTopic, setSelectedTopic] = useState(sensorTopics[0].topic);
@@ -22,21 +23,8 @@ const HistoryPageCard = () => {
 
   return (
     <div className="flex flex-1 justify-center items-center gap-4 self-center place-items-center min-h-[600px]">
-      <Card className="min-w-[200px] min-h-[400px]">
-        <CardHeader className="flex gap-3">
-          <div className="flex flex-col">
-            <p className="text-md">Sensor History</p>
-            <p className="text-small text-default-500">History of sensors</p>
-          </div>
-        </CardHeader>
-        <Divider />
-        <CardBody>
-          <div className="flex flex-col gap-2">
-            {selectedProps && <HistoryCard {...selectedProps} />}
-          </div>
-        </CardBody>
-        <Divider />
-        <CardFooter className="gap-2 flex flex-col xl:flex-row justify-between items-center">
+      <BackGroundCard
+        footerChildren={
           <select onChange={handleChange}>
             {sensorTopics.map((item, index) => (
               <option key={index} value={item.topic}>
@@ -44,8 +32,19 @@ const HistoryPageCard = () => {
               </option>
             ))}
           </select>
-        </CardFooter>
-      </Card>
+        }
+        bodyChildren={
+          <div className="flex flex-col gap-2">
+            {selectedProps && <HistoryCard {...selectedProps} />}
+          </div>
+        }
+        headChildren={
+          <div className="flex flex-col">
+            <p className="text-md">Sensor History</p>
+            <p className="text-small text-default-500">History of sensors</p>
+          </div>
+        }
+      />
     </div>
   );
 };

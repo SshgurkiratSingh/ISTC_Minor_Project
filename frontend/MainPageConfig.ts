@@ -129,7 +129,9 @@ const mainPageConfig = [
           "subTitle": "Washroom Gyser",
           "identity": "Washroom Gyser"
         }
+
       ]
+      
     }
   ]
   export default mainPageConfig;
