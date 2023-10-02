@@ -1,5 +1,4 @@
 [
-  
   {
     "UID": "15 63 1D 85",
     "timestamp": "2023-09-25T16:41:33.252Z",
@@ -148,6 +147,22 @@
     "description": "Entry was Approved",
     "status": "approved",
     "userName": "Gurkirat SIngh",
+    "nodeLocation": "Entrance"
+  },
+  {
+    "UID": "33 3F D2 1C",
+    "timestamp": "2023-09-30T14:55:18.490Z",
+    "nodeLocation": "Entrance",
+    "description": "Entry was Denied due to lack of permissions",
+    "status": "denied",
+    "userName": "k"
+  },
+  {
+    "UID": "33 CA C9 12",
+    "timestamp": "2023-09-30T14:55:39.817Z",
+    "description": "Entry was Approved",
+    "status": "approved",
+    "userName": "tarun kotyan",
     "nodeLocation": "Entrance"
   }
 ]

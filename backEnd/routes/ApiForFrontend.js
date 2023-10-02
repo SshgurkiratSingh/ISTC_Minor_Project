@@ -7,6 +7,7 @@ let logs = [];
 const mqtt = require("mqtt");
 const client = mqtt.connect("mqtt://localhost:1883");
 const fs = require("fs");
+const EntryCache = require("../CustomModule/cacheManager");
 const sensorTopicToStore = [
   "IoT/garage/personMonitoring",
   "IoT/kitchen/airQuality",
@@ -277,12 +278,9 @@ router.get("/getSecurityData", async (req, res) => {
   const garageStatusValue = garageStatus ? garageStatus.value : "";
   const entranceStatusValue = entranceStatus ? entranceStatus.value : "";
 
-  const fileData = await fs.promises.readFile(
-    "dataFiles/Entrylog.json",
-    "utf-8"
-  );
-  const data = JSON.parse(fileData);
-
+  const d = await EntryCache.getCache("entryLog");
+  const data = d["data"];
+  // console.log(data);
   const responseData = {
     intrusionDetection: intrusionDetectionValue === "1",
     rainCheck: rainCheckValue === "1",

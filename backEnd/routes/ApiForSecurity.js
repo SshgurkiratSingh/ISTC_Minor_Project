@@ -3,10 +3,13 @@ const router = express.Router();
 router.use(express.json());
 router.use(express.urlencoded({ extended: true }));
 const cors = require("cors");
+const EntryCache = require("../CustomModule/cacheManager");
 const fs = require("fs").promises;
 // Checking Server Status
-router.get("/", (req, res) => {
+router.get("/", async (req, res) => {
+  // await EntryCache.updateCache("entryLog");
   res.json({
+    cachenodes: await EntryCache.getCache("entryLog"),
     serverStatus: "Online",
   });
 });
@@ -116,6 +119,7 @@ router.post("/validateUser", async (req, res) => {
     console.error("Error reading or parsing JSON file:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
+  await EntryCache.updateCache("entryLog");
 });
 
 // adding User using Post request

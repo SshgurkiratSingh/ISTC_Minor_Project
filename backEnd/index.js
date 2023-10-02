@@ -5,6 +5,7 @@ const cors = require("cors");
 const securityRouter = require("./routes/ApiForSecurity");
 const frontEndRouter = require("./routes/ApiForFrontend");
 const ApiForPost = require("./routes/ApiForPost");
+const EntryCache = require("./CustomModule/cacheManager");
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
@@ -22,4 +23,5 @@ app.get("/", (req, res) => {
 
 app.listen(port, () => {
   console.log("Server is online at port 2500 over!");
+  EntryCache.updateCache("entryLog");
 });
