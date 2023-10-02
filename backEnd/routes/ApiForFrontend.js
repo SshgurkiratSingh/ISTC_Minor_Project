@@ -279,14 +279,14 @@ router.get("/getSecurityData", async (req, res) => {
   const entranceStatusValue = entranceStatus ? entranceStatus.value : "";
 
   const d = await EntryCache.getCache("entryLog");
-  const data = d["data"];
+  const dataCopy = [...d["data"]];
   // console.log(data);
   const responseData = {
     intrusionDetection: intrusionDetectionValue === "1",
     rainCheck: rainCheckValue === "1",
     garageStatus: garageStatusValue === "1",
     entranceStatus: entranceStatusValue === "1",
-    entryLog: data.reverse().splice(0, 5),
+    entryLog: dataCopy.reverse().splice(0, 5),
   };
 
   res.json(responseData);

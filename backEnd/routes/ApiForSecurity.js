@@ -9,7 +9,6 @@ const fs = require("fs").promises;
 router.get("/", async (req, res) => {
   // await EntryCache.updateCache("entryLog");
   res.json({
-    cachenodes: await EntryCache.getCache("entryLog"),
     serverStatus: "Online",
   });
 });
