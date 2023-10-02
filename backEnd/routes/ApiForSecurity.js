@@ -58,6 +58,7 @@ router.post("/validateUser", async (req, res) => {
           "dataFiles/Entrylog.json",
           JSON.stringify(entryLog, null, 2)
         );
+        await EntryCache.updateCache("entryLog");
 
         return res.json({
           permissionToUnlock: true,
@@ -82,6 +83,7 @@ router.post("/validateUser", async (req, res) => {
           "dataFiles/Entrylog.json",
           JSON.stringify(entryLog, null, 2)
         );
+        await EntryCache.updateCache("entryLog");
 
         return res.json({
           permissionToUnlock: false,
@@ -107,6 +109,7 @@ router.post("/validateUser", async (req, res) => {
         JSON.stringify(entryLog, null, 2)
       );
 
+      await EntryCache.updateCache("entryLog");
       return res.json({
         isValid: false,
         nodeLocation,
@@ -118,7 +121,6 @@ router.post("/validateUser", async (req, res) => {
     console.error("Error reading or parsing JSON file:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
-  await EntryCache.updateCache("entryLog");
 });
 
 // adding User using Post request
