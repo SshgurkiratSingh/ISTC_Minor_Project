@@ -1,3 +1,11 @@
+/*
+Author: Gurkirat Singh <gurkirat7092@yahoo.com>
+Date: Sept 28, 2023
+Description:
+This code establish connection as control panel to mqtt server to control nodes over wifi.
+
+*/
+
 #include <Arduino.h>
 #include <Wire.h>
 #include <Adafruit_GFX.h>
