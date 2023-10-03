@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # MQTT broker address
-# MQTT_BROKER="ec2-3-88-49-62.compute-1.amazonaws.com"
-MQTT_BROKER="localhost"
+MQTT_BROKER="ec2-3-88-49-62.compute-1.amazonaws.com"
+# MQTT_BROKER="localhost"
 
 # List of topics
 TOPICS=(
@@ -13,12 +13,6 @@ TOPICS=(
     "IoT/room1/fan1"
     "IoT/room1/fan2"
     "IoT/room1/brightness"
-    "IoT/room2/light1"
-    "IoT/room2/light2"
-    "IoT/room2/temperature"
-    "IoT/room2/humidity"
-    "IoT/room2/fan1"
-    "IoT/room2/brigtness1"
     "IoT/garage/light1"
     "IoT/garage/light2"
     "IoT/garage/door"

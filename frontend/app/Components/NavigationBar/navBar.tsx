@@ -49,13 +49,7 @@ const NavBar = () => {
         justify="center"
       >
         <NavbarBrand>
-          <p className="font-bold text-inherit text-2xl">
-            {" "}
-            <Code color="danger" className="text-lg">
-              {" "}
-              Minor Project-IoT Enabled Home
-            </Code>{" "}
-          </p>
+          <p className="titBlock text-4xl">Minor Project-Home Automation</p>
         </NavbarBrand>
 
         {/* <NavbarItem>

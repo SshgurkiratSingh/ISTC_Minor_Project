@@ -92,7 +92,7 @@ const HistoryCard: React.FC<HistoryPageCardProps> = ({
   }, [topic]);
 
   return (
-    <div>
+    <div className="text-black">
       <h2>{LongHeading}</h2>
       <LineChart
         width={chartWidth}
@@ -123,7 +123,7 @@ const HistoryCard: React.FC<HistoryPageCardProps> = ({
         <Line
           type="monotone"
           dataKey="value"
-          stroke="#0075FF"
+          stroke="#dd3322"
           dot={false}
           activeDot={{ r: 5 }}
         />

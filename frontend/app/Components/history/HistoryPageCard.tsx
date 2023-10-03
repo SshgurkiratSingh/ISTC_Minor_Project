@@ -26,7 +26,10 @@ const HistoryPageCard = () => {
       <BackGroundCard
         darkMode
         footerChildren={
-          <select onChange={handleChange}>
+          <select
+            onChange={handleChange}
+            className="rounded-lg w-1/3 bg-black border hover:border-gray-600 transition h-7"
+          >
             {sensorTopics.map((item, index) => (
               <option key={index} value={item.topic}>
                 {item.LongHeading}

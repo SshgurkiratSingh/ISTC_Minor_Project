@@ -301,6 +301,30 @@ background-size: cover;
 }
 
 
+.titBlock {
+  position: relative;
+font-weight: bolder;
+
+  text-transform: uppercase;
+  font-size: 1.3em;
+  letter-spacing: 4px;
+  overflow: hidden;
+  background: linear-gradient(90deg, #0babea, #d41c1c, #11ea19);
+  background-repeat: no-repeat;
+  background-size: 83%;
+  animation: animate 3s linear infinite;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: rgba(255, 255, 255, 0);
+}
+
+@keyframes animate {
+  0% {
+    background-position: -500%;
+  }
+  100% {
+    background-position: 500%;
+  }
+}
 
 
 
