@@ -71,6 +71,7 @@ const EngageDisengage = ({
         color={current ? "warning" : "danger"}
         onClick={() => setIsOpen(true)}
         variant="shadow"
+        className={"hover:scale-105 transition"}
       >
         {current
           ? "Disengage Intrusion Detection"

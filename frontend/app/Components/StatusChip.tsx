@@ -18,6 +18,7 @@ const StatusChip: React.FC<StatusChipProps> = ({
     startContent={status ? <TiTickOutline size={20} /> : <FcCancel size={20} />}
     variant="faded"
     color={status ? "success" : "danger"}
+    className="hover:animate-pulse transition "
   >
     <p className="font-bold">{`${label} ${status ? falseText : trueText}`}</p>
   </Chip>

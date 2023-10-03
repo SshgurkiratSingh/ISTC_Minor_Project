@@ -63,21 +63,33 @@ const NavBar = () => {
         <NavbarItem>
           {" "}
           <Link href="/">
-            <Button as={Link} variant="bordered" className="font-bold">
+            <Button
+              as={Link}
+              variant="bordered"
+              className="font-bold hover:border-white transition"
+            >
               Home
             </Button>
           </Link>
         </NavbarItem>
         <NavbarItem className="hidden xl:block">
           <Link href="/securitySystem">
-            <Button as={Link} variant="bordered" className="font-bold">
+            <Button
+              as={Link}
+              variant="bordered"
+              className="font-bold hover:border-white transition"
+            >
               Security Sys
             </Button>
           </Link>
         </NavbarItem>
         <NavbarItem className="hidden xl:block">
           <Link href="/historyPage">
-            <Button as={Link} variant="bordered" className="font-bold">
+            <Button
+              as={Link}
+              variant="bordered"
+              className="font-bold hover:border-white transition"
+            >
               History Page
             </Button>
           </Link>

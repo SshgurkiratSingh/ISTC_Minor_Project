@@ -88,7 +88,12 @@ const AddUserModal = () => {
 
   return (
     <div className="dark">
-      <Button color="primary" onClick={() => setIsOpen(true)} variant="shadow">
+      <Button
+        color="primary"
+        onClick={() => setIsOpen(true)}
+        variant="shadow"
+        className="hover:scale-105 transition text-black"
+      >
         Add User
       </Button>
       <Modal

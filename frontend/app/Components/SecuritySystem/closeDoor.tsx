@@ -75,6 +75,7 @@ const CloseOpenDoor = ({
         color={current ? "warning" : "danger"}
         onClick={() => setIsOpen(true)}
         variant="shadow"
+        className="hover:scale-105 transition text-black"
       >
         {current
           ? `Open ${location ? location : "door"}`

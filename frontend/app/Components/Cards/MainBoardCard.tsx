@@ -236,7 +236,7 @@ const MainBoardCard = ({
           )}
           <p className="font-bold text-white  transition "> {customNotes}</p>
           <Button
-            className="text-tiny text-white bg-black/20"
+            className="text-tiny text-white bg-black/20 hover:animate-pulse transition"
             variant="flat"
             color="default"
             radius="lg"

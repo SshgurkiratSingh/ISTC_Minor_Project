@@ -48,8 +48,8 @@ const mainPageConfig = [
         "identity": "Sweep Mode"
       },{
         "topic": "IoT/robot/moop",
-        "subTitle": "Mooping Mode",
-        "identity": "Mooping Mode"
+        "subTitle": "Moping Mode",
+        "identity": "Moping Mode"
       }],
       "customNotes":"Control Panel for Cleaner Robot"
     },
