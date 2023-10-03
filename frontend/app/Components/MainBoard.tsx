@@ -19,7 +19,7 @@ const MainBoard = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`${API_BASE_URL}/api/frontend/logs`);
+        const response = await fetch(`/api/frontend/logs`);
         if (!response.ok) {
           throw new Error("Failed to fetch data");
         }
