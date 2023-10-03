@@ -48,6 +48,7 @@ const SecuritySystemPage = () => {
   return (
     <div className="flex flex-1 justify-center items-center gap-4  self-center place-items-center min-h-[600px]">
       <BackGroundCard
+        darkMode
         headChildren={
           <div className="flex flex-col">
             <p className="text-md">Security System</p>

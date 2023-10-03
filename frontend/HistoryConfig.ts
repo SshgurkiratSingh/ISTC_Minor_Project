@@ -40,20 +40,7 @@ const sensorTopics = [
       "LongHeading": "Entrance Air Quality",
       "endMark": "AQI",
       "icon": "FcCancel"
-    }, {
-        "topic": "IoT/room2/temperature",
-        "heading": "Temperature",
-        "LongHeading": "Room 2 Temperature",
-        "endMark": "°C",
-        "icon": "TiTickOutline"
-      },
-      {
-        "topic": "IoT/room2/humidity",
-        "heading": "Humidity",
-        "LongHeading": "Room 2 Humidity",
-        "endMark": "%",
-        "icon": "TiTickOutline"
-      },
+    }, 
       {
         "topic": "IoT/garage/temperature",
         "heading": "Temperature",

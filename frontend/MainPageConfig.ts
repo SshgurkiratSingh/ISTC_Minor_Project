@@ -14,20 +14,6 @@ const mainPageConfig = [
       "customData": []
     },
     {
-      "roomName": "Room 2",
-      "roomId": 2,
-      "roomTag": "room2",
-      "noOfFans": 1,
-      "noOfLights": 2,
-      "noOfSwitchBoards": 1,
-      "noOfBrightness": 1,
-      "tempAndHum": true,
-      "airQuality": false,
-      "isTvPresent": false,
-      "isCustomPresent": false,
-      "customData": []
-    },
-    {
       "roomName": "Kitchen",
       "roomId": 2,
       "roomTag": "kitchen",
@@ -40,53 +26,34 @@ const mainPageConfig = [
       "isTvPresent": false,
       "isCustomPresent": false,
       "customData": []
-    },
-    {
-      "roomName": "Hall",
+    },{
+      "roomName":"Cleaning Robot",
       "roomId": 3,
-      "roomTag": "hall",
-      "noOfFans": 2,
-      "noOfLights": 3,
-      "noOfSwitchBoards": 1,
-      "noOfBrightness": 0,
-      "tempAndHum": true,
-      "airQuality": false,
-      "isTvPresent": true,
-      "isCustomPresent": true,
-      "customData": [{
-        "topic": "IoT/hall/ambientLight",
-        "subTitle": "Ambient Light",
-        "identity": "Ambient Light",
-        "slideVersion": true
-      }]
-    },
-    {
-      "roomName": "Lawn",
-      "roomId": 5,
-      "roomTag": "lawn",
+      "roomTag": "robot",
       "noOfFans": 0,
-      "noOfLights": 4,
+      "noOfLights": 0,
       "noOfSwitchBoards": 0,
-      "noOfBrightness": 2,
-      "tempAndHum": true,
-      "airQuality": true,
+      "noOfBrightness": 0,
+      "tempAndHum": false,
+      "airQuality": false,
       "isTvPresent": false,
       "isCustomPresent": true,
-      "customData": [
-        {
-          "topic": "IoT/lawn/pump1",
-          "subTitle": "Lawn Pump 1",
-          "identity": "Lawn Pump 1"
-        },
-        {
-          "topic": "IoT/lawn/autonomousLighting",
-          "subTitle": "AutoLumus",
-          "identity": "Lawn Autonomous Lighting",
-         
-        }
-      ]
+      "customData": [{
+        "topic": "IoT/robot/clean",
+        "subTitle": "Cleaning Mode",
+        "identity": "Self Cleaning Mode"
+      },{
+        "topic": "IoT/robot/sweep",
+        "subTitle": "Sweep Mode",
+        "identity": "Sweep Mode"
+      },{
+        "topic": "IoT/robot/moop",
+        "subTitle": "Mooping Mode",
+        "identity": "Mooping Mode"
+      }],
+      "customNotes":"Control Panel for Cleaner Robot"
     },
-    {
+     {
       "roomName": "Garage Washroom Store",
       "roomId": 6,
       "roomTag": "garage",
@@ -132,6 +99,57 @@ const mainPageConfig = [
 
       ]
       
-    }
+    },
+    {
+      "roomName": "Hall",
+      "roomId": 3,
+      "roomTag": "hall",
+      "noOfFans": 2,
+      "noOfLights": 2,
+      "noOfSwitchBoards": 1,
+      "noOfBrightness": 0,
+      "tempAndHum": true,
+      "airQuality": false,
+      "isTvPresent": true,
+      "isCustomPresent": true,
+      "customData": [{
+        "topic": "IoT/hall/ambientLight",
+        "subTitle": "Ambient Light",
+        "identity": "Ambient Light",
+        "slideVersion": true
+      },{
+        "topic": "IoT/entrance/light1"
+        ,"subTitle": "Entrance Light ",
+        "identity": "Entrance Light 1"
+        ,"slideVersion": true
+      }]
+    },
+    {
+      "roomName": "Lawn",
+      "roomId": 5,
+      "roomTag": "lawn",
+      "noOfFans": 0,
+      "noOfLights": 4,
+      "noOfSwitchBoards": 0,
+      "noOfBrightness": 2,
+      "tempAndHum": true,
+      "airQuality": true,
+      "isTvPresent": false,
+      "isCustomPresent": true,
+      "customData": [
+        {
+          "topic": "IoT/lawn/pump1",
+          "subTitle": "Lawn Pump 1",
+          "identity": "Lawn Pump 1"
+        },
+        {
+          "topic": "IoT/lawn/autonomousLighting",
+          "subTitle": "AutoLumus",
+          "identity": "Lawn Autonomous Lighting",
+         
+        }
+      ]
+    },
+   
   ]
   export default mainPageConfig;

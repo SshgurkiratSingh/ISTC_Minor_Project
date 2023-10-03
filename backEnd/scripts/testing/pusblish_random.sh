@@ -1,7 +1,8 @@
 #!/bin/bash
 
 # MQTT broker address
-MQTT_BROKER="ec2-3-88-49-62.compute-1.amazonaws.com"
+# MQTT_BROKER="ec2-3-88-49-62.compute-1.amazonaws.com"
+MQTT_BROKER="localhost"
 
 # List of topics
 TOPICS=(
@@ -69,12 +70,18 @@ TOPICS=(
     "IoT/garage/door"
     "IoT/garage/occupancy"
     "IoT/washroom/gyser"
+    "IoT/robot/areaCovered"
+    "IoT/auxiliary/tankLevel"
+    "IoT/entrance/lightIntensity"
 
 )
 
 # Loop through topics and publish random values
 for topic in "${TOPICS[@]}"; do
     case "$topic" in
+    *"lightIntensity"*)
+        random_value=$(shuf -i 0-1024 -n 1) # Generate random value between 0 and 1024
+        ;;
     *"light"*)
         random_value=$(shuf -i 0-1 -n 1) # Generate random 0 or 1 for lights
         ;;
@@ -89,6 +96,12 @@ for topic in "${TOPICS[@]}"; do
         ;;
     *"brightness"*)
         random_value=$(shuf -i 0-100 -n 1) # Generate random value between 0 and 100 for brightness
+        ;;
+    *"tankLevel"*)
+        random_value=$(shuf -i 0-100 -n 1) # Generate random value between 0 and 100
+        ;;
+    *"areaCovered"*)
+        random_value=$(shuf -i 0-100 -n 1) # Generate random value between 0 and 100
         ;;
 
     *)

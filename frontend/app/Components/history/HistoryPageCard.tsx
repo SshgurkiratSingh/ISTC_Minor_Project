@@ -24,6 +24,7 @@ const HistoryPageCard = () => {
   return (
     <div className="flex flex-1 justify-center items-center gap-4 self-center place-items-center min-h-[600px]">
       <BackGroundCard
+        darkMode
         footerChildren={
           <select onChange={handleChange}>
             {sensorTopics.map((item, index) => (

@@ -3,11 +3,6 @@
 import NavBar from "./navBar";
 
 const MainNavbar = () => {
-  return (
-    <div>
-      <NavBar />
-      
-    </div>
-  );
+  return <NavBar />;
 };
 export default MainNavbar;

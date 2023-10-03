@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { formatDistanceToNow } from "date-fns";
-import { Card, CardFooter, Button } from "@nextui-org/react";
+import { Card, CardFooter, Button, Progress } from "@nextui-org/react";
 import ToggleButton from "../input/Toggle";
 import API_BASE_URL from "@/APIconfig";
 import FanSpeedSelector from "../input/FanSpeedSelector";
@@ -27,6 +27,7 @@ interface RoomCardProps {
   customData?: ElementInfo[];
   customSelector?: boolean;
   SelectorData?: ElementInfo[];
+  customNotes?: String;
 }
 
 const MainBoardCard = ({
@@ -46,6 +47,7 @@ const MainBoardCard = ({
   isAirConditionerPresent,
   customData,
   isCustomPresent = false,
+  customNotes = "",
 }: RoomCardProps) => {
   const [ServerData, setServerData] = useState<IoTDataArray | null>(null);
   const [temperature, setTemperature] = useState<string | undefined>(undefined);
@@ -113,17 +115,6 @@ const MainBoardCard = ({
                 }
               />
             ))}{" "}
-            {isTvPresent && (
-              <ToggleButton
-                topic={`IoT/${roomTag}/TV`}
-                subTitle={`TV`}
-                value={
-                  ServerData?.find((item) => item.topic === `IoT/${roomTag}/TV`)
-                    ?.value === "1"
-                }
-                slideVersion
-              />
-            )}
             {Array.from({ length: noOfSwitchBoards }).map((_, index) => (
               <ToggleButton
                 key={index}
@@ -137,7 +128,18 @@ const MainBoardCard = ({
                 }
                 plantVersion={true}
               />
-            ))}{" "}
+            ))}
+            {isTvPresent && (
+              <ToggleButton
+                topic={`IoT/${roomTag}/TV`}
+                subTitle={`TV`}
+                value={
+                  ServerData?.find((item) => item.topic === `IoT/${roomTag}/TV`)
+                    ?.value === "1"
+                }
+                slideVersion
+              />
+            )}
             {isCustomPresent &&
               customData &&
               customData.map((item, index) => (
@@ -224,11 +226,15 @@ const MainBoardCard = ({
                   </div>
                 )}
               </p>
+              <p className="font-bold text-white  transition ">
+                {" "}
+                {customNotes}
+              </p>
             </div>
           ) : (
             <></>
           )}
-
+          <p className="font-bold text-white  transition "> {customNotes}</p>
           <Button
             className="text-tiny text-white bg-black/20"
             variant="flat"

@@ -22,7 +22,6 @@ const NavBar = () => {
     { heading: "Sensor History", to: "/historyPage" },
     { heading: "About", to: "/about" },
   ];
-  const menuItems = ["", "historyPage", "securitySystem", "About"];
 
   return (
     <Navbar
@@ -30,7 +29,8 @@ const NavBar = () => {
       isMenuOpen={isMenuOpen}
       onMenuOpenChange={setIsMenuOpen}
       shouldHideOnScroll
-      className="dark"
+      className="dark "
+      position="static"
     >
       <NavbarContent className="sm:hidden" justify="start">
         <NavbarMenuToggle
@@ -69,36 +69,21 @@ const NavBar = () => {
         <NavbarItem>
           {" "}
           <Link href="/">
-            <Button
-              as={Link}
-              color="secondary"
-              variant="bordered"
-              className="font-bold"
-            >
+            <Button as={Link} variant="bordered" className="font-bold">
               Home
             </Button>
           </Link>
         </NavbarItem>
         <NavbarItem className="hidden xl:block">
           <Link href="/securitySystem">
-            <Button
-              as={Link}
-              color="secondary"
-              variant="bordered"
-              className="font-bold"
-            >
+            <Button as={Link} variant="bordered" className="font-bold">
               Security Sys
             </Button>
           </Link>
         </NavbarItem>
         <NavbarItem className="hidden xl:block">
           <Link href="/historyPage">
-            <Button
-              as={Link}
-              color="secondary"
-              variant="bordered"
-              className="font-bold"
-            >
+            <Button as={Link} variant="bordered" className="font-bold">
               History Page
             </Button>
           </Link>

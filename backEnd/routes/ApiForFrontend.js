@@ -15,8 +15,6 @@ const sensorTopicToStore = [
   "IoT/entrance/airQuality",
   "IoT/room1/temperature",
   "IoT/room1/humidity",
-  "IoT/room2/temperature",
-  "IoT/room2/humidity",
   "IoT/garage/temperature",
   "IoT/garage/humidity",
   "IoT/kitchen/temperature",
@@ -35,16 +33,6 @@ const topicsByArea = {
     "temperature",
     "humidity",
     "fan1",
-    "fan2",
-    "switchBoard1",
-    "brightness1",
-  ],
-  room2: [
-    "light1",
-    "light2",
-    "temperature",
-    "humidity",
-    "fan1",
     "switchBoard1",
     "brightness1",
   ],
@@ -58,23 +46,16 @@ const topicsByArea = {
     "fan1",
     "airQuality",
     "brightness1",
+    "fireIndicator",
   ],
-  entrance: [
-    "door",
-    "light1",
-    "light2",
-    "rainCheck",
-    "lightIntensity",
-    "temperature",
-    "brightness1",
-  ],
+  entrance: ["door", "light1", "rainCheck", "lightIntensity", "temperature"],
   hall: [
     "light1",
     "light2",
     "ambientLight",
     "TV",
     "fan1",
-    "light3",
+    "fan2",
     "temperature",
     "humidity",
     "airQuality",
@@ -101,8 +82,9 @@ const topicsByArea = {
     "brightness1",
   ],
   washroom: ["light1", "gyser"],
-  store: ["light1", "light2", "fireIndicator"],
+  store: ["light1", "fireIndicator"],
   auxiliary: ["tankLevel"],
+  robot: ["clean", "sweep", "moop", "areaCovered"],
 };
 client.on("connect", () => {
   for (const [area, topics] of Object.entries(topicsByArea)) {
@@ -113,6 +95,7 @@ client.on("connect", () => {
 });
 client.on("message", (topic, message) => {
   logs = logs.filter((log) => log.topic !== topic);
+  console.log(topic, message.toString());
   logs.push({
     topic: topic,
     value: message.toString(),
