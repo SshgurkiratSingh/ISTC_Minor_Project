@@ -325,7 +325,9 @@ font-weight: bolder;
     background-position: 500%;
   }
 }
-
+.custom-select-item {
+  color: black !important; /* or any color that you like */
+}
 
 
 

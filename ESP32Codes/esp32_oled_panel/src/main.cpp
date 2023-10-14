@@ -3,14 +3,21 @@ Author: Gurkirat Singh <gurkirat7092@yahoo.com>
 Date: Sept 28, 2023
 Description:
 This code establish connection as control panel to mqtt server to control nodes over wifi.
-
+- PushButton attached to pin 32,33,27
+- OLED attached to pin 22 (sda),21
+- DHT22 attached to pin 15
+- Fan attached to pin 18
+- Light attached to pin 23
+- Plug attached to pin 5
+- Brightness Led attached to pin 19
 */
 
 #include <Arduino.h>
 #include <Wire.h>
 #include <Adafruit_GFX.h>
 #include <PubSubClient.h>
-#include <Adafruit_SH1106.h>
+// #include <Adafruit_SH1106.h>
+#include <Adafruit_SSD1306.h>
 #include <DHTesp.h>
 #include <WiFi.h>
 #define OLED_RESET 4
@@ -20,13 +27,15 @@ This code establish connection as control panel to mqtt server to control nodes 
 #define LIGHT 3
 #define BRIGHTNESS 4
 
-Adafruit_SH1106 display(22, 21);
+Adafruit_SSD1306 display(128, 64, &Wire, -1);
+// Adafruit_SH1106 display(22, 21);
+DHTesp dht;
+
 WiFiClient wifi;
 PubSubClient client(wifi);
 /* CONFIGURATION Parameters */
 #define MAX_ITEMS 5
 #define DEBUG_MODE true
-
 /* OLED */
 #define SCREEN_WIDTH 128
 #define SCREEN_HEIGHT 64
@@ -71,7 +80,8 @@ uint8_t selectedItem = 0;
 uint8_t upItem;
 uint8_t downItem;
 const char *mqtt_server = "ec2-3-88-49-62.compute-1.amazonaws.com";
-
+float temp = 0;
+float hum = 0;
 // Items Configuration starts here
 const char selectableItems[MAX_ITEMS][15] = {
     "Light 1",
@@ -131,8 +141,10 @@ void setup()
 {
     Serial.begin(115200);
     delay(1000);
-
-    display.begin(SH1106_SWITCHCAPVCC, 0x3C);
+    dht.setup(15, DHTesp::DHT22);
+    Serial.println(dht.getTemperature());
+    display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
+    // display.begin(SH1106_SWITCHCAPVCC, 0x3C);
     display.clearDisplay();
     display.setTextSize(1);
     display.setTextColor(WHITE);
@@ -220,7 +232,13 @@ void displayItems()
         display.print(currentValue[downItem]);
         display.drawBitmap(5, 32, logoArray[downItem], 16, 16, WHITE);
         display.setCursor(50, 51);
-        display.print("Room 1");
+        display.print("  Room");
+        display.setCursor(10, 51);
+        display.print("T:");
+        display.print(temp);
+        display.setCursor(90, 51);
+        display.print("H:");
+        display.print(int(hum));
         display.display();
     }
     else
@@ -239,6 +257,15 @@ void displayItems()
     needUpdate = false;
 }
 
+/**
+ * Fixes the numbering of items.
+ *
+ * @param None
+ *
+ * @return None
+ *
+ * @throws None
+ */
 void fixNumbering()
 {
     upItem = (selectedItem == 0) ? (MAX_ITEMS - 1) : (selectedItem - 1);
@@ -338,19 +365,65 @@ void checkButtons()
         }
     }
 }
+
+/**
+ * Updates the temperature and humidity readings.
+ *
+ * @return void
+ */
+void updateTempHum()
+{
+    float t = dht.getTemperature();
+    float h = dht.getHumidity();
+ 
+    if (isnan(t) || isnan(h) || t == 0 || h == 0)
+    {
+        return;
+    }else{
+
+ 
+        if ((temp !=t) || (hum !=h)){
+      temp = t;
+       hum = h;
+       Serial.println("updatte detected");
+    needUpdate = true;
+        client.publish("IoT/room1/temperature", String(temp).c_str(), true);
+    client.publish("IoT/room1/humidity", String(hum).c_str(), true);
+
+        }
+    }
+ 
+}
+
+/**
+ * Updates the output based on the current values.
+ *
+ * @param None
+ *
+ * @return None
+ *
+ * @throws None
+ */
 void updateOutput()
 {
-    digitalWite(itemPin[0], currentValue[0]);
+    digitalWrite(itemPin[0], currentValue[0]);
     analogWrite(itemPin[1], currentValue[1 + 1] * 2.55 * currentValue[1]);
     analogWrite(itemPin[2], currentValue[2 + 1] * 2.55);
     digitalWrite(itemPin[3], currentValue[3 + 1]);
 }
-void void loop()
+
+/**
+ * Performs the main loop of the program.
+ *
+ * @return void
+ */
+void loop()
 {
     client.loop();
     fixNumbering();
     displayItems();
     checkButtons();
     updateOutput();
+    updateTempHum();
     delay(100);
 }

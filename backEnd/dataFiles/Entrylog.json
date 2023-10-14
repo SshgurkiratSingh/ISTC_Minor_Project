@@ -1,5 +1,4 @@
 [
-  
   {
     "UID": " 13 70 1D 85",
     "nodeLocation": "Entrance",
@@ -45,5 +44,55 @@
     "status": "approved",
     "userName": "tarun kotyan",
     "nodeLocation": "Entrance"
+  },
+  {
+    "UID": "85 45 84 52",
+    "timestamp": "2023-10-14T10:02:52.357Z",
+    "description": "Entry was Denied because of an unknown card",
+    "status": "unknown"
+  },
+  {
+    "UID": "85 45 84 52",
+    "nodeLocation": "Garage",
+    "timestamp": "2023-10-14T10:04:24.580Z",
+    "description": "Entry was Denied because of an unknown card",
+    "status": "unknown"
+  },
+  {
+    "UID": "33 CA C9 12\t",
+    "nodeLocation": "Garage",
+    "timestamp": "2023-10-14T10:05:06.870Z",
+    "description": "Entry was Denied because of an unknown card",
+    "status": "unknown"
+  },
+  {
+    "UID": "33 CA C9 12",
+    "nodeLocation": "Garage",
+    "timestamp": "2023-10-14T10:05:12.131Z",
+    "description": "Entry was Denied because of an unknown card",
+    "status": "unknown"
+  },
+  {
+    "UID": "C3 AA 0e 31\t",
+    "nodeLocation": "Garage",
+    "timestamp": "2023-10-14T10:05:34.144Z",
+    "description": "Entry was Denied because of an unknown card",
+    "status": "unknown"
+  },
+  {
+    "UID": "C3 AA 0e 31",
+    "timestamp": "2023-10-14T10:05:40.242Z",
+    "description": "Entry was Approved",
+    "status": "approved",
+    "userName": "QuaTrope",
+    "nodeLocation": "Garage"
+  },
+  {
+    "UID": "C3 AA 0e 31",
+    "timestamp": "2023-10-14T10:05:40.630Z",
+    "description": "Entry was Approved",
+    "status": "approved",
+    "userName": "QuaTrope",
+    "nodeLocation": "Garage"
   }
 ]

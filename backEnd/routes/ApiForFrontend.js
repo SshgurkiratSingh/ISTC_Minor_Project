@@ -269,7 +269,7 @@ router.get("/getSecurityData", async (req, res) => {
     rainCheck: rainCheckValue === "1",
     garageStatus: garageStatusValue === "1",
     entranceStatus: entranceStatusValue === "1",
-    entryLog: dataCopy.reverse().splice(0, 5),
+    entryLog: dataCopy.reverse(),
   };
 
   res.json(responseData);

@@ -48,7 +48,7 @@ class CacheManager {
       }
       const fileData = await fs.readFile(filePath, "utf-8");
       if (key == "entryLog") {
-        this.setCache(key, JSON.parse(fileData).splice(-10));
+        this.setCache(key, JSON.parse(fileData));
       } else {
         this.setCache(key, JSON.parse(fileData));
       }
