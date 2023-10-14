@@ -11,8 +11,15 @@ This code establish connection as control panel to mqtt server to control nodes 
 #include <Adafruit_GFX.h>
 #include <PubSubClient.h>
 #include <Adafruit_SH1106.h>
+#include <DHTesp.h>
 #include <WiFi.h>
 #define OLED_RESET 4
+// OUTPUT CONFIGS
+#define FAN 1
+#define PLUG 2
+#define LIGHT 3
+#define BRIGHTNESS 4
+
 Adafruit_SH1106 display(22, 21);
 WiFiClient wifi;
 PubSubClient client(wifi);
@@ -23,9 +30,10 @@ PubSubClient client(wifi);
 /* OLED */
 #define SCREEN_WIDTH 128
 #define SCREEN_HEIGHT 64
-#define NEXT_BUTTON 27
-#define PREV_BUTTON 14
-#define SELECT_BUTTON 12
+// Button Config
+#define NEXT_BUTTON 32
+#define PREV_BUTTON 33
+#define SELECT_BUTTON 27
 // 'New Project', 16x16px
 const unsigned char light[] PROGMEM = {
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x03, 0x00, 0x04, 0x80, 0x08, 0x40, 0x10, 0x20, 0x10, 0x20,
@@ -62,7 +70,7 @@ bool inItem = false;
 uint8_t selectedItem = 0;
 uint8_t upItem;
 uint8_t downItem;
-const char *mqtt_server = "192.168.1.100";
+const char *mqtt_server = "ec2-3-88-49-62.compute-1.amazonaws.com";
 
 // Items Configuration starts here
 const char selectableItems[MAX_ITEMS][15] = {
@@ -75,6 +83,9 @@ const char selectableItems[MAX_ITEMS][15] = {
 const bool toggleItems[MAX_ITEMS] = {true, true, false, false, true};
 int currentValue[MAX_ITEMS] = {0, 0, 0, 0, 0};
 const char topics[MAX_ITEMS][30] = {"IoT/room1/light1", "IoT/room1/light2", "IoT/room1/brightness1", "IoT/room1/fan1", "IoT/room1/switchBoard1"};
+
+const uint8_t itemPin[MAX_ITEMS - 1] = {23, 19, 18, 5};
+
 const uint8_t maxValues[MAX_ITEMS] = {1, 1, 100, 100, 1};
 bool needUpdate = true;
 void callback(char *topic, byte *payload, unsigned int length)
@@ -125,7 +136,7 @@ void setup()
     display.clearDisplay();
     display.setTextSize(1);
     display.setTextColor(WHITE);
-    WiFi.begin("Node ", "whyitellyou");
+    WiFi.begin("Wokwi-GUEST", "");
     client.setServer(mqtt_server, 1883);
     client.setCallback(callback);
     while (WiFi.status() != WL_CONNECTED)
@@ -137,11 +148,12 @@ void setup()
         display.setTextSize(1);
         display.setCursor(5, 32);
         display.print("Connecting to WiFi..");
+        display.drawBitmap(58, 14, epd_bitmap_wifi, 16, 16, WHITE);
         display.display();
         delay(1000);
     }
 
-    if (client.connect("ESP8266Client"))
+    if (client.connect("ccc"))
     {
 
 #if DEBUG_MODE
@@ -166,7 +178,11 @@ void setup()
     pinMode(NEXT_BUTTON, INPUT_PULLUP);
     pinMode(PREV_BUTTON, INPUT_PULLUP);
     pinMode(SELECT_BUTTON, INPUT_PULLUP);
-    delay(2000);
+
+    for (int i = 0; i < MAX_ITEMS - 1; i++)
+    {
+        pinMode(itemPin[i], OUTPUT);
+    }
 }
 
 void displayItems()
@@ -182,6 +198,8 @@ void displayItems()
         // Up Item
         display.setCursor(24, 4);
         display.print(selectableItems[upItem]);
+        display.setCursor(100, 4);
+        display.print(currentValue[upItem]);
         display.drawBitmap(5, 0, logoArray[upItem], 16, 16, WHITE);
 
         // Center Item
@@ -191,13 +209,18 @@ void displayItems()
         display.drawLine(5, 16, 5, 31, WHITE);
         display.setCursor(24, 20);
         display.print(selectableItems[selectedItem]);
+        display.setCursor(100, 20);
+        display.print(currentValue[selectedItem]);
         display.drawBitmap(5, 16, logoArray[selectedItem], 16, 16, WHITE);
 
         // Down Item
         display.setCursor(24, 36);
         display.print(selectableItems[downItem]);
+        display.setCursor(100, 36);
+        display.print(currentValue[downItem]);
         display.drawBitmap(5, 32, logoArray[downItem], 16, 16, WHITE);
-
+        display.setCursor(50, 51);
+        display.print("Room 1");
         display.display();
     }
     else
@@ -222,6 +245,13 @@ void fixNumbering()
     downItem = (selectedItem == (MAX_ITEMS - 1)) ? 0 : (selectedItem + 1);
 }
 
+/**
+ * Checks the state of the buttons and performs corresponding actions.
+ *
+ * @return void
+ *
+ * @throws None
+ */
 void checkButtons()
 {
     unsigned long currentTime = millis();
@@ -308,12 +338,19 @@ void checkButtons()
         }
     }
 }
-
-void loop()
+void updateOutput()
+{
+    digitalWite(itemPin[0], currentValue[0]);
+    analogWrite(itemPin[1], currentValue[1 + 1] * 2.55 * currentValue[1]);
+    analogWrite(itemPin[2], currentValue[2 + 1] * 2.55);
+    digitalWrite(itemPin[3], currentValue[3 + 1]);
+}
+void void loop()
 {
     client.loop();
     fixNumbering();
     displayItems();
     checkButtons();
+    updateOutput();
     delay(100);
 }

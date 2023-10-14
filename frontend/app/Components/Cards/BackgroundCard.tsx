@@ -30,7 +30,7 @@ const BackGroundCard = ({
       <Divider />
       <CardBody>{bodyChildren}</CardBody>
       <Divider />
-      <CardFooter className="gap-2 flex flex-col xl:flex-row justify-between items-center">
+      <CardFooter className="gap-2 flex flex-col xl:flex-row justify-between items-center  content-center">
         {footerChildren}
       </CardFooter>
     </Card>

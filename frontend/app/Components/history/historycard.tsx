@@ -93,7 +93,9 @@ const HistoryCard: React.FC<HistoryPageCardProps> = ({
 
   return (
     <div className="text-black">
-      <h2>{LongHeading}</h2>
+      <h2 className="text-white hover:text-red-300 transition">
+        {LongHeading}
+      </h2>
       <LineChart
         width={chartWidth}
         height={chartHeight}
@@ -127,13 +129,6 @@ const HistoryCard: React.FC<HistoryPageCardProps> = ({
           dot={false}
           activeDot={{ r: 5 }}
         />
-
-        {/* <ReferenceLine
-          y={25}
-          label="Avg Temp"
-          stroke="red"
-          strokeDasharray="3 3"
-        /> */}
       </LineChart>
     </div>
   );
