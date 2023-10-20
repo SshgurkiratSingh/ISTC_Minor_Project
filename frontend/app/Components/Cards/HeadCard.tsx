@@ -25,15 +25,16 @@ const HeadingCard = ({
       <ClientOnly>
         <Card
           isFooterBlurred
-          className="w-full h-[300px] col-span-12 sm:col-span-7 text-white"
+          className="w-full max-h-[15rem] col-span-12 sm:col-span-7 text-white dark"
         >
           <CardHeader
-            className="absolute z-10 top-1 flex-col gap-2 p-4"
+            className="absolute z-10 top-1 flex-col gap-2 p-4 dark"
             style={{ backdropFilter: "blur(15px)" }}
           >
             <p className="text-tiny text-white/60 uppercase font-bold">
               Minor Project
             </p>
+            <Divider />
             <Progress
               label="Tank Level"
               size="sm"
@@ -43,7 +44,6 @@ const HeadingCard = ({
               showValueLabel={true}
               className="max-w-md "
             />
-            <Divider />
             <Progress
               label="Area Cleaned By Cleaning Robot"
               size="sm"
@@ -69,7 +69,7 @@ const HeadingCard = ({
             className="z-0 w-full h-full object-cover"
             src="/bg.webp"
           />
-          <CardFooter className="absolute bg-black/40 bottom-0 z-10 border-t-1 border-default-600 dark:border-default-100">
+          {/* <CardFooter className="absolute bg-black/40 bottom-0 z-10 border-t-1 border-default-600 dark:border-default-100">
             <div className="flex flex-grow gap-2 items-center">
               <Image
                 alt="ICON"
@@ -81,7 +81,7 @@ const HeadingCard = ({
                 <p className="text-tiny text-white/60"></p>
               </div>
             </div>
-          </CardFooter>
+          </CardFooter> */}
         </Card>
       </ClientOnly>
     </div>

@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { Providers } from "./providers";
 import ClientPasscodeLock from "./ClientPasscode";
+import ClientOnly from "./Components/clientOnly";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -20,7 +21,9 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className + " bg-black"}>
         <Providers>
-          <ClientPasscodeLock>{children}</ClientPasscodeLock>
+          <ClientOnly>
+            <ClientPasscodeLock>{children}</ClientPasscodeLock>
+          </ClientOnly>
         </Providers>
       </body>
     </html>

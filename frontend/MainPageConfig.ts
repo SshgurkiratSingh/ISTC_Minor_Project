@@ -54,13 +54,13 @@ const mainPageConfig = [
       "customNotes":"Control Panel for Cleaner Robot"
     },
      {
-      "roomName": "Garage Washroom Store",
+      "roomName": "Garage ",
       "roomId": 6,
       "roomTag": "garage",
       "noOfFans": 0,
       "noOfLights": 0,
       "noOfSwitchBoards": 0,
-      "noOfBrightness": 1,
+      "noOfBrightness": 0,
       "tempAndHum": false,
       "airQuality": false,
       "isTvPresent": false,
@@ -76,26 +76,26 @@ const mainPageConfig = [
           "subTitle": "Garage Light 2",
           "identity": "Garage Light 2"
         },
-        {
-          "topic": "IoT/store/light1",
-          "subTitle": "Store Light 1",
-          "identity": "Store Light 1"
-        },
-        {
-          "topic": "IoT/store/light2",
-          "subTitle": "Store Light 2",
-          "identity": "Store Light 2"
-        },
-        {
-          "topic": "IoT/washroom/light1",
-          "subTitle": "Washroom Light 1",
-          "identity": "Washroom Light 1"
-        },
-        {
-          "topic": "IoT/washroom/gyser",
-          "subTitle": "Washroom Gyser",
-          "identity": "Washroom Gyser"
-        }
+        // {
+        //   "topic": "IoT/store/light1",
+        //   "subTitle": "Store Light 1",
+        //   "identity": "Store Light 1"
+        // },
+        // {
+        //   "topic": "IoT/store/light2",
+        //   "subTitle": "Store Light 2",
+        //   "identity": "Store Light 2"
+        // },
+        // {
+        //   "topic": "IoT/washroom/light1",
+        //   "subTitle": "Washroom Light ",
+        //   "identity": "Washroom Light 1"
+        // },
+        // {
+        //   "topic": "IoT/washroom/gyser",
+        //   "subTitle": "Washroom Gyser",
+        //   "identity": "Washroom Gyser"
+        // }
 
       ]
       

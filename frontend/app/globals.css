@@ -19,7 +19,7 @@
 body {
  min-height: 100vh;
  background: rgb(174,183,238);
- background: linear-gradient(167deg, rgba(174,183,238,1) 0%, rgba(206,179,220,1) 15%, rgba(216,177,209,1) 24%, rgba(194,180,217,1) 49%, rgba(231,143,255,1) 64%, rgba(11,102,227,1) 100%);
+ background: linear-gradient(167deg, rgb(7, 13, 48) , rgb(36, 14, 43), rgb(5, 47, 107) );
  background-repeat: no-repeat;
 background-size: cover;
  background-color: black;

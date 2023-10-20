@@ -72,7 +72,7 @@ const NavBar = () => {
             </Button>
           </Link>
         </NavbarItem>
-        <NavbarItem className="hidden xl:block">
+        <NavbarItem className="hidden xl:block ">
           <Link href="/securitySystem">
             <Button
               as={Link}
@@ -96,7 +96,7 @@ const NavBar = () => {
         </NavbarItem>
       </NavbarContent>
 
-      <NavbarMenu>
+      <NavbarMenu className="dark">
         {mainMenuItems.map((item, index) => (
           <NavbarMenuItem key={`${item}-${index}`}>
             <Link className="w-full" href={item.to} size="lg">

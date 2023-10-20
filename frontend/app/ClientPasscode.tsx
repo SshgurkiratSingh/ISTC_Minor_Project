@@ -14,14 +14,15 @@ export default function ClientPasscodeLock({
   const checkPasscode = () => {
     if (inputPasscode === "1010") {
       setIsLocked(false);
+      localStorage.setItem("isUnlocked", "true");
     } else {
       alert("Incorrect Passcode. Try again.");
     }
   };
 
   useEffect(() => {
-    const existingPasscode = localStorage.getItem("app-passcode");
-    if (existingPasscode === "1010") {
+    const isUnlocked = localStorage.getItem("isUnlocked");
+    if (isUnlocked === "true") {
       setIsLocked(false);
     }
   }, []);
