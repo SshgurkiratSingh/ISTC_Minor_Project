@@ -97,7 +97,7 @@ void loop()
     // Now you can access and process the data from the JSON response
     bool permissionToUnlock = responseDoc["permissionToUnlock"]; // true or false
     bool isValid = responseDoc["isValid"];                       // true or false
-    String nodeLocation = responseDoc["nodeLocation"];           // "Entrance" or "Garage" or "whatever idc"
+    String nodeLocation = responseDoc["nodeLocation"];           // "Entrance" or "Garage" or "whatever idc" will be Deprecated soon 
 
     String userName = responseDoc["userName"]; // "may exist" or may be null
     if (permissionToUnlock)                    // true
