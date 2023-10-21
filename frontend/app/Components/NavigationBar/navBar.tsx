@@ -90,7 +90,7 @@ const NavBar = () => {
               variant="bordered"
               className="font-bold hover:border-white transition"
             >
-              History Page
+              Sensor History
             </Button>
           </Link>
         </NavbarItem>

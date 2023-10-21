@@ -1,6 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { formatDistanceToNow } from "date-fns";
-import { Card, CardFooter, Button, Progress } from "@nextui-org/react";
+import {
+  Card,
+  CardFooter,
+  Button,
+  Progress,
+  Image,
+  CardHeader,
+} from "@nextui-org/react";
 import ToggleButton from "../input/Toggle";
 import API_BASE_URL from "@/APIconfig";
 import FanSpeedSelector from "../input/FanSpeedSelector";
@@ -28,6 +35,7 @@ interface RoomCardProps {
   customSelector?: boolean;
   SelectorData?: ElementInfo[];
   customNotes?: String;
+  backImg?: string;
 }
 
 const MainBoardCard = ({
@@ -48,6 +56,7 @@ const MainBoardCard = ({
   customData,
   isCustomPresent = false,
   customNotes = "",
+  backImg = "/background2.jpg",
 }: RoomCardProps) => {
   const [ServerData, setServerData] = useState<IoTDataArray | null>(null);
   const [temperature, setTemperature] = useState<string | undefined>(undefined);
@@ -99,9 +108,20 @@ const MainBoardCard = ({
         isFooterBlurred
         radius="lg"
         className="border-none bg-black"
-        style={{ minHeight: "200px", minWidth: "290px" }}
+        style={{
+          minHeight: "200px",
+          minWidth: "290px",
+          backdropFilter: "blur(15px)",
+        }}
       >
-        <div className="flex flex-col p-2">
+        <div
+          className="flex flex-col p-2"
+          style={{
+            backgroundImage: `url(${backImg})`,
+            backgroundSize: "cover",
+            backgroundRepeat: "no-repeat",
+          }}
+        >
           <div className=" grid grid-cols-1 lg:grid-cols-3 p-4 m-2 place-content-between">
             {Array.from({ length: noOfLights }).map((_, index) => (
               <ToggleButton
@@ -194,7 +214,6 @@ const MainBoardCard = ({
               ))}
           </div>
         </div>
-
         <CardFooter className=" justify-between before:bg-white/10 border-white/20 border-1 overflow-hidden py-1 absolute before:rounded-xl rounded-large bottom-1 w-[calc(100%-_8px)] shadow-small ml-1 z-10">
           {tempAndHum ? (
             <div>

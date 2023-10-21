@@ -9,23 +9,26 @@ import {
   Divider,
 } from "@nextui-org/react";
 import ClientOnly from "../clientOnly";
+import PowerConsumptionCard from "./PowerUsage";
 interface HeadingCardProps {
   children?: React.ReactNode;
   tankLevel?: number;
   areaCleaned?: number;
   sunlightIntensity?: number;
+  powerConsumption?: number;
 }
 const HeadingCard = ({
   tankLevel,
   areaCleaned,
   sunlightIntensity,
+  powerConsumption,
 }: HeadingCardProps) => {
   return (
     <div>
       <ClientOnly>
         <Card
           isFooterBlurred
-          className="w-full max-h-[15rem] col-span-12 sm:col-span-7 text-white dark"
+          className="w-full max-h-[14rem] col-span-12 sm:col-span-7 text-white dark"
         >
           <CardHeader
             className="absolute z-10 top-1 flex-col gap-2 p-4 dark"
@@ -61,6 +64,10 @@ const HeadingCard = ({
               color="warning"
               showValueLabel={true}
               className="max-w-md "
+            />
+            <Divider />
+            <PowerConsumptionCard
+              powerConsumption={parseFloat((Math.random() * 7.6).toFixed(2))}
             />
           </CardHeader>
           <Image

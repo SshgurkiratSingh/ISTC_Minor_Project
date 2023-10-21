@@ -8,8 +8,6 @@ import {
   TableRow,
   TableCell,
   Button,
-  Select,
-  SelectItem,
   Input,
 } from "@nextui-org/react";
 import StatusChip from "../StatusChip";

@@ -14,28 +14,52 @@ export interface IoTData {
 }
 
 export type IoTDataArray = IoTData[];
+
+function arraysAreEqual(arrayA: IoTDataArray, arrayB: IoTDataArray): boolean {
+  if (arrayA.length !== arrayB.length) return false;
+
+  for (let i = 0; i < arrayA.length; i++) {
+    const itemA = arrayA[i];
+    const itemB = arrayB[i];
+
+    if (itemA.topic !== itemB.topic || itemA.value !== itemB.value)
+      return false;
+  }
+
+  return true;
+}
+
 const MainBoard = () => {
   const [ServerData, setServerData] = useState<IoTDataArray | null>(null);
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch(`/api/frontend/logs`);
-        if (!response.ok) {
-          throw new Error("Failed to fetch data");
-        }
-        const data = await response.json();
-        setServerData(data);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
 
+  const fetchData = async () => {
+    try {
+      const response = await fetch(`/api/frontend/logs`);
+      if (!response.ok) {
+        throw new Error("Failed to fetch data");
+      }
+      const data = await response.json();
+
+      // Only setServerData if data is different
+      if (!ServerData || !arraysAreEqual(data, ServerData)) {
+        setServerData(data);
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  useEffect(() => {
     fetchData();
 
     const intervalId = setInterval(fetchData, 2000);
 
     return () => clearInterval(intervalId);
-  }, []);
+  }, [ServerData]); // Pass ServerData to the dependency array
+
+  const getDataValue = (topic: string) => {
+    return ServerData?.find((item) => item.topic === topic)?.value || "0";
+  };
   return (
     <div className=" px-6 py-6 justify-center   flex-1 border-white">
       <div
@@ -53,11 +77,12 @@ const MainBoard = () => {
             ServerData?.find((i) => i.topic == "IoT/entrance/lightIntensity")
               ?.value
           )}
+          powerConsumption={Number(
+            ServerData?.find((i) => i.topic == "IoT/auxiliary/powerConsumption")
+              ?.value
+          )}
         />
-        <div
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4  m-4 
-"
-        >
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2  m-3 gap-6">
           <ClientOnly>
             {mainPageConfig.map((room) => (
               <MainBoardCard {...room} data={ServerData} />

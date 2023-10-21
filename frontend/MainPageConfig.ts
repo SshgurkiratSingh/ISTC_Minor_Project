@@ -12,6 +12,8 @@ const mainPageConfig = [
       "isTvPresent": false,
       "isCustomPresent": false,
       "customData": []
+      ,
+      "backImg": "/background.jpg"
     },
     {
       "roomName": "Kitchen",
@@ -54,6 +56,7 @@ const mainPageConfig = [
       "customNotes":"Control Panel for Cleaner Robot"
     },
      {
+      "backImg": "/background3.png",
       "roomName": "Garage ",
       "roomId": 6,
       "roomTag": "garage",
@@ -122,7 +125,9 @@ const mainPageConfig = [
         ,"subTitle": "Entrance Light ",
         "identity": "Entrance Light 1"
         ,"slideVersion": true
-      }]
+      }],
+      "backImg": "/back2.webp"
+     
     },
     {
       "roomName": "Lawn",
@@ -148,7 +153,8 @@ const mainPageConfig = [
           "identity": "Lawn Autonomous Lighting",
          
         }
-      ]
+      ],
+      "backImg": "/back.jpg"
     },
    
   ]
