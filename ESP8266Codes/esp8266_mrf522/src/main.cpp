@@ -119,7 +119,7 @@ void loop()
     else
     {
       Serial.println("Denied");
-      // Handle the denied access scenario (print abus** on oled screen)
+      // Handle the denied access scenario 
     }
   }
   else
