@@ -104,4 +104,4 @@ const FanSpeedSelector = ({
   );
 };
 
-export default React.memo(FanSpeedSelector);
+export default FanSpeedSelector;

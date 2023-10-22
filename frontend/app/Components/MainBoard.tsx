@@ -86,9 +86,9 @@ const MainBoard = () => {
     return ServerData?.find((item) => item.topic === topic)?.value || "0";
   };
   return (
-    <div className=" px-6 py-6 justify-center   flex-1 border-white">
+    <div className=" px-6 py-6 justify-center   flex-1 ">
       <div
-        className="flex flex-col items-center justify-center  py-2 flex-1 border-white border-1 rounded-lg"
+        className="flex flex-col items-center justify-center  py-2 flex-1   rounded-lg"
         style={{ backdropFilter: "blur(15px)", minHeight: "80vh" }}
       >
         <HeadingCard
@@ -104,7 +104,7 @@ const MainBoard = () => {
           )}
           powerConsumption={totalConsumption}
         />
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2  m-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2  m-3 gap-6 ">
           <ClientOnly>
             {mainPageConfig.map((room) => (
               <MainBoardCard {...room} data={ServerData} />

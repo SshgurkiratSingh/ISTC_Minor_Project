@@ -21,6 +21,7 @@ const NavBar = () => {
     { heading: "Security System", to: "/securitySystem" },
     { heading: "Sensor History", to: "/historyPage" },
     { heading: "About", to: "/about" },
+    { heading: "Low End Version ", to: "/lowEnd" },
   ];
 
   return (
@@ -104,6 +105,7 @@ const NavBar = () => {
             </Link>
           </NavbarMenuItem>
         ))}
+        
       </NavbarMenu>
     </Navbar>
   );
