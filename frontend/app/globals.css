@@ -329,7 +329,10 @@ font-weight: bolder;
   color: black !important; /* or any color that you like */
 }
 
-
+.button-toggle {
+  transition: all 0.3s ease;
+  will-change: transform;
+}
 
 
 

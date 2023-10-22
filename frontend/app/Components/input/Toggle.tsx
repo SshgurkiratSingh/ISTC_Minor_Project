@@ -1,9 +1,9 @@
 "use client";
 import API_BASE_URL from "@/APIconfig";
-import { use, useEffect, useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import ClientOnly from "../clientOnly";
 import { toast } from "react-toastify";
-
+import { debounce } from "lodash";
 interface ToggleButtonProps {
   topic: string;
   value: boolean;
@@ -29,17 +29,12 @@ const ToggleButton = ({
     setIsToggled(value);
   }, [value]);
 
-  const handleCheckboxChange = async () => {
-    // Invert the value
+  const handleCheckboxChangeActual = async () => {
     const invertedValue = !isToggled;
-
-    // Update the component state
     setIsToggled(invertedValue);
 
     const encodedTopic = encodeURIComponent(topic);
-
     try {
-      // Make the HTTP GET request to your server with the inverted value and topic as query parameters
       const response = await fetch(
         `/api/frontend/publish?value=${invertedValue}&topic=${encodedTopic}`,
         {
@@ -51,17 +46,17 @@ const ToggleButton = ({
       );
       const responseData = await response.json();
       if (!response.ok) {
-        // Handle the error or failed response
         console.error("HTTP GET request failed");
       } else {
-        console.log("HTTP GET request succeeded");
-
         toast.success(`Switch toggled: ${responseData.message}`);
       }
     } catch (error) {
       console.error("An error occurred:", error);
     }
   };
+
+  // Debounce the actual function
+  const handleCheckboxChange = debounce(handleCheckboxChangeActual, 200);
 
   if (plantVersion) {
     return (
@@ -132,4 +127,4 @@ const ToggleButton = ({
   }
 };
 
-export default ToggleButton;
+export default React.memo(ToggleButton);

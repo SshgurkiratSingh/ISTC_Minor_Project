@@ -67,28 +67,15 @@ const HeadingCard = ({
             />
             <Divider />
             <PowerConsumptionCard
-              powerConsumption={parseFloat((Math.random() * 7.6).toFixed(2))}
+              powerConsumption={Number(powerConsumption?.toFixed(4)) || 0}
             />
           </CardHeader>
           <Image
             removeWrapper
             alt="minor project background"
             className="z-0 w-full h-full object-cover"
-            src="/bg.webp"
+            src="/back2.webp"
           />
-          {/* <CardFooter className="absolute bg-black/40 bottom-0 z-10 border-t-1 border-default-600 dark:border-default-100">
-            <div className="flex flex-grow gap-2 items-center">
-              <Image
-                alt="ICON"
-                className="rounded-full w-10 h-11 bg-black"
-                src="/ISTC.webp"
-              />
-              <div className="flex flex-col">
-                <p className="text-tiny text-white/80 font-bold"></p>
-                <p className="text-tiny text-white/60"></p>
-              </div>
-            </div>
-          </CardFooter> */}
         </Card>
       </ClientOnly>
     </div>

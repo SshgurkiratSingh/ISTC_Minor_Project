@@ -7,6 +7,7 @@ import ClientOnly from "./clientOnly";
 import HeadingCard from "./Cards/HeadCard";
 import MainBoardCard from "./Cards/MainBoardCard";
 import mainPageConfig from "@/MainPageConfig";
+import { toast } from "react-toastify";
 export interface IoTData {
   topic: string;
   value: string;
@@ -31,18 +32,42 @@ function arraysAreEqual(arrayA: IoTDataArray, arrayB: IoTDataArray): boolean {
 
 const MainBoard = () => {
   const [ServerData, setServerData] = useState<IoTDataArray | null>(null);
+  const [totalConsumption, setTotalConsumption] = useState(0);
 
   const fetchData = async () => {
     try {
       const response = await fetch(`/api/frontend/logs`);
       if (!response.ok) {
-        throw new Error("Failed to fetch data");
+        toast.error("Error fetching data");
       }
       const data = await response.json();
 
       // Only setServerData if data is different
       if (!ServerData || !arraysAreEqual(data, ServerData)) {
         setServerData(data);
+        let powerConsumption = 0;
+        if (data) {
+          data.forEach((item: IoTData) => {
+            if (item.topic.includes("light")) {
+              if (item.value == "1") {
+                powerConsumption += 0.025;
+              }
+            }
+            if (item.topic.includes("fan")) {
+              powerConsumption += (0.89 * Number(item.value)) / 100;
+            }
+            if (item.topic.includes("pump")) {
+              powerConsumption += Number(item.value) * 1.3;
+            }
+            if (item.topic.includes("switchBoard")) {
+              powerConsumption += Number(item.value) * 0.5;
+            }
+            if (item.topic.includes("TV")) {
+              powerConsumption += Number(item.value) * 0.5;
+            }
+          });
+        }
+        setTotalConsumption(powerConsumption);
       }
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -55,7 +80,7 @@ const MainBoard = () => {
     const intervalId = setInterval(fetchData, 2000);
 
     return () => clearInterval(intervalId);
-  }, [ServerData]); // Pass ServerData to the dependency array
+  }, [ServerData, totalConsumption]);
 
   const getDataValue = (topic: string) => {
     return ServerData?.find((item) => item.topic === topic)?.value || "0";
@@ -77,10 +102,7 @@ const MainBoard = () => {
             ServerData?.find((i) => i.topic == "IoT/entrance/lightIntensity")
               ?.value
           )}
-          powerConsumption={Number(
-            ServerData?.find((i) => i.topic == "IoT/auxiliary/powerConsumption")
-              ?.value
-          )}
+          powerConsumption={totalConsumption}
         />
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2  m-3 gap-6">
           <ClientOnly>

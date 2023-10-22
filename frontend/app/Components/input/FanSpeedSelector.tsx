@@ -1,9 +1,10 @@
-import { ChangeEvent, useEffect, useState } from "react";
+"use client";
+import React, { ChangeEvent, useCallback, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { BsBrightnessAltLow, BsFan } from "react-icons/bs";
 import { Card, CardHeader, CardBody, Divider } from "@nextui-org/react";
 import API_BASE_URL from "@/APIconfig";
-
+import { debounce } from "lodash";
 interface FanSpeedProps {
   topic: string;
   value: number;
@@ -25,34 +26,39 @@ const FanSpeedSelector = ({
 }: FanSpeedProps) => {
   const [fanSpeed, setFanSpeed] = useState<number>(value);
 
-  const handleRangeChange = async (event: ChangeEvent<HTMLInputElement>) => {
+  const debouncedHandleRangeChange = useCallback(
+    debounce(async (newFanSpeed: number) => {
+      const encodedTopic = encodeURIComponent(topic);
+
+      try {
+        const response = await fetch(
+          `/api/frontend/publish?value=${newFanSpeed}&topic=${encodedTopic}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        const responseData = await response.json();
+
+        if (!response.ok) {
+          console.error("HTTP GET request failed");
+        } else {
+          console.log("HTTP GET request succeeded");
+        }
+      } catch (error) {
+        console.error("An error occurred:", error);
+      }
+    }, 500), // 300ms delay
+    [topic]
+  );
+
+  const handleRangeChange = (event: ChangeEvent<HTMLInputElement>) => {
     const newFanSpeed = parseInt(event.target.value);
     setFanSpeed(newFanSpeed);
-
-    const encodedTopic = encodeURIComponent(topic);
-
-    try {
-      const response = await fetch(
-        `/api/frontend/publish?value=${newFanSpeed}&topic=${encodedTopic}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      const responseData = await response.json();
-
-      if (!response.ok) {
-        // Handle the error or failed response
-        console.error("HTTP GET request failed");
-      } else {
-        console.log("HTTP GET request succeeded");
-      }
-    } catch (error) {
-      console.error("An error occurred:", error);
-    }
+    debouncedHandleRangeChange(newFanSpeed);
   };
 
   useEffect(() => {
@@ -98,4 +104,4 @@ const FanSpeedSelector = ({
   );
 };
 
-export default FanSpeedSelector;
+export default React.memo(FanSpeedSelector);
