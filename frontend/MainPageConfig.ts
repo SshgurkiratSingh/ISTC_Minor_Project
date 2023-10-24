@@ -13,7 +13,7 @@ const mainPageConfig = [
       "isCustomPresent": false,
       "customData": []
       ,
-      "backImg": "/background.jpg"
+      "backImg": "/back2.webp"
     },
     {
       "roomName": "Kitchen",

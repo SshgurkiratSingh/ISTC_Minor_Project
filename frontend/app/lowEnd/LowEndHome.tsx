@@ -83,13 +83,18 @@ const LoweEndHome = () => {
       <div className="flex flex-col gap-2 p-4">
         <ClientOnly>
           {mainPageConfig.map((room) => (
-            <Card className="dark">
+            <Card
+              className="dark"
+              style={{
+                background: "url(./back2.webp)",
+              }}
+            >
               <CardHeader className="flex items-center justify-center">
                 <p className="text-md">{room.roomName}</p>
               </CardHeader>
               <Divider />
-              <CardBody>
-                <div className="grid grid-cols-2 xl:grid-cols-4">
+              <CardBody className="gap-2">
+                <div className="grid grid-cols-2 xl:grid-cols-5 gap-2">
                   {Array.from({ length: room.noOfLights }).map((_, index) => (
                     <LowEndToggle
                       key={index}
@@ -136,7 +141,7 @@ const LoweEndHome = () => {
                       />
                     ))}
                 </div>
-                <div className="grid grid-cols-1 xl:grid-cols-2">
+                <div className="grid grid-cols-1 xl:grid-cols-4">
                   {Array.from({ length: room.noOfFans }).map((_, index) => (
                     <FanSpeedSelector
                       key={index}
