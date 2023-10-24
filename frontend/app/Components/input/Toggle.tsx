@@ -83,26 +83,7 @@ const ToggleButton = ({
         </div>
       </ClientOnly>
     );
-  } else if (slideVersion) {
-    return (
-      <ClientOnly>
-        <div
-          className="flex flex-col items-center justify-center ml-5"
-          id={topic}
-        >
-          <div className="checkbox-wrapper-25">
-            <input
-              type="checkbox"
-              checked={isToggled}
-              onChange={handleCheckboxChange}
-            />
-          </div>
-
-          <div className="text-sm font-bold text-gray-300">{subTitle}</div>
-        </div>
-      </ClientOnly>
-    );
-  } else {
+  }  else {
     return (
       <ClientOnly>
         <div className="flex flex-col items-center justify-center" id={topic}>
