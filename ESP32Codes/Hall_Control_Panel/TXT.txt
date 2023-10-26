@@ -1,0 +1,84 @@
+Security Page: https://istc-minor-project.vercel.app/securitySystem
+The low-end version of the site: https://istc-minor-project.vercel.app/lowEnd
+GitHub:https://github.com/SshgurkiratSingh/ISTC_Minor_Project
+Current MQTT server: ec2-3-88-49-62.compute-1.amazonaws.com
+Home Page: https://istc-minor-project.vercel.app/
+Http Api : http://ec2-3-88-49-62.compute-1.amazonaws.com:2500
+Topic to be used by Cleaning Robot: "clean", "sweep", "moop", "areaCovered"
+
+const char topics[MAX_ITEMS][30] = {"IoT/hall/light1", "IoT/hall/light2", "IoT/hall/ambientLight", "IoT/hall/TV", "IoT/hall/fan1", "IoT/hall/fan2", "IoT/hall/switchBoard1"};
+- DHT22 attached to pin 15
+- Fan 1 attached to pin 18
+- Fan 2 attached to pin 4
+- Light 1 attached to pin 23
+- Ambient Led attached to pin 2
+- Plug attached to pin 5
+- Brightness Led attached to pin 19
+const uint8_t itemPin[MAX_ITEMS - 1] = {23, 19, 18, 5, 4, 2};
+
+
+
+updated topic list:- 
+IoT/room1/light1
+- IoT/room1/light2
+- IoT/room1/temperature
+- IoT/room1/humidity
+- IoT/room1/fan1
+- IoT/room1/switchBoard1
+- IoT/room1/brightness1
+- IoT/garage/light1
+- IoT/garage/light2
+- IoT/garage/door
+- IoT/garage/occupancy
+- IoT/garage/personMonitoring
+- IoT/kitchen/light1
+- IoT/kitchen/light2
+- IoT/kitchen/switchBoard1
+- IoT/kitchen/temperature
+- IoT/kitchen/humidity
+- IoT/kitchen/fan1
+- IoT/kitchen/airQuality
+- IoT/kitchen/brightness1
+- IoT/kitchen/fireIndicator
+- IoT/entrance/door
+- IoT/entrance/light1
+- IoT/entrance/rainCheck
+- IoT/entrance/lightIntensity
+- IoT/entrance/temperature
+- IoT/hall/light1
+- IoT/hall/light2
+- IoT/hall/ambientLight
+- IoT/hall/TV
+- IoT/hall/fan1
+- IoT/hall/fan2
+- IoT/hall/temperature
+- IoT/hall/humidity
+- IoT/hall/airQuality
+- IoT/hall/switchBoard1
+- IoT/lawn/soilMoisture
+- IoT/lawn/light1
+- IoT/lawn/light2
+- IoT/lawn/light3
+- IoT/lawn/light4
+- IoT/lawn/sunlight
+- IoT/lawn/rainStatus
+- IoT/lawn/soilMoisture1
+- IoT/lawn/soilMoisture2
+- IoT/lawn/pump1
+- IoT/lawn/pump2
+- IoT/lawn/autonomousMode
+- IoT/lawn/autonomousLighting
+- IoT/lawn/disengageIndruderDetector
+- IoT/lawn/airQuality
+- IoT/lawn/temperature
+- IoT/lawn/humidity
+- IoT/lawn/brightness1
+- IoT/washroom/light1
+- IoT/washroom/gyser
+- IoT/store/light1
+- IoT/store/fireIndicator
+- IoT/auxiliary/tankLevel
+- IoT/robot/clean
+- IoT/robot/sweep
+- IoT/robot/moop
+- IoT/robot/areaCovered
