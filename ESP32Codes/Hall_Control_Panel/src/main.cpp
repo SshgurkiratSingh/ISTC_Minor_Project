@@ -1,6 +1,5 @@
 /*
-Author: Gurkirat Singh <gurkirat7092@yahoo.com>
-Date: Sept 28, 2023
+Date: oct 26
 Description:
 Updated ersion of OLED_ROOM1
 This code establish connection as control panel to mqtt server to control nodes over wifi.
