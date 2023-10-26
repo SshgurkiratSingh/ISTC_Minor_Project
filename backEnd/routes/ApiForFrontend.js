@@ -8,6 +8,8 @@ const mqtt = require("mqtt");
 const client = mqtt.connect("mqtt://localhost:1883");
 const fs = require("fs");
 const EntryCache = require("../CustomModule/cacheManager");
+let totalPowerConsumption = 2.54;
+
 const sensorTopicToStore = [
   "IoT/garage/personMonitoring",
   "IoT/kitchen/airQuality",
@@ -93,6 +95,12 @@ client.on("connect", () => {
     }
   }
 });
+const powerConsumptionValues = {
+  light: 0.07,
+  fan: (Math.random() * (0.4 - 0.35) + 0.35).toFixed(2), // Random value between 0.35 and 0.40
+  switchBoard: (Math.random() * (1.3 - 0.5) + 0.5).toFixed(2), // Random value between 0.5 and 1.3
+  TV: 0.88,
+};
 client.on("message", (topic, message) => {
   logs = logs.filter((log) => log.topic !== topic);
   console.log(topic, message.toString());
@@ -101,6 +109,7 @@ client.on("message", (topic, message) => {
     value: message.toString(),
     lastUpdate: new Date().toISOString(),
   });
+
   // if topic is from sensorTopicToStore, store the message in fie named SensorLogs.json
   if (sensorTopicToStore.includes(topic)) {
     let fileData;
