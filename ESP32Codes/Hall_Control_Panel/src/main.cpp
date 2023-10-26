@@ -6,7 +6,7 @@ Updated ersion of OLED_ROOM1
 This code establish connection as control panel to mqtt server to control nodes over wifi.
 
 - PushButton attached to pin 32,33,27
-- OLED attached to pin 22 (sda),21
+- OLED attached to pin 21 (sda),22
 - DHT22 attached to pin 15
 - Fan 1 attached to pin 18
 - Fan 2 attached to pin 4
