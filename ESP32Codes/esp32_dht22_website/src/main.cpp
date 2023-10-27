@@ -314,5 +314,5 @@ void loop()
   fixNumbering();
   displayItems();
   checkButtons();
-  delay(100);
+  
 }
