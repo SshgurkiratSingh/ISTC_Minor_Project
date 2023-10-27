@@ -211,7 +211,8 @@ void setup()
     display.clearDisplay();
     display.setTextSize(1);
     display.setTextColor(WHITE);
-    WiFi.begin("Wokwi-GUEST", "");
+// WiFi Name Here:______
+    WiFi.begin("ConForNode1", "12345678");
     client.setServer(mqtt_server, 1883);
     client.setCallback(callback);
     uint8_t i = 0;
@@ -518,5 +519,5 @@ void loop()
     checkButtons();
     updateOutput();
     updateTempHum();
-    delay(100);
+    
 }

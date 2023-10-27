@@ -82,7 +82,7 @@ void loop()
   client.setInsecure(); // Ignore SSL certificate verification if self-signed without it is returning 400 error
   // and server doesnot get any req
 
-  http.begin(client, "https://nodejs.gurkirat7092.repl.co/api/security/validateUser"); // Specify the request destination and give it wifi object
+  http.begin(client, "https://istc-minor-project.vercel.app/api/security/validateUser"); // Specify the request destination and give it wifi object
 
   http.addHeader("Content-Type", "application/json"); // Specify content type
   DynamicJsonDocument doc(1024);                      // DynamicJsonDocument object instance
