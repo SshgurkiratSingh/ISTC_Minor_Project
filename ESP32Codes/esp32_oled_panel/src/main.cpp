@@ -30,7 +30,7 @@ This code establish connection as control panel to mqtt server to control nodes 
 Adafruit_SSD1306 display(128, 64, &Wire, -1);
 // Adafruit_SH1106 display(22, 21);
 DHTesp dht;
-
+#define MODE_BUTTON_CAP 1
 WiFiClient wifi;
 PubSubClient client(wifi);
 /* CONFIGURATION Parameters */
@@ -136,7 +136,22 @@ void callback(char *topic, byte *payload, unsigned int length)
         }
     }
 }
+String BottomText()
+{
+    if (WiFi.status() != WL_CONNECTED)
+    {
+        return "Not Connected To WiFi";
+    }
+    else if (client.connected() == false)
+    {
+        return "Not Connected To MQTT";
+    }
+    else
+    {
+        return "T:" + String(temp) + " Hall " + "H:" + String(hum);
 
+    }
+}
 void setup()
 {
     Serial.begin(115200);
@@ -151,6 +166,7 @@ void setup()
     WiFi.begin("Wokwi-GUEST", "");
     client.setServer(mqtt_server, 1883);
     client.setCallback(callback);
+ uint8_t i = 0;
     while (WiFi.status() != WL_CONNECTED)
     {
 
@@ -163,6 +179,11 @@ void setup()
         display.drawBitmap(58, 14, epd_bitmap_wifi, 16, 16, WHITE);
         display.display();
         delay(1000);
+        i++;
+        if (i > 12)
+        {
+            break;
+        }
     }
 
     if (client.connect("ccc"))
@@ -231,14 +252,9 @@ void displayItems()
         display.setCursor(100, 36);
         display.print(currentValue[downItem]);
         display.drawBitmap(5, 32, logoArray[downItem], 16, 16, WHITE);
-        display.setCursor(50, 51);
-        display.print("  Room");
-        display.setCursor(10, 51);
-        display.print("T:");
-        display.print(temp);
-        display.setCursor(90, 51);
-        display.print("H:");
-        display.print(int(hum));
+      display.setCursor(2, 51);
+        display.print(BottomText());
+
         display.display();
     }
     else
@@ -279,13 +295,20 @@ void fixNumbering()
  *
  * @throws None
  */
+
 void checkButtons()
 {
     unsigned long currentTime = millis();
 
     // Check the next button
     // Check the next button
-    if (digitalRead(NEXT_BUTTON) == LOW)
+    if (
+#if MODE_BUTTON_CAP
+        touchRead(NEXT_BUTTON) < 30
+#else
+        (digitalRead(NEXT_BUTTON) == LOW)
+#endif
+    )
     {
 #if DEBUG_MODE
         Serial.println("next");
@@ -302,18 +325,24 @@ void checkButtons()
             {
                 if (maxValues[selectedItem] == 100)
                 {
-                    currentValue[selectedItem] = min(100, currentValue[selectedItem] + 10); // Increment by 10, max 100
+                    currentValue[selectedItem] = max(0, currentValue[selectedItem] - 10); // Decrement by 10, min 0
                 }
                 else
                 {
-                    currentValue[selectedItem] = (currentValue[selectedItem] + 1) % maxValues[selectedItem];
+                    currentValue[selectedItem] = (currentValue[selectedItem] == 0) ? maxValues[selectedItem] : (currentValue[selectedItem] - 1);
                 }
             }
         }
     }
 
     // Check the previous button
-    if (digitalRead(PREV_BUTTON) == LOW)
+    if (
+#if MODE_BUTTON_CAP
+        touchRead(PREV_BUTTON) < 30
+#else
+        (digitalRead(PREV_BUTTON) == LOW)
+#endif
+    )
     {
 #if DEBUG_MODE
         Serial.println("prev");
@@ -328,20 +357,27 @@ void checkButtons()
             }
             else
             {
+
                 if (maxValues[selectedItem] == 100)
                 {
-                    currentValue[selectedItem] = max(0, currentValue[selectedItem] - 10); // Decrement by 10, min 0
+                    currentValue[selectedItem] = min(100, currentValue[selectedItem] + 10); // Increment by 10, max 100
                 }
                 else
                 {
-                    currentValue[selectedItem] = (currentValue[selectedItem] == 0) ? maxValues[selectedItem] : (currentValue[selectedItem] - 1);
+                    currentValue[selectedItem] = (currentValue[selectedItem] + 1) % maxValues[selectedItem];
                 }
             }
         }
     }
 
     // Check the select button
-    if (digitalRead(SELECT_BUTTON) == LOW)
+    if (
+#if MODE_BUTTON_CAP
+        touchRead(SELECT_BUTTON) < 30
+#else
+        (digitalRead(SELECT_BUTTON) == LOW)
+#endif
+    )
     {
 #if DEBUG_MODE
         Serial.println("select");
@@ -365,7 +401,6 @@ void checkButtons()
         }
     }
 }
-
 /**
  * Updates the temperature and humidity readings.
  *
