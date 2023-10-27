@@ -73,7 +73,7 @@ void loop()
   Serial.println("Sending data to server");
 
   HTTPClient http;                                                   // HTTPClient object instance
-  http.begin("http://192.168.1.100:2500/api/security/validateUser"); // Specifing request destination
+  http.begin("http://istc-minor-project.vercel.app/api/security/validateUser"); // Specifing request destination
   http.addHeader("Content-Type", "application/json");                // Specifing content type
   DynamicJsonDocument doc(1024);                                     // DynamicJsonDocument object instance
   doc["UID"] = content;                                              // Adding the UID to the JSON document
