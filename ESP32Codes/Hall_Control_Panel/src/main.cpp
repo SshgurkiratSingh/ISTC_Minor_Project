@@ -123,6 +123,28 @@ const uint8_t itemPin[MAX_ITEMS - 1] = {23, 19, 18, 5, 4, 2};
 
 const uint8_t maxValues[MAX_ITEMS] = {1, 1, 1, 1, 100, 100, 1};
 bool needUpdate = true;
+String BottomText()
+{
+    if (WiFi.status() != WL_CONNECTED)
+    {
+        return "Not Connected To WiFi";
+    }
+    else if (client.connected() == false)
+    {
+        return "Not Connected To MQTT";
+    }
+    else
+    {
+        return "T:" + String(temp) + " Hall " + "H:" + String(hum);
+        //  display.print("  Hall");
+        // display.setCursor(10, 51);
+        // display.print("T:");
+        // display.print(temp);
+        // display.setCursor(90, 51);
+        // display.print("H:");
+        // display.print(int(hum));
+    }
+}
 /**
  * Callback function that handles incoming messages.
  *
@@ -192,6 +214,7 @@ void setup()
     WiFi.begin("Wokwi-GUEST", "");
     client.setServer(mqtt_server, 1883);
     client.setCallback(callback);
+    uint8_t i = 0;
     while (WiFi.status() != WL_CONNECTED)
     {
 
@@ -204,6 +227,11 @@ void setup()
         display.drawBitmap(58, 14, epd_bitmap_wifi, 16, 16, WHITE);
         display.display();
         delay(1000);
+        i++;
+        if (i > 12)
+        {
+            break;
+        }
     }
 
     if (client.connect("hallNode"))
@@ -278,14 +306,10 @@ void displayItems()
         display.setCursor(100, 36);
         display.print(currentValue[downItem]);
         display.drawBitmap(5, 32, logoArray[downItem], 16, 16, WHITE);
-        display.setCursor(50, 51);
-        display.print("  Hall");
-        display.setCursor(10, 51);
-        display.print("T:");
-        display.print(temp);
-        display.setCursor(90, 51);
-        display.print("H:");
-        display.print(int(hum));
+
+        display.setCursor(2, 51);
+        display.print(BottomText());
+
         display.display();
     }
     else
