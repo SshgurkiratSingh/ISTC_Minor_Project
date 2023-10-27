@@ -494,5 +494,5 @@ void loop()
     checkButtons();
     updateOutput();
     updateTempHum();
-    delay(100);
+    
 }
