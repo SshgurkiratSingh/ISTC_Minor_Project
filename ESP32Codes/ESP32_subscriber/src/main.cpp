@@ -20,7 +20,7 @@ PubSubClient client(wifi);
 #define MQTT_SERVER "ec2-3-88-49-62.compute-1.amazonaws.com"
 #define MQTT_PORT 1883
 /*                      Debug Configurations                             */
-#define DEBUG_MODE 0
+#define DEBUG_MODE 1
 /*                      Toggle Configurations                             */
 #define totalTogglesTopics 2
 String toggleTopics[totalTogglesTopics] = {"IoT/room1/light1", "IoT/room1/switchBoard1"};
