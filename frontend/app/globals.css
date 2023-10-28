@@ -268,20 +268,26 @@ font-weight: bolder;
   font-size: 1.3em;
   letter-spacing: 4px;
   overflow: hidden;
-  background: linear-gradient(90deg, #0babea, #d41c1c, #11ea19);
+  background: linear-gradient(90deg, #0babea, #d41c1c, #ff7504b7, #a200ffc4);
   background-repeat: no-repeat;
   background-size: 83%;
-  animation: animate 3s linear infinite;
+  animation: animate 4s linear infinite;
   -webkit-background-clip: text;
   -webkit-text-fill-color: rgba(255, 255, 255, 0);
 }
 
 @keyframes animate {
   0% {
-    background-position: -500%;
+    background-position: -250%;
+  }
+  50%{
+    background-position: 370%;
+  }
+  75% {
+    background-position: 250%;
   }
   100% {
-    background-position: 500%;
+    background-position: -50%;
   }
 }
 .custom-select-item {
@@ -289,7 +295,7 @@ font-weight: bolder;
 }
 
 .button-toggle {
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
   will-change: transform;
 }
 

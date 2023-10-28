@@ -79,11 +79,11 @@ const mainPageConfig = [
           "subTitle": "Garage Light 2",
           "identity": "Garage Light 2"
         },
-        // {
-        //   "topic": "IoT/store/light1",
-        //   "subTitle": "Store Light 1",
-        //   "identity": "Store Light 1"
-        // },
+        {
+          "topic": "IoT/auxilary/pump1",
+          "subTitle": "Water Tank Pump",
+          "identity": "Store Light 1"
+        },
         // {
         //   "topic": "IoT/store/light2",
         //   "subTitle": "Store Light 2",

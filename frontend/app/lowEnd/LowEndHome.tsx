@@ -87,6 +87,9 @@ const LoweEndHome = () => {
               className="dark"
               style={{
                 background: "url(./back2.webp)",
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+                backgroundRepeat: "no-repeat",
               }}
             >
               <CardHeader className="flex items-center justify-center">
@@ -141,7 +144,8 @@ const LoweEndHome = () => {
                       />
                     ))}
                 </div>
-                <div className="grid grid-cols-1 xl:grid-cols-4">
+                <Divider />
+                <div className="grid grid-cols-1 xl:grid-cols-4 mb-16">
                   {Array.from({ length: room.noOfFans }).map((_, index) => (
                     <FanSpeedSelector
                       key={index}
@@ -156,6 +160,7 @@ const LoweEndHome = () => {
                       customHeading="Fan Speed"
                     />
                   ))}
+
                   {Array.from({ length: room.noOfBrightness }).map(
                     (_, index) => (
                       <FanSpeedSelector
@@ -175,6 +180,39 @@ const LoweEndHome = () => {
                   )}
                 </div>
               </CardBody>
+              <CardFooter className="absolute bg-black/40 bottom-0 z-10 border-t-1 w-full border-default-600 dark:border-default-100 ">
+                {ServerData?.find(
+                  (item) => item.topic === `IoT/${room.roomTag}/temperature`
+                ) && (
+                  <div className="flex flex-col items-center justify-center w-full m-1 text-center">
+                    <p className="text-md">
+                      Temperature:{" "}
+                      {
+                        ServerData?.find(
+                          (item) =>
+                            item.topic === `IoT/${room.roomTag}/temperature`
+                        )?.value
+                      }
+                      &deg;C
+                    </p>
+                    <p className="text-md">
+                      Humidity:{" "}
+                      {
+                        ServerData?.find(
+                          (item) =>
+                            item.topic === `IoT/${room.roomTag}/humidity`
+                        )?.value
+                      }
+                      %
+                    </p>
+                  </div>
+                )}
+                {room.customNotes && (
+                  <div className="flex flex-col items-center justify-center w-full m-1 text-center">
+                    <p className="text-md">{room.customNotes}</p>
+                  </div>
+                )}
+              </CardFooter>
             </Card>
           ))}
         </ClientOnly>
