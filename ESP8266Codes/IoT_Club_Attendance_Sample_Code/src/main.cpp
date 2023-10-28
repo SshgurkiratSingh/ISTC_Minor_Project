@@ -17,7 +17,6 @@ The server responds with JSON data containing the following fields:
   - 1: Entry approved
   - 2: Entry denied due to lack of permissions
   - 3: Entry denied due to an unknown card
-** RFID code modified from Tarun Kotyan's code of door lock/unlock security
 
 ** Client
 The client sends a JSON data containing the following fields:
