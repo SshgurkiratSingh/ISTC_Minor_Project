@@ -310,7 +310,15 @@ void loop()
   if (touchRead(INSIDEBUTTON) < 30)
   {
     OpenDoor();
+    Serial.print("unlock trigg");
+    display.clearDisplay();
+    display.setCursor(0, 16);
+    display.print("Unlock Triggered from Inside");
+    display.display();
     delay(5000);
+      display.clearDisplay();
+  display.drawBitmap(0, 0, lock, 128, 64, WHITE);
+  display.display();
   }
   if (!mfrc522.PICC_IsNewCardPresent()) // Look for new cards
   {
@@ -372,13 +380,15 @@ void loop()
       Serial.println(userName); // "printing the user name becuz now we are sure it exists"
       Serial.println("Unlocking");
       display.clearDisplay();
-      display.setCursor(5, 4);
-      display.print("Welcome,");
-      display.print(userName);
-      display.setTextSize(1);
+       display.setTextSize(2);
+      display.setCursor(5, 16);
+      display.println("Welcome,");
+      display.println(userName);
+     
       display.setCursor(5, 32);
-      display.drawBitmap(0, 0, unlock, 128, 64, WHITE);
+      // display.drawBitmap(0, 0, unlock, 128, 64, WHITE);
       display.display();
+      delay(6000);
       uint8_t i = 0;
       // do something on oled
     }
