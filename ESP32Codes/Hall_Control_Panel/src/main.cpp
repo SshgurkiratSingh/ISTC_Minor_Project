@@ -31,7 +31,7 @@ This code establish connection as control panel to mqtt server to control nodes 
 #define BRIGHTNESS 4
 
 // BUTTON CONFIG
-#define MODE_BUTTON_CAP 0
+#define MODE_BUTTON_CAP 1
 
 Adafruit_SSD1306 display(128, 64, &Wire, -1);
 // Adafruit_SH1106 display(22, 21);
@@ -123,6 +123,13 @@ const uint8_t itemPin[MAX_ITEMS - 1] = {23, 19, 18, 5, 4, 2};
 
 const uint8_t maxValues[MAX_ITEMS] = {1, 1, 1, 1, 100, 100, 1};
 bool needUpdate = true;
+/**
+ * Returns the bottom text to be displayed on the screen.
+ *
+ * @return The bottom text as a string.
+ *
+ * @throws None
+ */
 String BottomText()
 {
     if (WiFi.status() != WL_CONNECTED)
