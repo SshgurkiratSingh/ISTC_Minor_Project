@@ -37,8 +37,9 @@ const topicsByArea = {
     "fan1",
     "switchBoard1",
     "brightness1",
+    "pir1",
   ],
-  garage: ["light1", "light2", "door", "occupancy", "personMonitoring"],
+  garage: ["light1", "light2", "door", "occupancy", "personMonitoring", "pir1"],
   kitchen: [
     "light1",
     "light2",
@@ -62,6 +63,7 @@ const topicsByArea = {
     "humidity",
     "airQuality",
     "switchBoard1",
+    "pir1",
   ],
   lawn: [
     "soilMoisture",
@@ -95,12 +97,35 @@ client.on("connect", () => {
     }
   }
 });
-const powerConsumptionValues = {
-  light: 0.07,
-  fan: (Math.random() * (0.4 - 0.35) + 0.35).toFixed(2), // Random value between 0.35 and 0.40
-  switchBoard: (Math.random() * (1.3 - 0.5) + 0.5).toFixed(2), // Random value between 0.5 and 1.3
-  TV: 0.88,
-};
+function autonomousMode() {
+  const logEntry = logs.find((log) => log.topic === "IoT/lawn/autonomousMode");
+
+  if (logEntry && logEntry.value === "1") {
+    console.log("Autonomous mode on");
+    // check for room 1 light
+    if (logs.find((log) => log.topic === "IoT/room1/light2").value === "1") {
+      console.log("Room 1 light is on");
+      // check for pir1
+      let pir = logs.find((log) => log.topic === "IoT/room1/pir1");
+      let lastUpdate = new Date(logEntry.lastUpdate);
+      const currentTime = new Date();
+
+      if (pir.value == "1" && currentTime - lastUpdate > 10000) {
+        // turn off the light
+        console.log("Turning off the light");
+        client.publish("IoT/room1/light2", "0");
+      } else if (pir.value == "0") {
+        client.publish("IoT/room1/light2", "0");
+      }
+    }
+    // check for hall light
+    
+  } else {
+    console.log("Autonomous mode off");
+  }
+}
+setInterval(autonomousMode, 10000);
+
 client.on("message", (topic, message) => {
   logs = logs.filter((log) => log.topic !== topic);
   console.log(topic, message.toString());
@@ -170,7 +195,7 @@ router.get("/getSensorHistory", (req, res) => {
     (log) => log.topic === req.query.topic
   );
   if (sensorHistory) {
-    res.json(sensorHistory.splice(-10));
+    res.json(sensorHistory);
   } else {
     res.json({ message: "No data found" });
   }
