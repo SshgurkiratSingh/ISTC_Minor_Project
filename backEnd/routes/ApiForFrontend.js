@@ -119,12 +119,12 @@ function autonomousMode() {
       }
     }
     // check for hall light
-    
+
   } else {
     console.log("Autonomous mode off");
   }
 }
-setInterval(autonomousMode, 10000);
+setInterval(autonomousMode, 20000);
 
 client.on("message", (topic, message) => {
   logs = logs.filter((log) => log.topic !== topic);

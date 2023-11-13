@@ -1,7 +1,7 @@
 declare class AnyNull extends NullTypesEnumValue {
 }
 
-export declare type Args<T, F extends Operation> = T extends {
+declare type Args<T, F extends Operation> = T extends {
     [K: symbol]: {
         types: {
             operations: {
@@ -11,7 +11,7 @@ export declare type Args<T, F extends Operation> = T extends {
             };
         };
     };
-} ? T[symbol]['types']['operations'][F]['args'] : never;
+} ? T[symbol]['types']['operations'][F]['args'] : any;
 
 declare class DbNull extends NullTypesEnumValue {
 }
@@ -304,8 +304,8 @@ export declare class Decimal {
  */
 export declare function detectRuntime(): Runtime;
 
-export declare type Exact<A, W> = (A extends unknown ? (W extends A ? {
-    [K in keyof W]: K extends keyof A ? Exact<A[K], W[K]> : never;
+declare type Exact<A, W> = (A extends unknown ? (W extends A ? {
+    [K in keyof A]: Exact<A[K], W[K]>;
 } : W) : never) | (A extends Narrowable ? A : never);
 
 declare class JsonNull extends NullTypesEnumValue {
@@ -329,7 +329,7 @@ declare class JsonNull extends NullTypesEnumValue {
  */
 export declare function makeStrictEnum<T extends Record<PropertyKey, string | number>>(definition: T): T;
 
-export declare type Narrowable = string | number | bigint | boolean | [];
+declare type Narrowable = string | number | bigint | boolean | [];
 
 declare class NullTypesEnumValue extends ObjectEnumValue {
     _getNamespace(): string;
@@ -358,7 +358,7 @@ export declare const objectEnumValues: {
     };
 };
 
-export declare type Operation = 'findFirst' | 'findFirstOrThrow' | 'findUnique' | 'findUniqueOrThrow' | 'findMany' | 'create' | 'createMany' | 'update' | 'updateMany' | 'upsert' | 'delete' | 'deleteMany' | 'aggregate' | 'count' | 'groupBy' | '$queryRaw' | '$executeRaw' | '$queryRawUnsafe' | '$executeRawUnsafe' | 'findRaw' | 'aggregateRaw' | '$runCommandRaw';
+declare type Operation = 'findFirst' | 'findFirstOrThrow' | 'findUnique' | 'findUniqueOrThrow' | 'findMany' | 'create' | 'createMany' | 'update' | 'updateMany' | 'upsert' | 'delete' | 'deleteMany' | 'aggregate' | 'count' | 'groupBy' | '$queryRaw' | '$executeRaw' | '$queryRawUnsafe' | '$executeRawUnsafe' | 'findRaw' | 'aggregateRaw' | '$runCommandRaw';
 
 declare namespace Public {
     export {
@@ -367,7 +367,7 @@ declare namespace Public {
 }
 export { Public }
 
-export declare type Runtime = "edge-routine" | "workerd" | "deno" | "lagon" | "react-native" | "netlify" | "electron" | "node" | "bun" | "edge-light" | "fastly" | "unknown";
+declare type Runtime = "edge-routine" | "workerd" | "deno" | "lagon" | "react-native" | "netlify" | "electron" | "node" | "bun" | "edge-light" | "fastly" | "unknown";
 
 declare function validator<V>(): <S>(select: Exact<S, V>) => S;
 
