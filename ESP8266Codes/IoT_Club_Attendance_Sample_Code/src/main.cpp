@@ -32,35 +32,47 @@ The client sends a JSON data containing the following fields:
 #include <ArduinoJson.h>
 #include <ESP8266WiFi.h>
 #include <ESP8266HTTPClient.h>
+#include <Wire.h>
+
+#include <LiquidCrystal_I2C.h>
+
+LiquidCrystal_I2C lcd(0x3F, 16, 2);
 #define RST_PIN D3
 #define SS_PIN D4
 MFRC522 mfrc522(SS_PIN, RST_PIN);
 
 // --------------------------WiFi Credentials--------------------------------//
-#define WIFI_SSID "Node "
-#define WIFI_PASS "whyitellyou"
+#define WIFI_SSID "vivo Y21G"
+#define WIFI_PASS "password"
 WiFiClient wifi;
 
 void setup()
 {
+
   Serial.begin(115200); // Initialize serial communications with the PC
   Serial.print("Connecting to WiFi: " + String(WIFI_SSID) + " ... ");
   WiFi.begin(WIFI_SSID, WIFI_PASS);
 
-  // Wait until WiFi is connected
   while (WiFi.status() != WL_CONNECTED)
   {
     delay(500);
     Serial.print(".");
   }
   Serial.println("connected");
-  SPI.begin();        // Init SPI bus
-  mfrc522.PCD_Init(); // Init MFRC522
-  delay(4);           // Optional delay. Some boards may need more time after init to be ready,
- mfrc522.PCD_DumpVersionToSerial(); // Show details of PCD - MFRC522 Card Reader details
+  SPI.begin();                       // Init SPI bus
+  mfrc522.PCD_Init();                // Init MFRC522
+  delay(4);                          // Optional delay. Some boards may need more time after init to be ready,
+  mfrc522.PCD_DumpVersionToSerial(); // Show details of PCD - MFRC522 Card Reader details
 }
+/**
+ * This function is the main loop of the program. It checks if a new RFID card is present, reads the card's serial number, and sends a request to a server to validate the user. If the request is successful, it processes the response and performs actions based on the result. If the request fails, it handles the failure scenario. The function waits for 1 second before the next scan.
+ *
+ * @throws None
+ */
 void loop()
 {
+  lcd.print("Scan Your Card");
+
   if (!mfrc522.PICC_IsNewCardPresent())
   {
     return;
@@ -125,15 +137,18 @@ void loop()
 
     if (permissionToUnlock) // if permissionToUnlock is true
     {
+      lcd.print(userName);
       Serial.println(userName); // Printing the user name because now we are sure it exists
       Serial.println("Unlocking");
       // Do something (oled ,button , unlock door,logic here )
     }
     else
     {
+      lcd.print("Denied");
       Serial.println("Denied");
       // Handle the denied access scenario (print error on oled screen or whatever you want to do)
     }
+    delay(5000);
   }
   else
   {

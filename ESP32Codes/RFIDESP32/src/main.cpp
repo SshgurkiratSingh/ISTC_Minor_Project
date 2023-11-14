@@ -216,7 +216,7 @@ bool loadConfiguration()
   if (!configFile)
   {
     Serial.println("Failed to open config file for reading");
-
+    saveConfiguration(SSID, PASSWORD);
     return false;
   }
 

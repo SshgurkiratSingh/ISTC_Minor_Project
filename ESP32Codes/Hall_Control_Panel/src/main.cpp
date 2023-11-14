@@ -23,6 +23,8 @@ This code establish connection as control panel to mqtt server to control nodes 
 #include <Adafruit_SSD1306.h>
 #include <DHTesp.h>
 #include <WiFi.h>
+#include <LittleFS.h>
+#include <ArduinoJson.h>
 #define OLED_RESET 4
 // OUTPUT CONFIGS
 #define FAN 1
@@ -123,6 +125,117 @@ const uint8_t itemPin[MAX_ITEMS - 1] = {23, 19, 18, 5, 4, 2};
 
 const uint8_t maxValues[MAX_ITEMS] = {1, 1, 1, 1, 100, 100, 1};
 bool needUpdate = true;
+const char *configFilePath = "/config.json";
+char SSID[15] = "Wokwi-GUEST";
+char PASSWORD[15] = "";
+
+/**
+ * Loads the configuration from a file.
+ *
+ * @return true if the configuration is successfully loaded, false otherwise.
+ *
+ * @throws ErrorType if there is an error opening the config file or parsing the JSON.
+ */
+bool loadConfiguration()
+{
+    File configFile = LittleFS.open(configFilePath, "r");
+    if (!configFile)
+    {
+        Serial.println("Failed to open config file for reading");
+
+        return false;
+    }
+
+    size_t size = configFile.size();
+    if (size == 0)
+    {
+        Serial.println("Config file is empty");
+        configFile.close();
+        return false;
+    }
+
+    std::unique_ptr<char[]> buf(new char[size]);
+    configFile.readBytes(buf.get(), size);
+    configFile.close();
+
+    StaticJsonDocument<512> doc;
+    DeserializationError error = deserializeJson(doc, buf.get());
+    if (error)
+    {
+        Serial.println("Failed to parse config file");
+        return false;
+    }
+
+    const char *ssid = doc["ssid"];
+    const char *password = doc["password"];
+#if DBUG_MODE
+    Serial.print("Loaded SSID: ");
+    Serial.println(ssid);
+    Serial.print("Loaded password: ");
+    Serial.println(password);
+#endif
+    strcpy(SSID, ssid);
+    strcpy(PASSWORD, password);
+
+    return true;
+}
+/**
+ * Saves the given WiFi configuration to a file in LittleFS.
+ *
+ * @param ssid the SSID of the WiFi network
+ * @param password the password of the WiFi network
+ *
+ * @throws ErrorType if there is an error opening or writing to the config file
+ */
+void saveConfiguration(const char *ssid, const char *password)
+{
+    StaticJsonDocument<512> doc;
+    doc["ssid"] = ssid;
+    doc["password"] = password;
+    strcpy(SSID, ssid);
+    strcpy(PASSWORD, password);
+    File configFile = LittleFS.open(configFilePath, "w");
+    if (!configFile)
+    {
+        Serial.println("Failed to open config file for writing");
+        return;
+    }
+
+    serializeJson(doc, configFile);
+    configFile.close();
+    Serial.println("Configuration saved");
+    display.clearDisplay();
+    display.setTextSize(1);
+    display.println("Configuration Updated");
+    display.println("Restarting...");
+    display.display();
+    delay(3000);
+
+    ESP.restart();
+}
+/**
+ * Checks for configuration through UART.
+ *
+ * @throws ErrorType description of error
+ */
+void checkForConfigThroughUART()
+{
+    if (Serial.available())
+    {
+        String config = Serial.readString();
+        Serial.println(config);
+        StaticJsonDocument<512> doc;
+        DeserializationError error = deserializeJson(doc, config);
+        if (error)
+        {
+            Serial.println("Failed to parse config file");
+            return;
+        }
+        const char *ssid = doc["ssid"];
+        const char *password = doc["password"];
+        saveConfiguration(ssid, password);
+    }
+}
 /**
  * Returns the bottom text to be displayed on the screen.
  *
@@ -210,7 +323,9 @@ void callback(char *topic, byte *payload, unsigned int length)
 void setup()
 {
     Serial.begin(115200);
-    delay(1000);
+    LittleFS.begin();
+    saveConfiguration(SSID, PASSWORD);
+    loadConfiguration();
     dht.setup(15, DHTesp::DHT22);
     Serial.println(dht.getTemperature());
     display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
@@ -218,8 +333,7 @@ void setup()
     display.clearDisplay();
     display.setTextSize(1);
     display.setTextColor(WHITE);
-// WiFi Name Here:______
-    WiFi.begin("ConForNode1", "12345678");
+    WiFi.begin(SSID, PASSWORD);
     client.setServer(mqtt_server, 1883);
     client.setCallback(callback);
     uint8_t i = 0;
@@ -526,5 +640,4 @@ void loop()
     checkButtons();
     updateOutput();
     updateTempHum();
-    
 }

@@ -206,6 +206,15 @@ void checkForConfigThroughUART()
         saveConfiguration(ssid, password);
     }
 }
+/**
+ * Callback function that is called when a message is received.
+ *
+ * @param topic The topic of the message.
+ * @param payload The payload of the message.
+ * @param length The length of the payload.
+ *
+ * @throws None
+ */
 void callback(char *topic, byte *payload, unsigned int length)
 {
 
@@ -244,6 +253,11 @@ void callback(char *topic, byte *payload, unsigned int length)
         }
     }
 }
+/**
+ * Returns the bottom text based on the WiFi and MQTT connection status.
+ *
+ * @return The bottom text.
+ */
 String BottomText()
 {
     if (WiFi.status() != WL_CONNECTED)
@@ -259,6 +273,13 @@ String BottomText()
         return "T:" + String(temp) + " Hall " + "H:" + String(hum);
     }
 }
+/**
+ * Initializes the setup of the program.
+ *
+ * @return void
+ *
+ * @throws None
+ */
 void setup()
 {
     Serial.begin(115200);
@@ -273,7 +294,7 @@ void setup()
     display.clearDisplay();
     display.setTextSize(1);
     display.setTextColor(WHITE);
-    WiFi.begin(SSID, PASSWORD);
+    
     client.setServer(mqtt_server, 1883);
     client.setCallback(callback);
     uint8_t i = 0;
@@ -328,6 +349,11 @@ void setup()
     }
 }
 
+/**
+ * Displays the items on the screen.
+ *
+ * @throws ErrorType description of error
+ */
 void displayItems()
 {
     if (!needUpdate)
