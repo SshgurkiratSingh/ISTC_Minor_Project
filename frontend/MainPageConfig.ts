@@ -52,7 +52,14 @@ const mainPageConfig = [
         "topic": "IoT/robot/moop",
         "subTitle": "Moping Mode",
         "identity": "Moping Mode"
-      }],
+      }
+      ,{
+        "topic": "IoT/lawn/autonomousMode",
+        "subTitle": "Autonous Light Mode",
+        "identity": "Autonomous Mode"
+ 
+      }
+    ],
       "customNotes":"Control Panel for Cleaner Robot"
     },
      {
@@ -84,21 +91,21 @@ const mainPageConfig = [
           "subTitle": "Water Tank Pump",
           "identity": "Store Light 1"
         },
-        // {
-        //   "topic": "IoT/store/light2",
-        //   "subTitle": "Store Light 2",
-        //   "identity": "Store Light 2"
-        // },
-        // {
-        //   "topic": "IoT/washroom/light1",
-        //   "subTitle": "Washroom Light ",
-        //   "identity": "Washroom Light 1"
-        // },
-        // {
-        //   "topic": "IoT/washroom/gyser",
-        //   "subTitle": "Washroom Gyser",
-        //   "identity": "Washroom Gyser"
-        // }
+        {
+          "topic": "IoT/store/light2",
+          "subTitle": "Store Light 2",
+          "identity": "Store Light 2"
+        },
+        {
+          "topic": "IoT/washroom/light1",
+          "subTitle": "Washroom Light ",
+          "identity": "Washroom Light 1"
+        },
+        {
+          "topic": "IoT/washroom/gyser",
+          "subTitle": "Washroom Gyser",
+          "identity": "Washroom Gyser"
+        }
 
       ]
       
