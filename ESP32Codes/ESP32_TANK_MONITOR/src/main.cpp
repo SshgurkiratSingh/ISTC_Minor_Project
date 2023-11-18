@@ -38,6 +38,8 @@ void callback(char *topic, byte *payload, unsigned int length)
   strncpy(msg, (char *)payload, length);
   msg[length] = '\0';
   tankToFill = atoi(msg);
+  Serial.println(msg);
+  Serial.println(tankToFill);
 }
 
 void connectToMQTT()
@@ -95,11 +97,12 @@ bool lastStatus = false;
 void updateDisplay()
 {
   int levelPercentage = (waterLevel * 100) / WaterTankSize;
+  client.publish("maninder/tank/lvl", String(levelPercentage).c_str(), true);
   display.clearDisplay();
   display.setCursor(0, 0);
   display.setTextSize(1);
   display.println("IoT Water Monitor");
-  display.drawLine(0, 14, 128, 14, WHITE);
+  display.drawLine(0, 12, 128, 12, WHITE);
   display.setCursor(0, 16);
   display.setTextSize(1);
   display.print("Water Level: ");
@@ -158,6 +161,7 @@ void loop()
   checkAndFill();
   if (needUpdate)
   {
-    client.publish("maninder/tank/status", String(tankToFill).c_str(), true);
+    client.publish("maninder/tank/status", String(lastStatus).c_str(), true);
+    delay(1500);
   }
 }
