@@ -84,6 +84,7 @@ const topicsByArea = {
     "temperature",
     "humidity",
     "brightness1",
+     "brightness2",
   ],
   washroom: ["light1", "gyser"],
   store: ["light1", "fireIndicator"],
