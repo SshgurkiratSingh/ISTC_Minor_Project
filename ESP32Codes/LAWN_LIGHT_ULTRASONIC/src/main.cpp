@@ -2,7 +2,7 @@
 #include <WiFi.h>
 #include <PubSubClient.h>
 #include <NewPing.h>
-
+#include <DHTesp.h>
 // Ultrasonic Configuration and led config
 // Define LED pins
 int led_pin[4] = {21, 19, 18, 5}; // Changed to pins that are general-purpose IO
@@ -24,7 +24,8 @@ int maxSize = 40;
 #define CHECKSOUTH (southUltrasonic.ping_cm() >= maxSize)
 #define CHECKEAST (eastUltrasonic.ping_cm() >= maxSize)
 #define CHECKWEST (westUltrasonic.ping_cm() >= maxSize)
-
+#define DHTPIN 27 // Assigning GPIO 27 for DHT22
+DHTesp dht;
 //-------------------------- MQTT CONFIG---------------------------------
 #define MAX_TOPIC 7
 const String Topic_TO_Subscribe[MAX_TOPIC] = {
@@ -92,10 +93,35 @@ void callback(char *topic, byte *payload, unsigned int length)
     }
   }
 }
+int temp = 0;
+int hum = 0;
+void updateTempHum()
+{
+  float t = dht.getTemperature();
+  float h = dht.getHumidity();
+
+  if (isnan(t) || isnan(h) || t == 0 || h == 0)
+  {
+    return;
+  }
+  else
+  {
+
+    if ((temp != t) || (hum != h))
+    {
+      temp = t;
+      hum = h;
+      Serial.println("updatte detected");
+
+      client.publish(Topic_TO_Publish[0].c_str(), String(temp).c_str(), true);
+      client.publish(Topic_TO_Publish[1].c_str(), String(hum).c_str(), true);
+    }
+  }
+}
 
 void setup()
 {
-
+  dht.setup(DHTPIN, DHTesp::DHT22);
   // put your setup code here, to run once:
   Serial.begin(115200);
   WiFi.begin(SSID, PASSWORD);
@@ -129,6 +155,13 @@ void setup()
   }
 }
 #define LOWVALUE 50
+void debugLEDS()
+{
+  for (int i = 0; i < 4; i++)
+  {
+    Serial.println(digitalRead(led_pin[i]));
+  }
+}
 void loop()
 {
   client.loop();
@@ -177,5 +210,6 @@ void loop()
     analogWrite(led_pin[3], BRIGHTNESS2 * 2.55 * WESTVALUE);
     delay(500);
   }
-  
+  debugLEDS();
+  updateTempHum();
 }
