@@ -102,8 +102,8 @@ const uint8_t maxValues[MAX_ITEMS] = {1, 1, 100, 100, 1};
 bool needUpdate = true;
 
 const char *configFilePath = "/config.json";
-char SSID[15] = "Wokwi-GUEST";
-char PASSWORD[15] = "";
+char SSID[32] = "Wokwi-GUEST"; // Increased size for SSID
+char PASSWORD[64] = " ";       // Increased size for Password
 
 /**
  * Loads the configuration from a file.
@@ -112,13 +112,13 @@ char PASSWORD[15] = "";
  *
  * @throws ErrorType if there is an error opening the config file or parsing the JSON.
  */
+
 bool loadConfiguration()
 {
     File configFile = LittleFS.open(configFilePath, "r");
     if (!configFile)
     {
         Serial.println("Failed to open config file for reading");
-
         return false;
     }
 
@@ -142,41 +142,31 @@ bool loadConfiguration()
         return false;
     }
 
-    const char *ssid = doc["ssid"];
-    const char *password = doc["password"];
-#if DBUG_MODE
+    strlcpy(SSID, doc["ssid"] | "ConForNode1", sizeof(SSID));          // Safe copying with default value
+    strlcpy(PASSWORD, doc["password"] | "12345678", sizeof(PASSWORD)); // Safe copying with default value
+#if 1
     Serial.print("Loaded SSID: ");
-    Serial.println(ssid);
+    Serial.println(SSID);
     Serial.print("Loaded password: ");
-    Serial.println(password);
+    Serial.println(PASSWORD);
 #endif
-    strcpy(SSID, ssid);
-    strcpy(PASSWORD, password);
-
     return true;
 }
-/**
- * Saves the given WiFi configuration to a file in LittleFS.
- *
- * @param ssid the SSID of the WiFi network
- * @param password the password of the WiFi network
- *
- * @throws ErrorType if there is an error opening or writing to the config file
- */
+
 void saveConfiguration(const char *ssid, const char *password)
 {
     StaticJsonDocument<512> doc;
     doc["ssid"] = ssid;
     doc["password"] = password;
-    strcpy(SSID, ssid);
-    strcpy(PASSWORD, password);
+    strlcpy(SSID, ssid, sizeof(SSID));             // Safe copying
+    strlcpy(PASSWORD, password, sizeof(PASSWORD)); // Safe copying
+
     File configFile = LittleFS.open(configFilePath, "w");
     if (!configFile)
     {
         Serial.println("Failed to open config file for writing");
         return;
     }
-
     serializeJson(doc, configFile);
     configFile.close();
     Serial.println("Configuration saved");
@@ -192,20 +182,34 @@ void checkForConfigThroughUART()
 {
     if (Serial.available())
     {
-        String config = Serial.readString();
+        String config = Serial.readStringUntil('\n'); // Read until newline
+        Serial.print("Received Config: ");
         Serial.println(config);
         StaticJsonDocument<512> doc;
         DeserializationError error = deserializeJson(doc, config);
         if (error)
         {
-            Serial.println("Failed to parse config file");
+            Serial.print("Failed to parse JSON: ");
+            Serial.println(error.c_str());
             return;
         }
-        const char *ssid = doc["ssid"];
-        const char *password = doc["password"];
-        saveConfiguration(ssid, password);
+        const char *newSSID = doc["ssid"];         // Directly access the ssid
+        const char *newPassword = doc["password"]; // Directly access the password
+        if (newSSID != nullptr && newPassword != nullptr)
+        {
+            Serial.print("New SSID: ");
+            Serial.println(newSSID);
+            Serial.print("New Password:");
+            Serial.println(newPassword);
+            saveConfiguration(newSSID, newPassword);
+        }
+        else
+        {
+            Serial.println("Invalid or missing SSID/Password in JSON");
+        }
     }
 }
+
 /**
  * Callback function that is called when a message is received.
  *
@@ -284,7 +288,6 @@ void setup()
 {
     Serial.begin(115200);
     LittleFS.begin();
-    saveConfiguration(SSID, PASSWORD);
     loadConfiguration();
     delay(1000);
     dht.setup(15, DHTesp::DHT22);
@@ -294,9 +297,10 @@ void setup()
     display.clearDisplay();
     display.setTextSize(1);
     display.setTextColor(WHITE);
-    
+
     client.setServer(mqtt_server, 1883);
     client.setCallback(callback);
+    WiFi.begin(SSID, PASSWORD);
     uint8_t i = 0;
     while (WiFi.status() != WL_CONNECTED)
     {
