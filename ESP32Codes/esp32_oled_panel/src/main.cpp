@@ -287,7 +287,10 @@ String BottomText()
 void setup()
 {
     Serial.begin(115200);
-    LittleFS.begin();
+    if (!LittleFS.begin())
+    {
+        Serial.println("An Error has occurred while mounting LittleFS");
+    }
     loadConfiguration();
     delay(1000);
     dht.setup(15, DHTesp::DHT22);
