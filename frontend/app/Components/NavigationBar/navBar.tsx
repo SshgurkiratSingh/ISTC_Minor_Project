@@ -22,6 +22,7 @@ const NavBar = () => {
     { heading: "Sensor History", to: "/historyPage" },
     { heading: "About", to: "/about" },
     { heading: "Low End Version ", to: "/lowEnd" },
+    { heading: "Smart City Parking ", to: "/smartParking" },
   ];
 
   return (
@@ -50,7 +51,7 @@ const NavBar = () => {
         justify="center"
       >
         <NavbarBrand>
-          <p className="titBlock text-4xl">Minor Project-Home Automation</p>
+          <p className="titBlock text-4xl">Minor Project </p>
         </NavbarBrand>
 
         {/* <NavbarItem>
@@ -94,6 +95,17 @@ const NavBar = () => {
               Sensor History
             </Button>
           </Link>
+        </NavbarItem>{" "}
+        <NavbarItem className="hidden xl:block">
+          <Link href="/smartParking">
+            <Button
+              as={Link}
+              variant="bordered"
+              className="font-bold hover:border-white transition"
+            >
+              Smart Parking
+            </Button>
+          </Link>
         </NavbarItem>
       </NavbarContent>
 
@@ -105,7 +117,6 @@ const NavBar = () => {
             </Link>
           </NavbarMenuItem>
         ))}
-        
       </NavbarMenu>
     </Navbar>
   );
