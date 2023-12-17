@@ -43,7 +43,9 @@ const ParkingContent = () => {
         <CardFooter>
           <Popover placement="right" className="dark">
             <PopoverTrigger>
-              <Button>Check Slot Availibility</Button>
+              <Button className="ml-2 ghost" variant="ghost" color="secondary">
+                Check Slot Availibility
+              </Button>
             </PopoverTrigger>
             <PopoverContent>
               <div className="px-1 py-2">
@@ -54,7 +56,9 @@ const ParkingContent = () => {
           </Popover>
           <Popover placement="top" className="dark">
             <PopoverTrigger>
-              <Button>Book a Slot</Button>
+              <Button className="ml-2 ghost" variant="ghost" color="primary">
+                Book a Slot
+              </Button>
             </PopoverTrigger>
             <PopoverContent>
               <div className="px-1 py-2">
@@ -70,7 +74,6 @@ const ParkingContent = () => {
                   <button className="bg-blue-500 text-white rounded-md p-2 mt-2">
                     Book Slot
                   </button>
-
                 </div>
               </div>
             </PopoverContent>
