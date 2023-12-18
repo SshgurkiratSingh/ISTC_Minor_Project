@@ -19,6 +19,9 @@ import {
 import React from "react";
 
 const ParkingContent = () => {
+  const [slotAvailable, setSlotAvailable] = React.useState(
+    Math.floor(Math.random() * 6)
+  );
   return (
     <div className="m-2 ">
       {" "}
@@ -41,7 +44,7 @@ const ParkingContent = () => {
         <CardBody></CardBody>
         <Divider />
         <CardFooter>
-          <Popover placement="right" className="dark">
+          <Popover placement="top" className="dark">
             <PopoverTrigger>
               <Button className="ml-2 ghost" variant="ghost" color="secondary">
                 Check Slot Availibility
@@ -50,7 +53,7 @@ const ParkingContent = () => {
             <PopoverContent>
               <div className="px-1 py-2">
                 <div className="text-small font-bold">Slot Left </div>
-                <div className="text-tiny">{Math.floor(Math.random() * 6)}</div>
+                <div className="text-tiny">{slotAvailable}</div>
               </div>
             </PopoverContent>
           </Popover>
@@ -71,7 +74,10 @@ const ParkingContent = () => {
                     max={6}
                     min={1}
                   />
-                  <button className="bg-blue-500 text-white rounded-md p-2 mt-2">
+                  <button
+                    className="bg-blue-500 text-white rounded-md p-2 mt-2"
+                    onClick={() => setSlotAvailable((slotAvailable - 1) % 6)}
+                  >
                     Book Slot
                   </button>
                 </div>
