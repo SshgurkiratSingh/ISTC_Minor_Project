@@ -291,15 +291,15 @@ void loop()
   Serial.println();
   Serial.println("Sending data to server");
 
-  HTTPClient http;                                                                            // HTTPClient object instance
-  http.begin("http://ec2-3-88-49-62.compute-1.amazonaws.com:2500/api/security/validateUser"); // Specifing request destination
-  http.addHeader("Content-Type", "application/json");                                         // Specifing content type
-  DynamicJsonDocument doc(1024);                                                              // DynamicJsonDocument object instance
-  doc["UID"] = content;                                                                       // Adding the UID to the JSON document
-  doc["nodeLocation"] = "Entrance";                                                           // identify the location (ee will have multiple rfid .one at garage and one at entrance so it is needed to distinguish between them)
-  String json;                                                                                // String for storing the JSON document
-  serializeJson(doc, json);                                                                   // Serializing the JSON document to a string
-  int httpCode = http.POST(json);                                                             // Sending the request
+  HTTPClient http;                                                                               // HTTPClient object instance
+  http.begin("http://ec2-35-170-242-83.compute-1.amazonaws.com:2500/api/security/validateUser"); // Specifing request destination
+  http.addHeader("Content-Type", "application/json");                                            // Specifing content type
+  DynamicJsonDocument doc(1024);                                                                 // DynamicJsonDocument object instance
+  doc["UID"] = content;                                                                          // Adding the UID to the JSON document
+  doc["nodeLocation"] = "Entrance";                                                              // identify the location (ee will have multiple rfid .one at garage and one at entrance so it is needed to distinguish between them)
+  String json;                                                                                   // String for storing the JSON document
+  serializeJson(doc, json);                                                                      // Serializing the JSON document to a string
+  int httpCode = http.POST(json);                                                                // Sending the request
 
   if (httpCode == HTTP_CODE_OK)
   {

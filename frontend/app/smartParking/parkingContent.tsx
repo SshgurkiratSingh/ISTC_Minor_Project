@@ -16,12 +16,15 @@ import {
   PopoverContent,
   Button,
 } from "@nextui-org/react";
-import React from "react";
+import React, { useEffect } from "react";
 
 const ParkingContent = () => {
   const [slotAvailable, setSlotAvailable] = React.useState(
     Math.floor(Math.random() * 6)
   );
+  // Fetch data from /api/user/entry
+    
+
   return (
     <div className="m-2 ">
       {" "}

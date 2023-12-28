@@ -50,7 +50,7 @@ const String Topic_TO_Publish[2] = {
     "IoT/lawn/temperature",
     "IoT/lawn/humidity",
 };
-const char *mqtt_server = "ec2-3-88-49-62.compute-1.amazonaws.com";
+const char *mqtt_server = "ec2-35-170-242-83.compute-1.amazonaws.com";
 //----------------------------Wifi Config --------------------------------
 char SSID[15] = "Wokwi-GUEST";
 char PASSWORD[15] = "";

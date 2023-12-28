@@ -16,7 +16,7 @@ int n = LOW;
 DHTesp dht;
 #define SSID "Wokwi-GUEST"
 #define PASSWORD ""
-#define MQTT_SERVER "ec2-3-88-49-62.compute-1.amazonaws.com"
+#define MQTT_SERVER "ec2-35-170-242-83.compute-1.amazonaws.com"
 #define MQTT_PORT 1883
 #define DEBUG_MODE 1
 #define MAX_ITEMS 5

@@ -17,7 +17,7 @@ WiFiClient wifi;
 PubSubClient client(wifi);
 #define SSID "Node "
 #define PASSWORD "whyitellyou"
-#define MQTT_SERVER "ec2-3-88-49-62.compute-1.amazonaws.com"
+#define MQTT_SERVER "ec2-35-170-242-83.compute-1.amazonaws.com"
 #define MQTT_PORT 1883
 /*                      Debug Configurations                             */
 #define DEBUG_MODE 1

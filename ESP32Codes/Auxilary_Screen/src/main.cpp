@@ -78,7 +78,7 @@ bool inItem = false;
 uint8_t selectedItem = 0;
 uint8_t upItem;
 uint8_t downItem;
-const char *mqtt_server = "ec2-3-88-49-62.compute-1.amazonaws.com";
+const char *mqtt_server = "ec2-35-170-242-83.compute-1.amazonaws.com";
 float temp = 0;
 float hum = 0;
 // Items Configuration starts here
