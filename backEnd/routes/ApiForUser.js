@@ -134,4 +134,25 @@ router.get("/get-entries", async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 });
+// function to get uid and store it in variable
+let uidLogs = [];
+router.post("/add", async (req, res) => {
+  try {
+    const { uid } = req.body;
+    uidLogs.push({ timestamp: new Date(), uid });
+    res.json({ msg: "UID added successfully" });
+  } catch (error) {
+    console.error("Failed to add UID:", error);
+    res.status(500).json({ error: "Server error" }); // Include the error message and a 500 status code
+  }
+});
+router.get("/get-uid", async (req, res) => {
+  try {
+    res.json({ uidLogs });
+  } catch (error) {
+    console.error("Failed to get UID:", error);
+    res.status(500).json({ error: "Server error" }); // Include the error message and a 500 status code
+  }
+});
+
 module.exports = router;
