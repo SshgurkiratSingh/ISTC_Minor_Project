@@ -16,14 +16,45 @@ import {
   PopoverContent,
   Button,
 } from "@nextui-org/react";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import { toast } from "react-toastify";
+import StatusChip from "../Components/StatusChip";
+type ApiResponse = {
+  uid: string;
+  timestamp: string; // Use 'Date' if the timestamp is a Date object
+};
 
 const ParkingContent = () => {
   const [slotAvailable, setSlotAvailable] = React.useState(
     Math.floor(Math.random() * 6)
   );
   // Fetch data from /api/user/entry
-    
+  const [data, setData] = useState<ApiResponse[]>([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch("/api/userCustom/get-uid");
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        const result = await response.json();
+        setData(result.uidLogs);
+        console.log(result); // Debug: log fetched data
+
+        toast.success("Data refreshed successfully");
+      } catch (error) {
+        console.error("There was a problem with the fetch operation:", error);
+      }
+    };
+
+    // Fetch data immediately and then set an interval to fetch every 10 seconds
+    fetchData();
+    const intervalId = setInterval(fetchData, 15000); // 10000 milliseconds = 10 seconds
+
+    // Clear the interval when the component unmounts
+    return () => clearInterval(intervalId);
+  }, []);
 
   return (
     <div className="m-2 ">
@@ -35,13 +66,38 @@ const ParkingContent = () => {
         <Divider />
         <CardBody>
           {" "}
-          <Table aria-label="Example empty table">
+          <Table aria-label="Example table with data">
             <TableHeader>
               <TableColumn>UID</TableColumn>
               <TableColumn>TimeStamp</TableColumn>
               <TableColumn>STATUS</TableColumn>
             </TableHeader>
-            <TableBody emptyContent={"No rows to display."}>{[]}</TableBody>
+            <TableBody>
+              {data && data.length > 0 ? (
+                data.map((item, index) => (
+                  <TableRow key={index}>
+                    <TableCell>{item.uid}</TableCell>
+                    <TableCell>
+                      {new Date(item.timestamp).toLocaleString()}
+                    </TableCell>
+                    <TableCell>
+                      <StatusChip
+                        status={true}
+                        label="Approved"
+                        falseText=" "
+                      />
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  {/* Make this TableCell span all 3 columns */}
+                  <TableCell>No rows to display.</TableCell>
+                  <TableCell>No rows to display.</TableCell>
+                  <TableCell>No rows to display.</TableCell>
+                </TableRow>
+              )}
+            </TableBody>
           </Table>
         </CardBody>
         <CardBody></CardBody>
