@@ -105,7 +105,6 @@ bool needUpdate = true;
 char SSID[32] = "ConForNode1"; // Increased size for SSID
 char PASSWORD[64] = "12345678";       // Increased size for Password
 
-
 /**
  * Callback function that is called when a message is received.
  *

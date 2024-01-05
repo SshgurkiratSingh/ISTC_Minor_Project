@@ -4,5 +4,6 @@
     "files.associations": {
         "*.embeddedhtml": "html",
         "littlefs.h": "c"
-    }
+    },
+    "ros.distro": "foxy"
 }
