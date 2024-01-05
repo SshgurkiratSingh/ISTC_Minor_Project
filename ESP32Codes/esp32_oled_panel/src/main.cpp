@@ -21,7 +21,7 @@ This code establish connection as control panel to mqtt server to control nodes 
 #include <DHTesp.h>
 #include <WiFi.h>
 #include <ArduinoJson.h>
-#include <LittleFS.h>
+
 #define OLED_RESET 4
 // OUTPUT CONFIGS
 #define FAN 1
@@ -32,7 +32,7 @@ This code establish connection as control panel to mqtt server to control nodes 
 Adafruit_SSD1306 display(128, 64, &Wire, -1);
 // Adafruit_SH1106 display(22, 21);
 DHTesp dht;
-#define MODE_BUTTON_CAP 0
+#define MODE_BUTTON_CAP 1
 WiFiClient wifi;
 PubSubClient client(wifi);
 /* CONFIGURATION Parameters */
@@ -101,114 +101,10 @@ const uint8_t itemPin[MAX_ITEMS - 1] = {23, 19, 18, 5};
 const uint8_t maxValues[MAX_ITEMS] = {1, 1, 100, 100, 1};
 bool needUpdate = true;
 
-const char *configFilePath = "/config.json";
-char SSID[32] = "Wokwi-GUEST"; // Increased size for SSID
-char PASSWORD[64] = " ";       // Increased size for Password
 
-/**
- * Loads the configuration from a file.
- *
- * @return true if the configuration is successfully loaded, false otherwise.
- *
- * @throws ErrorType if there is an error opening the config file or parsing the JSON.
- */
+char SSID[32] = "ConForNode1"; // Increased size for SSID
+char PASSWORD[64] = "12345678";       // Increased size for Password
 
-bool loadConfiguration()
-{
-    File configFile = LittleFS.open(configFilePath, "r");
-    if (!configFile)
-    {
-        Serial.println("Failed to open config file for reading");
-        return false;
-    }
-
-    size_t size = configFile.size();
-    if (size == 0)
-    {
-        Serial.println("Config file is empty");
-        configFile.close();
-        return false;
-    }
-
-    std::unique_ptr<char[]> buf(new char[size]);
-    configFile.readBytes(buf.get(), size);
-    configFile.close();
-
-    StaticJsonDocument<512> doc;
-    DeserializationError error = deserializeJson(doc, buf.get());
-    if (error)
-    {
-        Serial.println("Failed to parse config file");
-        return false;
-    }
-
-    strlcpy(SSID, doc["ssid"] | "ConForNode1", sizeof(SSID));          // Safe copying with default value
-    strlcpy(PASSWORD, doc["password"] | "12345678", sizeof(PASSWORD)); // Safe copying with default value
-#if 1
-    Serial.print("Loaded SSID: ");
-    Serial.println(SSID);
-    Serial.print("Loaded password: ");
-    Serial.println(PASSWORD);
-#endif
-    return true;
-}
-
-void saveConfiguration(const char *ssid, const char *password)
-{
-    StaticJsonDocument<512> doc;
-    doc["ssid"] = ssid;
-    doc["password"] = password;
-    strlcpy(SSID, ssid, sizeof(SSID));             // Safe copying
-    strlcpy(PASSWORD, password, sizeof(PASSWORD)); // Safe copying
-
-    File configFile = LittleFS.open(configFilePath, "w");
-    if (!configFile)
-    {
-        Serial.println("Failed to open config file for writing");
-        return;
-    }
-    serializeJson(doc, configFile);
-    configFile.close();
-    Serial.println("Configuration saved");
-    delay(2000);
-    ESP.restart();
-}
-/**
- * Checks for configuration through UART.
- *
- * @throws ErrorType description of error
- */
-void checkForConfigThroughUART()
-{
-    if (Serial.available())
-    {
-        String config = Serial.readStringUntil('\n'); // Read until newline
-        Serial.print("Received Config: ");
-        Serial.println(config);
-        StaticJsonDocument<512> doc;
-        DeserializationError error = deserializeJson(doc, config);
-        if (error)
-        {
-            Serial.print("Failed to parse JSON: ");
-            Serial.println(error.c_str());
-            return;
-        }
-        const char *newSSID = doc["ssid"];         // Directly access the ssid
-        const char *newPassword = doc["password"]; // Directly access the password
-        if (newSSID != nullptr && newPassword != nullptr)
-        {
-            Serial.print("New SSID: ");
-            Serial.println(newSSID);
-            Serial.print("New Password:");
-            Serial.println(newPassword);
-            saveConfiguration(newSSID, newPassword);
-        }
-        else
-        {
-            Serial.println("Invalid or missing SSID/Password in JSON");
-        }
-    }
-}
 
 /**
  * Callback function that is called when a message is received.
@@ -287,11 +183,7 @@ String BottomText()
 void setup()
 {
     Serial.begin(115200);
-    if (!LittleFS.begin())
-    {
-        Serial.println("An Error has occurred while mounting LittleFS");
-    }
-    loadConfiguration();
+   
     delay(1000);
     dht.setup(15, DHTesp::DHT22);
     Serial.println(dht.getTemperature());
@@ -545,6 +437,7 @@ void checkButtons()
     }
 }
 
+
 /**
  * Updates the temperature and humidity readings.
  *
@@ -603,7 +496,7 @@ void loop()
     displayItems();
     checkButtons();
     updateOutput();
-    checkForConfigThroughUART();
+    
     updateTempHum();
     delay(100);
 }

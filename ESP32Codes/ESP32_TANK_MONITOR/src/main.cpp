@@ -17,8 +17,11 @@ Program to monitor a water tank and fill it if it is below limit and limit can b
 #define SSID "Wokwi-GUEST"
 #define PASSWORD ""
 WiFiClient esp;
+String btnTopic = "maninder/tank/button";
+unsigned int lastBtnUpdate;
+bool btnStatus;
 // ------------------------------MQTT Config-------------------------
-const char *mqtt_server = "ec2-3-88-49-62.compute-1.amazonaws.com";
+const char *mqtt_server = "ec2-35-170-242-83.compute-1.amazonaws.com";
 PubSubClient client(esp);
 Adafruit_SSD1306 display(128, 64, &Wire, -1);
 const unsigned char epd_bitmap_wifi[] PROGMEM = {
@@ -27,19 +30,37 @@ const unsigned char epd_bitmap_wifi[] PROGMEM = {
 //--------------------- UltraSonic Cnfig--------------------------
 NewPing tankMonitor(23, 19, 100);
 int waterLevel = 0;
-#define WaterTankSize 20
+#define WaterTankSize 18
 int tankToFill = 70;
 // ----------------------------Buzzer and Relay Config-------------------------
 #define BUZZER_PIN 27
 #define RELAY_PIN 18
+
 void callback(char *topic, byte *payload, unsigned int length)
 {
+  Serial.print("Message arrived in topic: ");
+  Serial.println(topic);
+
   char msg[length + 1];
   strncpy(msg, (char *)payload, length);
   msg[length] = '\0';
-  tankToFill = atoi(msg);
-  Serial.println(msg);
-  Serial.println(tankToFill);
+
+  // Check if the message is for tank filling level
+  if (strcmp(topic, "your/tankToFill/topic") == 0)
+  {
+    tankToFill = atoi(msg);
+    Serial.println("Tank fill level set to: ");
+    Serial.println(tankToFill);
+  }
+  // Add additional conditions here for other topics
+  else if (strcmp(topic, btnTopic.c_str()) == 0)
+  {
+    // Handle btnTopic message
+    btnStatus = atoi(msg);
+    lastBtnUpdate = millis();
+    Serial.println(msg);
+    // Add your code here to handle the button topic message
+  }
 }
 
 void connectToMQTT()
@@ -49,6 +70,7 @@ void connectToMQTT()
     if (client.connect("ArduinoClient"))
     {
       client.subscribe("your/tankToFill/topic");
+      client.subscribe(btnTopic.c_str());
     }
     else
     {
@@ -128,8 +150,8 @@ void checkAndFill()
 {
   if (waterLevel < (WaterTankSize * tankToFill / 100))
   {
-    digitalWrite(RELAY_PIN, HIGH);
-    digitalWrite(BUZZER_PIN, HIGH);
+
+    digitalWrite(RELAY_PIN, LOW);
     if (!lastStatus)
     {
       needUpdate = true;
@@ -138,8 +160,8 @@ void checkAndFill()
   }
   else
   {
-    digitalWrite(RELAY_PIN, LOW);
-    digitalWrite(BUZZER_PIN, LOW);
+    digitalWrite(RELAY_PIN, HIGH);
+
     if (lastStatus)
     {
       needUpdate = true;
@@ -158,7 +180,25 @@ void loop()
 
   waterLevel = tankMonitor.ping_cm();
   updateDisplay();
-  checkAndFill();
+  if (millis() - lastBtnUpdate > 15000)
+  {
+    Serial.println("Override Mode");
+    if (btnStatus == 1)
+    {
+      digitalWrite(RELAY_PIN, HIGH);
+      delay(1000);
+    }
+    else
+    {
+      digitalWrite(RELAY_PIN, 0);
+      delay(1000);
+    }
+  }
+  else
+  {
+    checkAndFill();
+  }
+
   if (needUpdate)
   {
     client.publish("maninder/tank/status", String(lastStatus).c_str(), true);
