@@ -183,7 +183,6 @@ void setup()
 {
     Serial.begin(115200);
    
-    delay(1000);
     dht.setup(15, DHTesp::DHT22);
     Serial.println(dht.getTemperature());
     display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
