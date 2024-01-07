@@ -195,6 +195,7 @@ checkAndUpdateButton();
 client.loop();
 delay(200);
 updateTempHum();
+updateWaterLevel();
 
 }
 
