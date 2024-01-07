@@ -10,6 +10,7 @@ import EntryLogTable, { EntryLogItem } from "./LastLog";
 import CloseOpenDoor from "./closeDoor";
 import BackGroundCard from "../Cards/BackgroundCard";
 import StatusChip from "../StatusChip";
+import ViewUsers from "./viewUsers";
 
 const SecuritySystemPage = () => {
   const [systemData, setSystemData] = useState({
@@ -66,12 +67,7 @@ const SecuritySystemPage = () => {
                 topic="IoT/lawn/disengageIndruderDetector"
                 onClick={fetchData}
               />
-              <CloseOpenDoor
-                current={entranceDoor}
-                onClick={fetchData}
-                topic="IoT/entrance/door"
-                location="Front Door"
-              />
+              <ViewUsers />
               <CloseOpenDoor
                 current={garageDoor}
                 onClick={fetchData}

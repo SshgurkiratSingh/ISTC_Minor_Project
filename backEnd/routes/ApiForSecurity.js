@@ -174,7 +174,7 @@ router.post("/addUser", async (req, res) => {
 router.get("/getAllUser", async (req, res) => {
   const fileData = await fs.readFile("dataFiles/RFID.json", "utf-8");
   const data = JSON.parse(fileData);
-  res.json(fileData);
+  res.json(data);
 });
 
 module.exports = router;
