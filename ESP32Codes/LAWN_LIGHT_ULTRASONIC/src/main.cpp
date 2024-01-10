@@ -52,8 +52,8 @@ const String Topic_TO_Publish[2] = {
 };
 const char *mqtt_server = "ec2-35-170-242-83.compute-1.amazonaws.com";
 //----------------------------Wifi Config --------------------------------
-char SSID[15] = "Wokwi-GUEST";
-char PASSWORD[15] = "";
+char SSID[15] = "Node ";
+char PASSWORD[15] = "whyitellyou";
 // --------------------------Instances ------------------------------------
 WiFiClient wifi;
 PubSubClient client(wifi);
@@ -154,7 +154,7 @@ void setup()
     pinMode(led_pin[i], OUTPUT);
   }
 }
-#define LOWVALUE 50
+#define LOWVALUE 20
 void debugLEDS()
 {
   for (int i = 0; i < 4; i++)

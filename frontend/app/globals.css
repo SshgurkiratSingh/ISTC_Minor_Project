@@ -15,6 +15,43 @@
     --background-end-rgb: 0, 0, 0;
   }
 }
+.neon-glass-effect {
+  background-color: rgba(255, 255, 255, 0.1); /* semi-transparent white background */
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.2); /* light border for more glass effect */
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.5), /* cyan glow */
+               0 0 20px rgba(0, 255, 255, 0.5), /* cyan glow */
+               0 0 30px rgba(0, 255, 255, 0.5), /* cyan glow */
+               0 0 40px rgba(0, 0, 255, 0.5),   /* blue glow */
+               0 0 70px rgba(0, 0, 255, 0.5),   /* blue glow */
+               0 0 80px rgba(0, 0, 255, 0.5);   /* blue glow */
+}
+@keyframes animated-border {
+  0% {
+    border-image: radial-gradient(circle farthest-corner at center center, #121FCF 49%, #CF1512 100%);
+
+
+    border-image-slice: 1;
+    border-radius: 10px; /* Add rounded corners */
+  }
+  100% {
+    border-image: linear-gradient(43deg, #4158D0 0%, #C850C0 46%, #FFCC70 100%);
+
+    border-image-slice: 1;
+    border-radius: 10px; /* Add rounded corners */
+  }
+}
+
+.animated-border {
+  animation: animated-border 10s linear infinite;
+  border: 3px solid; /* Use a solid border as a fallback for browsers that don't support border images */
+  padding: 1em;
+  color: #fff; /* Change as needed */
+  
+}
+
+  
 
 body {
  min-height: 100vh;

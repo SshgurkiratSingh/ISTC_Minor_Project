@@ -2,15 +2,8 @@
 #include <DHTesp.h>
 #include <WiFi.h>
 #include <PubSubClient.h>
-#include <NewPing.h>
 
-
-#define TRIGGER_PIN  4
-#define ECHO_PIN     2
-#define MAX_DISTANCE 20
-NewPing sonar(TRIGGER_PIN, ECHO_PIN, MAX_DISTANCE);
-#define TANK_SIZE 18
-
+#define PIR 2
 const uint8_t touch_Pins[6] = {
   32,33,27,14,12,13
 };
@@ -38,12 +31,7 @@ DHTesp dht;
  *
  * @throws None
  */
-int waterLevel = 0;
-void updateWaterLevel() {
-  int distanceToWater = sonar.ping_cm();
-  int waterDepth = TANK_SIZE - distanceToWater;
-  waterLevel = (waterDepth * 100) / TANK_SIZE;
-}
+
 void callback(char *topic, byte *payload, unsigned int length)
 {
 
@@ -87,10 +75,11 @@ void setup() {
      WiFi.begin(SSID, PASSWORD);
      client.setServer(mqtt_server, 1883);
     client.setCallback(callback);
-
+pinMode(PIR, INPUT);
     uint8_t i = 0;
     while (WiFi.status() != WL_CONNECTED)
-    {
+    {                client.publish("IoT/kitchen/motion", "1", true);
+
 
 #if DEBUG_MODE
         Serial.println("Connecting to WiFi..");
@@ -138,43 +127,72 @@ float hum = 0;
  *
  * @throws none
  */
+unsigned long lastUpdateTime = 0;
+const unsigned long updateInterval = 15000;  // 15 seconds in milliseconds
+
 void updateTempHum()
 {
-    float t = dht.getTemperature();
-    float h = dht.getHumidity();
-
-    if (isnan(t) || isnan(h) || t == 0 || h == 0)
+    // Check if it's time for an update
+    if (millis() - lastUpdateTime >= updateInterval)
     {
-        return;
-    }
-    else
-    {
+        float t = dht.getTemperature();
+        float h = dht.getHumidity();
 
-        if ((temp != t) || (hum != h))
+        if (isnan(t) || isnan(h) || t == 0 || h == 0)
         {
-            temp = t;
-            hum = h;
-            Serial.println("update detected");
-            
-            client.publish("IoT/kitchen/temperature", String(temp).c_str(), true);
-            client.publish("IoT/kitchen/humidity", String(hum).c_str(), true);
-            client.publish("IoT/auxiliary/tankLevel", String(waterLevel).c_str(), true);
+            return;
+        }
+        else
+        {
+            if ((temp != t) || (hum != h))
+            {
+                temp = t;
+                hum = h;
+                Serial.println("Update detected");
+
+                client.publish("IoT/kitchen/temperature", String(temp).c_str(), true);
+                client.publish("IoT/kitchen/humidity", String(hum).c_str(), true);
+                
+                if (digitalRead(PIR) == HIGH)
+                {
+                    client.publish("IoT/kitchen/motion", "1", true);
+                }
+            }
+
+            // Update the last update time
+            lastUpdateTime = millis();
         }
     }
 }
+
 /**
  * Checks and updates the button.
  *
  * @throws ErrorType description of error
  */
-void checkAndUpdateButton(){
-    for (int i = 0; i < 6; i++){
-      if (touchRead(touch_Pins[i]) <30){
-        status[i] = !status[i];
-        client.publish(topics_To_Control[i].c_str(), String(status[i]).c_str(), true);
-      }
+unsigned long lastButtonUpdateTime = 0;
+const unsigned long buttonUpdateInterval = 300;  // 300 milliseconds
+
+void checkAndUpdateButton()
+{
+    // Check if it's time to update buttons
+    if (millis() - lastButtonUpdateTime >= buttonUpdateInterval)
+    {
+        for (int i = 0; i < 6; i++)
+        {
+            if (touchRead(touch_Pins[i]) < 30)
+            {
+                status[i] = !status[i];
+
+                client.publish(topics_To_Control[i].c_str(), String(status[i]).c_str(), true);
+            }
+        }
+
+        // Update the last button update time
+        lastButtonUpdateTime = millis();
     }
 }
+
 
 /**
  * The loop function is responsible for executing a continuous loop in the program.
@@ -191,11 +209,10 @@ void checkAndUpdateButton(){
  */
 void loop() {
 checkAndUpdateButton();
-    refreshOutput();
+refreshOutput();
 client.loop();
 delay(200);
 updateTempHum();
-updateWaterLevel();
 
 }
 
