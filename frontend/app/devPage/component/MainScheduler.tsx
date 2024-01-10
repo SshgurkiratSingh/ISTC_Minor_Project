@@ -6,6 +6,8 @@ import React from "react";
 import { Button } from "@nextui-org/react";
 import { IoMdAddCircleOutline } from "react-icons/io";
 import ScheduleCard from "./Scheduleard";
+import AddTask from "./AddTask";
+const { v4: uuidv4 } = require("uuid");
 
 const MainScheduler = () => {
   return (
@@ -24,8 +26,9 @@ const MainScheduler = () => {
           }}
         >
           <div className="flex flex-row text-center hover:transform hover:scale-105 transition-all duration-300">
-            <h1 className="text-3xl font-bold text-yellow-500">
-              Scheduler Portal
+            <h1 className="text-3xl font-bold text-yellow-500 relative">
+              Task itinerary
+              <span className="absolute top-0 left-0 right-0 bottom-0 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 opacity-70 filter blur-xl mix-blend-lighten"></span>
             </h1>
             <MdSchedule size={35} className="text-yellow-500" />
           </div>
@@ -39,19 +42,21 @@ const MainScheduler = () => {
               >
                 <FcRefresh size={35} />
               </Button>
+              <AddTask />
               {/* Button For add new  */}
-              <Button isIconOnly color="success" variant="faded">
-                <IoMdAddCircleOutline size={35} />
-              </Button>
+             
             </div>
           </div>
           <div className="mt-5 flex flex-col gap-2">
-            <ScheduleCard />
-            <ScheduleCard />
-            <ScheduleCard />
-            <ScheduleCard />
-            <ScheduleCard />
-            <ScheduleCard />
+            <ScheduleCard UID={uuidv4()} Status="Awaiting Location Response" />
+            <ScheduleCard UID={uuidv4()} Status="Awaiting Slot" />
+            <ScheduleCard
+              UID={uuidv4()}
+              Status="Searching for Nearby Devices"
+            />
+            <ScheduleCard UID={uuidv4()} Status="Partially Completed" />
+            <ScheduleCard Time={"2024-01-10"} Status="Completed with PIN8546" />
+            <ScheduleCard UID={uuidv4()} Status="Cancelled By the other User" />
           </div>
         </div>
       </div>
