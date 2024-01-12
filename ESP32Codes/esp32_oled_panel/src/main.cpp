@@ -10,6 +10,7 @@ This code establish connection as control panel to mqtt server to control nodes 
 - Light attached to pin 23
 - Plug attached to pin 5
 - Brightness Led attached to pin 19
+- PIR attached to pin 2
 */
 
 #include <Arduino.h>
@@ -98,6 +99,8 @@ const char topics[MAX_ITEMS][30] = {"IoT/room1/light1", "IoT/room1/light2", "IoT
 
 const uint8_t itemPin[MAX_ITEMS - 1] = {23, 19, 18, 5};
 
+#define PIR 2
+
 const uint8_t maxValues[MAX_ITEMS] = {1, 1, 100, 100, 1};
 bool needUpdate = true;
 
@@ -114,6 +117,28 @@ char PASSWORD[64] = "12345678";       // Increased size for Password
  *
  * @throws None
  */
+unsigned long lastPIR = 0;
+
+void checkPIR(){
+int pirValue = digitalRead(PIR);
+
+    // Check if motion is detected
+    if (pirValue == HIGH) {
+        // Motion detected, update lastPIR with current time
+        lastPIR = millis();
+    }
+
+    // Check if motion was detected in the last 30 seconds
+    if (millis() - lastPIR <= 30000) {
+        // Set pirFlag to 1
+        client.publish(topics[0],String(1*currentValue[0]).c_str(),true);
+    } else {
+        // Reset pirFlag to 0
+       client.publish(topics[0],String(0*currentValue[0]).c_str(),true);
+    }
+
+
+}
 void callback(char *topic, byte *payload, unsigned int length)
 {
 
@@ -181,6 +206,7 @@ String BottomText()
  */
 void setup()
 {
+    pinMode(PIR,INPUT);
     Serial.begin(115200);
    
     dht.setup(15, DHTesp::DHT22);
@@ -494,7 +520,7 @@ void loop()
     displayItems();
     checkButtons();
     updateOutput();
-    
+    checkPIR();
     updateTempHum();
     delay(100);
 }
