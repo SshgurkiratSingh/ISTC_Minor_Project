@@ -5,25 +5,24 @@
 #include <DHTesp.h>
 // Ultrasonic Configuration and led config
 // Define LED pins
-int led_pin[4] = {21, 19, 18, 5}; // Changed to pins that are general-purpose IO
+int led_pin[4] = {21, 19, 18,5}; // Changed to pins that are general-purpose IO
 
 // Define ultrasonic sensors
 // North Ultrasonic Sensor
-NewPing northUltrasonic(23, 22); // Pins 23 and 22 are general-purpose IO
+NewPing northUltrasonic(23, 22,500); // Pins 23 and 22 are general-purpose IO
 
 // South Ultrasonic Sensor
-NewPing southUltrasonic(25, 26); // Pins 25 and 26 are general-purpose IO
+NewPing southUltrasonic(25, 26,500); // Pins 25 and 26 are general-purpose IO
 
-// East Ultrasonic Sensor
-NewPing eastUltrasonic(17, 16); // Pins 17 and 16 are general-purpose IO
+NewPing TankSensor(32, 33,200);
+#define TANKSIZE 15
 
-// West Ultrasonic Sensor
-NewPing westUltrasonic(13, 14); // Pins 13 and 14 are general-purpose IO
 int maxSize = 40;
 #define CHECKNORTH (northUltrasonic.ping_cm() >= maxSize)
 #define CHECKSOUTH (southUltrasonic.ping_cm() >= maxSize)
-#define CHECKEAST (eastUltrasonic.ping_cm() >= maxSize)
-#define CHECKWEST (westUltrasonic.ping_cm() >= maxSize)
+
+#define AIRQUALITY_PIN 34
+
 #define DHTPIN 27 // Assigning GPIO 27 for DHT22
 DHTesp dht;
 //-------------------------- MQTT CONFIG---------------------------------
@@ -41,9 +40,9 @@ int ValueOfSubScribedTopic[MAX_TOPIC] = {0, 0, 0, 0, 0, 0, 0};
 #define NORTHVALUE ValueOfSubScribedTopic[0]
 #define SOUTHVALUE ValueOfSubScribedTopic[1]
 #define EASTVALUE ValueOfSubScribedTopic[2]
-#define WESTVALUE ValueOfSubScribedTopic[3]
+#define LIGHT4 ValueOfSubScribedTopic[3]
 #define BRIGHTNESS1 ValueOfSubScribedTopic[4]
-#define BRIGHTNESS2 ValueOfSubScribedTopic[5]
+#define LOWVALUE ValueOfSubScribedTopic[5]
 #define AUTONOMOUSLIGHTING ValueOfSubScribedTopic[6]
 
 const String Topic_TO_Publish[2] = {
@@ -52,12 +51,34 @@ const String Topic_TO_Publish[2] = {
 };
 const char *mqtt_server = "ec2-35-170-242-83.compute-1.amazonaws.com";
 //----------------------------Wifi Config --------------------------------
-char SSID[15] = "Node ";
-char PASSWORD[15] = "whyitellyou";
+char SSID[15] = "ConForNode1";
+char PASSWORD[15] = "12345678";
 // --------------------------Instances ------------------------------------
 WiFiClient wifi;
 PubSubClient client(wifi);
 #define DEBUG_MODE 1
+int waterLevel = 0;
+/**
+ * Updates the water level based on the distance to the water.
+ *
+ * @throws None
+ */
+unsigned long lastTime = 0;
+unsigned long timerDelay = 8000;
+void updateWaterLevel() {
+  int distanceToWater = TankSensor.ping_cm();
+  int waterDepth = TANKSIZE - distanceToWater;
+  waterLevel = (waterDepth * 100) / TANKSIZE;
+  Serial.print("Water Level: ");
+    Serial.println(waterLevel);
+    // publish every 5 seconds
+if (millis() - lastTime >= timerDelay) {
+    lastTime = millis();
+    client.publish("IoT/auxiliary/tankLevel", String(waterLevel).c_str(), true);
+  }
+   
+    
+}
 /**
  * A callback function that handles incoming messages from a subscribed topic.
  *
@@ -95,33 +116,53 @@ void callback(char *topic, byte *payload, unsigned int length)
 }
 int temp = 0;
 int hum = 0;
+/**
+ * Updates the temperature and humidity values.
+ *
+ * @return void
+ */
+unsigned long previousMillis = 0;
+const long interval = 15000;  // 15 seconds
+
 void updateTempHum()
 {
-  float t = dht.getTemperature();
-  float h = dht.getHumidity();
+  unsigned long currentMillis = millis();
 
-  if (isnan(t) || isnan(h) || t == 0 || h == 0)
+  if (currentMillis - previousMillis >= interval)
   {
-    return;
-  }
-  else
-  {
+    previousMillis = currentMillis;
 
-    if ((temp != t) || (hum != h))
+    float t = dht.getTemperature();
+    float h = dht.getHumidity();
+
+    if (!(isnan(t) || isnan(h) || t == 0 || h == 0))
     {
-      temp = t;
-      hum = h;
-      Serial.println("updatte detected");
+      if ((temp != t) || (hum != h))
+      {
+        temp = t;
+        hum = h;
+        Serial.println("Update detected");
 
-      client.publish(Topic_TO_Publish[0].c_str(), String(temp).c_str(), true);
-      client.publish(Topic_TO_Publish[1].c_str(), String(hum).c_str(), true);
+        client.publish(Topic_TO_Publish[0].c_str(), String(temp).c_str(), true);
+        client.publish(Topic_TO_Publish[1].c_str(), String(hum).c_str(), true);
+        client.publish("IoT/lawn/airQuality", String(analogRead(AIRQUALITY_PIN)).c_str(), true);
+      }
     }
   }
 }
 
+
+/**
+ * Initializes the setup for the program.
+ *
+ * @return void
+ *
+ * @throws None
+ */
 void setup()
 {
   dht.setup(DHTPIN, DHTesp::DHT22);
+  pinMode(AIRQUALITY_PIN, INPUT);
   // put your setup code here, to run once:
   Serial.begin(115200);
   WiFi.begin(SSID, PASSWORD);
@@ -149,21 +190,24 @@ void setup()
     }
   }
   // declare led pins as outputs
-  for (int i = 0; i < 4; i++)
+  for (int i = 0; i < 3; i++)
   {
     pinMode(led_pin[i], OUTPUT);
   }
 }
-#define LOWVALUE 20
-void debugLEDS()
-{
-  for (int i = 0; i < 4; i++)
-  {
-    Serial.println(digitalRead(led_pin[i]));
-  }
-}
+
+
+/**
+ * The `loop` function is responsible for executing the main logic of the program in a continuous loop.
+ *
+ * @return void
+ */
 void loop()
 {
+  Serial.print("distance by ultrasonic 1: ");
+  Serial.println(northUltrasonic.ping_cm());
+   Serial.print("distance by ultrasonic 2: ");
+   Serial.println(southUltrasonic.ping_cm());
   client.loop();
   if (AUTONOMOUSLIGHTING)
   {
@@ -184,32 +228,18 @@ void loop()
     {
       analogWrite(led_pin[1], BRIGHTNESS1 * 2.55 * SOUTHVALUE);
     }
-    if (CHECKEAST)
-    {
-      analogWrite(led_pin[2], LOWVALUE);
-    }
-    else
-    {
-      analogWrite(led_pin[2], BRIGHTNESS2 * 2.55 * EASTVALUE);
-    }
-    if (CHECKWEST)
-    {
-      analogWrite(led_pin[3], LOWVALUE);
-    }
-    else
-    {
-      analogWrite(led_pin[3], BRIGHTNESS2 * 2.55 * WESTVALUE);
-    }
+      analogWrite(led_pin[2], BRIGHTNESS1 * 2.55 * EASTVALUE);
     delay(500);
   }
   else
   {
     analogWrite(led_pin[0], BRIGHTNESS1 * 2.55 * NORTHVALUE);
     analogWrite(led_pin[1], BRIGHTNESS1 * 2.55 * SOUTHVALUE);
-    analogWrite(led_pin[2], BRIGHTNESS2 * 2.55 * EASTVALUE);
-    analogWrite(led_pin[3], BRIGHTNESS2 * 2.55 * WESTVALUE);
+    analogWrite(led_pin[2], BRIGHTNESS1 * 2.55 * EASTVALUE);
+    
     delay(500);
   }
-  debugLEDS();
+  analogWrite(led_pin[3], BRIGHTNESS1 * 2.55 * LIGHT4);
   updateTempHum();
+  updateWaterLevel();
 }
