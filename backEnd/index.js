@@ -23,7 +23,9 @@ app.get("/", (req, res) => {
   });
 });
 
-app.listen(port, () => {
-  console.log("Server is online at port 2500 over!");
+const port = 2500; // or any other port number you want to use
+
+app.listen(port, '0.0.0.0', () => {
+  console.log(`Server is online at port ${port}!`);
   EntryCache.updateCache("entryLog");
 });
