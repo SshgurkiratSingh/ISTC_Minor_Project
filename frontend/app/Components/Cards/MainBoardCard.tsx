@@ -110,7 +110,7 @@ const MainBoardCard = ({
         className="border-none bg-black"
         style={{
           minHeight: "200px",
-          minWidth: "290px",
+          minWidth: "340px",
           backdropFilter: "blur(15px)",
         }}
       >
@@ -122,7 +122,7 @@ const MainBoardCard = ({
             backgroundRepeat: "no-repeat",
           }}
         >
-          <div className=" grid grid-cols-1 lg:grid-cols-3 p-4 m-2 place-content-between">
+          <div className=" grid grid-cols-2 lg:grid-cols-3 p-4 m-2 place-content-between">
             {Array.from({ length: noOfLights }).map((_, index) => (
               <ToggleButton
                 key={index}

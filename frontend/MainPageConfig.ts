@@ -20,14 +20,30 @@ const mainPageConfig = [
       "roomId": 2,
       "roomTag": "kitchen",
       "noOfFans": 1,
-      "noOfLights": 2,
-      "noOfSwitchBoards": 1,
+      "noOfLights": 0,
+      "noOfSwitchBoards": 0,
       "noOfBrightness": 1,
       "tempAndHum": true,
       "airQuality": true,
       "isTvPresent": false,
       "isCustomPresent": false,
-      "customData": []
+      "customData": [
+        {
+          "topic": "IoT/kitchen/light1",
+          "subTitle": "Red Light",
+          "identity": "Red Light"
+        },
+        {
+          "topic": "IoT/kitchen/light2",
+          "subTitle": "Green Light",
+          "identity": "Green Li"
+        }
+        ,{
+          "topic": "IoT/kitchen/switchBoard1",
+          "subTitle": "Blue Light",
+          "identity": "Blue Light"
+        }
+      ]
     },{
       "roomName":"Cleaning Robot",
       "roomId": 3,
