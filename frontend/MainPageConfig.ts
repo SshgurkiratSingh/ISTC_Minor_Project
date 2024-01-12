@@ -80,7 +80,7 @@ const mainPageConfig = [
     },
      {
       "backImg": "/background3.png",
-      "roomName": "Garage ",
+      "roomName": "Garage, Washroom",
       "roomId": 6,
       "roomTag": "garage",
       "noOfFans": 0,
