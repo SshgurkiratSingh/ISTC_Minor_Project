@@ -3,12 +3,12 @@
 #include <WiFi.h>
 #include <PubSubClient.h>
 
-#define PIR 2
+#define AIRQUALITY 2
 const uint8_t touch_Pins[6] = {
   32,33,27,14,12,13
 };
 const String topics_To_Control[6]={
-  "IoT/kitchen/light1","IoT/kitchen/light2","IoT/kitchen/switchBoard1","IoT/auxilary/pump1","IoT/washroom/light1","IoT/washroom/gyser"
+  "IoT/kitchen/light1","IoT/kitchen/light2","IoT/kitchen/switchBoard1","IoT/garage/light1","IoT/washroom/light1","IoT/washroom/gyser"
 };
 const char *mqtt_server = "ec2-35-170-242-83.compute-1.amazonaws.com";
 
@@ -67,6 +67,7 @@ void callback(char *topic, byte *payload, unsigned int length)
 void refreshOutput(){
     for (int i = 0; i < 6; i++){
       digitalWrite(pin_To_Control[i], status[i]);
+
     }
 }
 void setup() {   
@@ -75,7 +76,7 @@ void setup() {
      WiFi.begin(SSID, PASSWORD);
      client.setServer(mqtt_server, 1883);
     client.setCallback(callback);
-pinMode(PIR, INPUT);
+pinMode(AIRQUALITY,INPUT);
     uint8_t i = 0;
     while (WiFi.status() != WL_CONNECTED)
     {                client.publish("IoT/kitchen/motion", "1", true);
@@ -128,7 +129,7 @@ float hum = 0;
  * @throws none
  */
 unsigned long lastUpdateTime = 0;
-const unsigned long updateInterval = 15000;  // 15 seconds in milliseconds
+const unsigned long updateInterval = 12000;  // 15 seconds in milliseconds
 
 void updateTempHum()
 {
@@ -152,11 +153,8 @@ void updateTempHum()
 
                 client.publish("IoT/kitchen/temperature", String(temp).c_str(), true);
                 client.publish("IoT/kitchen/humidity", String(hum).c_str(), true);
-                
-                if (digitalRead(PIR) == HIGH)
-                {
-                    client.publish("IoT/kitchen/motion", "1", true);
-                }
+                client.publish("IoT/kitchen/airQuality",String(analogRead(AIRQUALITY)).c_str(),true);
+              
             }
 
             // Update the last update time
@@ -171,7 +169,7 @@ void updateTempHum()
  * @throws ErrorType description of error
  */
 unsigned long lastButtonUpdateTime = 0;
-const unsigned long buttonUpdateInterval = 300;  // 300 milliseconds
+const unsigned long buttonUpdateInterval = 2000;  // 300 milliseconds
 
 void checkAndUpdateButton()
 {
@@ -185,6 +183,10 @@ void checkAndUpdateButton()
                 status[i] = !status[i];
 
                 client.publish(topics_To_Control[i].c_str(), String(status[i]).c_str(), true);
+                Serial.print("Button pressed");
+                Serial.println(i);
+                Serial.println(status[i]);
+                Serial.println(topics_To_Control[i]);
             }
         }
 
@@ -211,7 +213,7 @@ void loop() {
 checkAndUpdateButton();
 refreshOutput();
 client.loop();
-delay(200);
+
 updateTempHum();
 
 }
