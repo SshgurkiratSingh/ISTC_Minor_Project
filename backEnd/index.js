@@ -1,6 +1,6 @@
 const express = require("express");
 const app = express();
-const port = 2500;
+
 const cors = require("cors");
 const securityRouter = require("./routes/ApiForSecurity");
 const frontEndRouter = require("./routes/ApiForFrontend");
