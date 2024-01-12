@@ -97,31 +97,19 @@ const mainPageConfig = [
           "subTitle": "Garage Light 1",
           "identity": "Garage Light 1"
         },
-        {
-          "topic": "IoT/garage/light2",
-          "subTitle": "Garage Light 2",
-          "identity": "Garage Light 2"
-        },
+
         {
           "topic": "IoT/auxilary/pump1",
           "subTitle": "Water Tank Pump",
           "identity": "Store Light 1"
         },
-        {
-          "topic": "IoT/store/light2",
-          "subTitle": "Store Light 2",
-          "identity": "Store Light 2"
-        },
+        
         {
           "topic": "IoT/washroom/light1",
           "subTitle": "Washroom Light ",
           "identity": "Washroom Light 1"
         },
-        {
-          "topic": "IoT/washroom/gyser",
-          "subTitle": "Washroom Gyser",
-          "identity": "Washroom Gyser"
-        }
+        
 
       ]
       
@@ -165,16 +153,11 @@ const mainPageConfig = [
       "isTvPresent": false,
       "isCustomPresent": true,
       "customData": [
-        {
-          "topic": "IoT/lawn/pump1",
-          "subTitle": "Lawn Pump 1",
-          "identity": "Lawn Pump 1"
-        },
+
         {
           "topic": "IoT/lawn/autonomousLighting",
           "subTitle": "AutoLumus",
           "identity": "Lawn Autonomous Lighting",
-         
         }
       ],
       "backImg": "/back.jpg"
