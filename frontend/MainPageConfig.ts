@@ -69,12 +69,7 @@ const mainPageConfig = [
         "subTitle": "Moping Mode",
         "identity": "Moping Mode"
       }
-      ,{
-        "topic": "IoT/lawn/autonomousMode",
-        "subTitle": "Autonous Light Mode",
-        "identity": "Autonomous Mode"
- 
-      }
+    
     ],
       "customNotes":"Control Panel for Cleaner Robot"
     },

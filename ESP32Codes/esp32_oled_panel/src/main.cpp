@@ -169,7 +169,7 @@ String BottomText()
     }
     else
     {
-        return "T:" + String(temp) + " Hall " + "H:" + String(hum);
+        return "T:" + String(temp) + " ROOM " + "H:" + String(hum);
     }
 }
 /**
