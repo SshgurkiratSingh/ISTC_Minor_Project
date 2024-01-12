@@ -98,34 +98,34 @@ client.on("connect", () => {
     }
   }
 });
-function autonomousMode() {
-  const logEntry = logs.find((log) => log.topic === "IoT/lawn/autonomousMode");
+// function autonomousMode() {
+//   const logEntry = logs.find((log) => log.topic === "IoT/lawn/autonomousMode");
 
-  if (logEntry && logEntry.value === "1") {
-    console.log("Autonomous mode on");
-    // check for room 1 light
-    if (logs.find((log) => log.topic === "IoT/room1/light2").value === "1") {
-      console.log("Room 1 light is on");
-      // check for pir1
-      let pir = logs.find((log) => log.topic === "IoT/room1/pir1");
-      let lastUpdate = new Date(logEntry.lastUpdate);
-      const currentTime = new Date();
+//   if (logEntry && logEntry.value === "1") {
+//     console.log("Autonomous mode on");
+//     // check for room 1 light
+//     if (logs.find((log) => log.topic === "IoT/room1/light2").value === "1") {
+//       console.log("Room 1 light is on");
+//       // check for pir1
+//       let pir = logs.find((log) => log.topic === "IoT/room1/pir1");
+//       let lastUpdate = new Date(logEntry.lastUpdate);
+//       const currentTime = new Date();
 
-      if (pir.value == "1" && currentTime - lastUpdate > 10000) {
-        // turn off the light
-        console.log("Turning off the light");
-        client.publish("IoT/room1/light2", "0");
-      } else if (pir.value == "0") {
-        client.publish("IoT/room1/light2", "0");
-      }
-    }
-    // check for hall light
+//       if (pir.value == "1" && currentTime - lastUpdate > 10000) {
+//         // turn off the light
+//         console.log("Turning off the light");
+//         client.publish("IoT/room1/light2", "0");
+//       } else if (pir.value == "0") {
+//         client.publish("IoT/room1/light2", "0");
+//       }
+//     }
+//     // check for hall light
 
-  } else {
-    console.log("Autonomous mode off");
-  }
-}
-setInterval(autonomousMode, 20000);
+//   } else {
+//     console.log("Autonomous mode off");
+//   }
+// }
+// setInterval(autonomousMode, 20000);
 
 client.on("message", (topic, message) => {
   logs = logs.filter((log) => log.topic !== topic);
