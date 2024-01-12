@@ -26,7 +26,7 @@ const mainPageConfig = [
       "tempAndHum": true,
       "airQuality": true,
       "isTvPresent": false,
-      "isCustomPresent": false,
+      "isCustomPresent": true,
       "customData": [
         {
           "topic": "IoT/kitchen/light1",
