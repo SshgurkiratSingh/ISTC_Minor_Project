@@ -28,10 +28,14 @@ const HistoryPageCard = () => {
         footerChildren={
           <select
             onChange={handleChange}
-            className="rounded-lg w-1/3 bg-black border hover:border-gray-600 transition h-7"
+            className="rounded-lg  bg-black border hover:border-gray-600 transition h-8 "
           >
             {sensorTopics.map((item, index) => (
-              <option key={index} value={item.topic}>
+              <option
+                key={index}
+                value={item.topic}
+                className="text-white rounded-lg hover:text-stone-500 transition"
+              >
                 {item.LongHeading}
               </option>
             ))}

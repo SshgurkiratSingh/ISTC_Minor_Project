@@ -141,7 +141,7 @@ const mainPageConfig = [
       "roomTag": "lawn",
       "noOfFans": 0,
       "noOfLights": 4,
-      "noOfSwitchBoards": 0,
+      "noOfSwitchBoards": 1,
       "noOfBrightness": 2,
       "tempAndHum": true,
       "airQuality": true,
