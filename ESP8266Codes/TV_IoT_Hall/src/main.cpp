@@ -1,51 +1,52 @@
-/*
-Date: Nov 14,2023
-Description:
-Code to run TV in hall and control the kitchen
-
-*/
-
 #include <Arduino.h>
-#include <SPI.h>
-#include <Wire.h>
-#include <Adafruit_GFX.h>
-#include <Adafruit_SSD1306.h>
 #include <ESP8266WiFi.h>
 #include <PubSubClient.h>
-#include <DHTesp.h>
+#include <Adafruit_GFX.h>
+#include <Adafruit_SSD1306.h>
+#include <U8g2lib.h>
 
-// -----------------------------Pin Config-------------------------------------//
+// ----------------------------- Configurations -------------------------------------//
 #define LEDPIN D0
 #define SWITCHBOARDPIN D3
-#define AIRQUALITYPIN A0
-#define DHT_PIN D5
-
-// -----------------------------Wifi Config-------------------------------------//
 #define WIFI_SSID "ConForNode1"
 #define WIFI_PASSWORD "12345678"
-WiFiClient esp;
-
-// -----------------------------MQTT Config-------------------------------------//
-#define MQTT_SERVER "ec2-3-88-49-62.compute-1.amazonaws.com"
+#define MQTT_SERVER "ec2-35-170-242-83.compute-1.amazonaws.com"
 #define MQTT_PORT 1883
-PubSubClient client(esp);
-// -----------------------------Other Config-------------------------------------//
-#define DEBUG_MODE 1
-#define TOTALTOPIC 4
-String topicToSubscribe[TOTALTOPIC] = {"IoT/hall/TV", "IoT/kitchen/light1", "IoT/kitchen/switchBoard1", "IoT/kitchen/brightness1"};
-int currentTopicValue[TOTALTOPIC] = {0, 0, 0, 0};
+#define TOTALTOPIC 1
+#define OLED_TYPE 1
+
+// Define OLED parameters based on the type
+#if OLED_TYPE
+  #define SCREEN_WIDTH 128
+  #define SCREEN_HEIGHT 64
+  #define SCREEN_I2C_ADDR 0x3C
+  #define OLED_RST_PIN -1
+  Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RST_PIN);
+#else
+  U8G2_SH1106_128X64_NONAME_F_SW_I2C display(U8G2_R0, D3, D4);
+#endif
+
+// Global Variables
+WiFiClient espClient;
+PubSubClient client(espClient);
+String topicToSubscribe[TOTALTOPIC] = {"IoT/hall/TV"};
+int currentTopicValue[TOTALTOPIC] = {0};
+
+
 // Oled Config Starts Here ------------------
 
-#define SCREEN_I2C_ADDR 0x3C // or 0x3C
-#define SCREEN_WIDTH 128     // OLED display width, in pixels
-#define SCREEN_HEIGHT 64     // OLED display height, in pixels
-#define OLED_RST_PIN -1      // Reset pin (-1 if not available)
-Adafruit_SSD1306 display(128, 64, &Wire, OLED_RST_PIN);
+
 #define FRAME_DELAY (42)
 #define FRAME_WIDTH (64)
 #define FRAME_HEIGHT (64)
 #define FRAME_COUNT (sizeof(frames) / sizeof(frames[0]))
-// Oled Animation Progmem starts here----------
+
+void setupWifi();
+void reconnectMQTT();
+void mqttCallback(char* topic, byte* payload, unsigned int length);
+void runAnimation();
+void clearAnimation();
+
 const byte PROGMEM frames[][512] = {
     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 254, 0, 0, 0, 0, 0, 0, 1, 255, 128, 0, 0, 0, 0, 0, 3, 195, 128, 0, 0, 0, 0, 0, 3, 129, 192, 0, 0, 0, 0, 0, 7, 0, 192, 0, 0, 0, 0, 0, 7, 0, 224, 0, 0, 0, 0, 0, 6, 0, 224, 0, 0, 0, 0, 0, 7, 0, 224, 0, 0, 0, 0, 3, 135, 0, 224, 0, 0, 0, 127, 255, 231, 129, 192, 0, 0, 1, 255, 255, 243, 195, 192, 0, 0, 15, 224, 0, 57, 255, 128, 0, 0, 63, 128, 0, 28, 255, 0, 0, 0, 124, 0, 0, 28, 24, 0, 0, 0, 240, 63, 240, 12, 0, 0, 0, 0, 192, 255, 240, 28, 0, 0, 0, 1, 199, 247, 128, 28, 0, 0, 0, 0, 255, 207, 0, 56, 0, 0, 0, 0, 254, 30, 0, 120, 0, 0, 0, 0, 120, 60, 0, 240, 0, 0, 0, 0, 0, 120, 1, 255, 128, 0, 0, 0, 0, 240, 3, 255, 224, 0, 0, 0, 1, 224, 7, 255, 224, 0, 0, 0, 3, 192, 15, 0, 224, 0, 0, 0, 3, 128, 30, 0, 224, 0, 0, 0, 3, 0, 63, 255, 224, 0, 0, 0, 7, 0, 127, 255, 224, 0, 0, 0, 15, 0, 255, 255, 128, 0, 0, 0, 31, 128, 240, 0, 0, 0, 0, 0, 63, 192, 248, 0, 0, 0, 0, 0, 121, 224, 60, 0, 0, 0, 0, 0, 240, 240, 30, 0, 0, 0, 0, 1, 224, 124, 7, 0, 0, 0, 3, 255, 192, 254, 3, 128, 0, 0, 7, 255, 129, 239, 3, 128, 0, 0, 15, 255, 3, 195, 195, 128, 0, 0, 12, 0, 7, 129, 195, 128, 0, 0, 12, 0, 15, 0, 227, 128, 0, 0, 14, 0, 30, 0, 227, 128, 0, 0, 15, 255, 252, 0, 227, 128, 0, 0, 7, 255, 248, 0, 227, 128, 0, 0, 3, 255, 192, 0, 227, 128, 0, 0, 0, 0, 0, 0, 227, 128, 0, 0, 0, 0, 0, 0, 227, 128, 0, 0, 0, 0, 0, 0, 227, 128, 0, 0, 0, 0, 0, 0, 227, 128, 0, 0, 0, 0, 0, 0, 227, 128, 0, 0, 0, 3, 128, 0, 227, 128, 48, 0, 0, 3, 224, 0, 227, 128, 240, 0, 0, 1, 255, 255, 255, 255, 224, 0, 0, 0, 127, 255, 255, 255, 192, 0, 0, 0, 31, 255, 255, 255, 0, 0, 0, 0, 15, 192, 0, 254, 0, 0, 0, 0, 29, 224, 0, 238, 0, 0, 0, 0, 28, 224, 0, 198, 0, 0, 0, 0, 28, 224, 0, 238, 0, 0, 0, 0, 15, 192, 0, 254, 0, 0, 0, 0, 15, 192, 0, 124, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 254, 0, 0, 0, 0, 0, 0, 1, 255, 128, 0, 0, 0, 0, 0, 3, 195, 128, 0, 0, 0, 0, 0, 3, 129, 192, 0, 0, 0, 0, 0, 7, 0, 192, 0, 0, 0, 0, 0, 7, 0, 224, 0, 0, 0, 0, 0, 6, 0, 224, 0, 0, 0, 0, 0, 7, 0, 224, 0, 0, 0, 0, 3, 135, 0, 224, 0, 0, 0, 127, 255, 231, 129, 192, 0, 0, 1, 255, 255, 243, 195, 192, 0, 0, 15, 224, 0, 57, 255, 128, 0, 0, 63, 128, 0, 28, 255, 0, 0, 0, 124, 0, 0, 28, 24, 0, 0, 0, 240, 63, 240, 12, 0, 0, 0, 0, 192, 255, 240, 28, 0, 0, 0, 1, 199, 247, 128, 28, 0, 0, 0, 0, 255, 207, 0, 56, 0, 0, 0, 0, 254, 30, 0, 120, 0, 0, 0, 0, 120, 60, 0, 240, 0, 0, 0, 0, 0, 120, 1, 255, 128, 0, 0, 0, 0, 240, 3, 255, 224, 0, 0, 0, 1, 224, 7, 255, 224, 0, 0, 0, 3, 192, 15, 0, 224, 0, 0, 0, 3, 128, 30, 0, 224, 0, 0, 0, 3, 0, 63, 255, 224, 0, 0, 0, 7, 0, 127, 255, 224, 0, 0, 0, 15, 0, 255, 255, 128, 0, 0, 0, 31, 128, 240, 0, 0, 0, 0, 0, 63, 192, 248, 0, 0, 0, 0, 0, 121, 224, 60, 0, 0, 0, 0, 0, 240, 240, 30, 0, 0, 0, 0, 1, 224, 124, 7, 0, 0, 0, 3, 255, 192, 254, 3, 128, 0, 0, 7, 255, 129, 239, 3, 128, 0, 0, 15, 255, 3, 195, 195, 128, 0, 0, 12, 0, 7, 129, 195, 128, 0, 0, 12, 0, 15, 0, 227, 128, 0, 0, 14, 0, 30, 0, 227, 128, 0, 0, 15, 255, 252, 0, 227, 128, 0, 0, 7, 255, 248, 0, 227, 128, 0, 0, 3, 255, 192, 0, 227, 128, 0, 0, 0, 0, 0, 0, 227, 128, 0, 0, 0, 0, 0, 0, 227, 128, 0, 0, 0, 0, 0, 0, 227, 128, 0, 0, 0, 0, 0, 0, 227, 128, 0, 0, 0, 0, 0, 0, 227, 128, 0, 0, 0, 3, 128, 0, 227, 128, 48, 0, 0, 3, 224, 0, 227, 128, 240, 0, 0, 1, 255, 255, 255, 255, 224, 0, 0, 0, 127, 255, 255, 255, 192, 0, 0, 0, 31, 255, 255, 255, 0, 0, 0, 0, 15, 192, 0, 254, 0, 0, 0, 0, 29, 224, 0, 238, 0, 0, 0, 0, 28, 224, 0, 198, 0, 0, 0, 0, 28, 224, 0, 238, 0, 0, 0, 0, 15, 192, 0, 254, 0, 0, 0, 0, 15, 192, 0, 124, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -87,82 +88,34 @@ void callback(char *topic, byte *payload, unsigned int length)
   String msg;
   String payloadString = String((char *)payload);
   int value = payloadString.toInt();
-  for (int i = 0; i < 3; i++)
-  {
-    if (topicToSubscribe[i] == receivedTopic)
-    {
-      currentTopicValue[i] = value;
-    }
-  }
+
+      currentTopicValue[0] = value;
+    
 }
-/**
- * Reconnects the MQTT client until it is successfully connected.
- *
- * @throws ErrorType description of error
- */
-void reconnectMQTT()
-{
-  // Loop until
-  while (!client.connected())
-  {
-#if DEBUG_MODE
-    Serial.print("Attempting MQTT connection...");
-#endif
-    // Attempt to connect
-    if (client.connect("esp82661"))
-    {
-#if DEBUG_MODE
-      Serial.println("connected");
-#endif
-      for (u_int8_t i = 0; i < 3; i++)
-      {
-        client.subscribe(topicToSubscribe[i].c_str());
-      }
-    }
-    else
-    {
-#if DEBUG_MODE
-      Serial.print("failed, rc=");
-      Serial.print(client.state());
-      Serial.println(" try again in 5 seconds");
-#endif
-      // Wait 5 seconds before retrying
-      delay(5000);
-    }
-  }
-}
-DHTesp dht;
-void setup()
-{
-#ifdef DEBUG_MODE
+
+void setup() {
   Serial.begin(115200);
-#endif
-  display.begin(SSD1306_SWITCHCAPVCC, SCREEN_I2C_ADDR);
-  display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
-  display.clearDisplay();
-  display.display();
-  // PinMode Declaration ----------//
+  setupWifi();
+
+  client.setServer(MQTT_SERVER, MQTT_PORT);
+  client.setCallback(mqttCallback);
+
   pinMode(LEDPIN, OUTPUT);
   pinMode(SWITCHBOARDPIN, OUTPUT);
   digitalWrite(LEDPIN, LOW);
   digitalWrite(SWITCHBOARDPIN, LOW);
-  dht.setup(DHT_PIN, DHTesp::DHT22);
-  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
-  while (WiFi.status() != WL_CONNECTED)
-  {
-    delay(500);
-#ifdef DEBUG_MODE
-    Serial.println("Connecting to WiFi..");
+
+#if OLED_TYPE
+  display.begin(SSD1306_SWITCHCAPVCC, SCREEN_I2C_ADDR);
+  display.clearDisplay(); 
+  display.display();
+#else
+  display.begin();
+  display.clearBuffer();  
+  display.sendBuffer();   
 #endif
-  }
-  client.setServer(MQTT_SERVER, MQTT_PORT);
-  client.setCallback(callback);
-  reconnectMQTT();
-  for (u_int8_t i = 0; i < 3; i++)
-  {
-    client.subscribe(topicToSubscribe[i].c_str());
-  }
 }
+
 int frame = 0;
 /**
  * Runs the animation on the display.
@@ -173,13 +126,15 @@ int frame = 0;
  *
  * @throws None
  */
-void runAnimation()
-{
+#if OLED_TYPE
+  void runAnimation()
+  {
 
   for (int i = 0; i < 85; i++)
-  {
+  { 
     display.clearDisplay();
     display.drawBitmap(32, 0, frames[frame], FRAME_WIDTH, FRAME_HEIGHT, 1);
+    display.drawBitmap
     display.display();
     frame = (frame + 1) % FRAME_COUNT;
     delay(FRAME_DELAY);
@@ -196,93 +151,92 @@ void runAnimation()
   display.display();
   delay(1000);
 }
-/**
- * Clears the display animation.
- *
- * @throws ErrorType description of error
- */
 void clearAnimation()
 {
   display.clearDisplay();
   display.display();
 }
-float hum = NULL;
-float temp = NULL;
-/**
- * Updates the temperature and humidity values.
- *
- * @return void
- *
- * @throws None
- */
-void updateTempHum()
-{
-  float t = dht.getTemperature();
-  float h = dht.getHumidity();
+#else 
+void runAnimation() {
+  // for (int i = 0; i < 85; i++) {
+  //   display.clearBuffer();
+  //   // Corrected drawBitmap call with proper argument types and order
+  //   display.drawBitmapP(0, 0, 128/8, 64, frames[frame]);
+  //   display.sendBuffer();
+  //   frame = (frame + 1) % FRAME_COUNT;
+  //   delay(FRAME_DELAY);
+  // }
 
-  if (isnan(t) || isnan(h) || t == 0 || h == 0)
-  {
-    return;
-  }
-  else
-  {
-
-    if ((temp != t) || (hum != h))
-    {
-      temp = t;
-      hum = h;
-      Serial.println("updatte detected");
-
-      client.publish("IoT/hall/temperature", String(temp).c_str(), true);
-      client.publish("IoT/hall/humidity", String(hum).c_str(), true);
-    }
-  }
+  display.clearBuffer();
+  display.setFont(u8g2_font_ncenB08_tr); // Example font, adjust as needed
+  display.drawStr(0, 10, "Made BY:");
+  display.drawStr(0, 20, "91, 92, 93, 94");
+  display.drawStr(0, 30, "143, 144, 145");
+  display.drawStr(0, 40, "162, 163, 164, 165");
+  display.sendBuffer();
+  delay(1000);
 }
-int airQuality = NULL;
-/**
- * Monitors the air quality by reading the analog value from the specified pin. If the air quality value
- * is different from the previous value, publishes the new air quality value to the specified topic.
- *
- * @param None
- *
- * @return None
- *
- * @throws None
- */
-void airQualityMonitor()
-{
-  int temp = analogRead(AIRQUALITYPIN);
-  if (temp != airQuality)
-  {
-    airQuality = temp;
-    client.publish("IoT/hall/airQuality", String(airQuality).c_str(), true);
-  }
+
+
+
+void clearAnimation() {
+  display.clearBuffer();
+  display.sendBuffer();
 }
-/**
- * Executes a loop of operations including checking the connection status,
- * reconnecting if necessary, processing the MQTT client, running an animation,
- * updating temperature and humidity, monitoring air quality, and controlling
- * digital and analog outputs.
- *
- * @throws ErrorType description of error
- */
-void loop()
-{
-  if (!client.connected())
-  {
+
+#endif
+
+void loop() {
+  if (!client.connected()) {
     reconnectMQTT();
   }
   client.loop();
-  if (currentTopicValue[0] == 1)
-  {
+
+  if (currentTopicValue[0] == 1) {
     runAnimation();
-  }
-  else
-  {
+  } else {
     clearAnimation();
   }
-  updateTempHum();
-  airQualityMonitor();
-  digitalWrite(SWITCHBOARDPIN, currentTopicValue[2]);
-  analogWrite(LEDPIN, currentTopicValue[3] * 2.55 * currentTopicValue[1]);
 }
+
+void setupWifi() {
+  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.println("Connecting to WiFi...");
+  }
+  Serial.println("WiFi connected");
+}
+
+void reconnectMQTT() {
+  while (!client.connected()) {
+    Serial.print("Attempting MQTT connection...");
+    if (client.connect("esp82661")) {
+      Serial.println("connected");
+      client.subscribe(topicToSubscribe[0].c_str());
+    } else {
+      Serial.print("failed, rc=");
+      Serial.print(client.state());
+      Serial.println(" try again in 5 seconds");
+      delay(5000);
+    }
+  }
+}
+
+void mqttCallback(char* topic, byte* payload, unsigned int length) {
+  payload[length] = '\0'; // Ensure null-termination
+  String receivedTopic = String(topic);
+  String payloadString = String((char *)payload);
+  currentTopicValue[0] = payloadString.toInt();
+  Serial.print("Message arrived [");
+
+  Serial.print(receivedTopic);
+
+  Serial.print("] ");
+
+  Serial.println(payloadString);
+
+  Serial.println(currentTopicValue[0]);
+
+}
+

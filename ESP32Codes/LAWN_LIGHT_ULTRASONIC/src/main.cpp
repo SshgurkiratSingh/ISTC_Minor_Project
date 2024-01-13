@@ -9,14 +9,14 @@ int led_pin[4] = {21, 19, 18,5}; // Changed to pins that are general-purpose IO
 
 // Define ultrasonic sensors
 // North Ultrasonic Sensor
-NewPing northUltrasonic(23, 22,500); // Pins 23 and 22 are general-purpose IO
+NewPing northUltrasonic(`3, 22,500); // Pins 23 and 22 are general-purpose IO
 
 // South Ultrasonic Sensor
 NewPing southUltrasonic(25, 26,500); // Pins 25 and 26 are general-purpose IO
 
 NewPing TankSensor(32, 33,200);
 #define TANKSIZE 15
-
+#define LDR 4
 int maxSize = 40;
 #define CHECKNORTH (northUltrasonic.ping_cm() >= maxSize)
 #define CHECKSOUTH (southUltrasonic.ping_cm() >= maxSize)
@@ -146,6 +146,8 @@ void updateTempHum()
         client.publish(Topic_TO_Publish[0].c_str(), String(temp).c_str(), true);
         client.publish(Topic_TO_Publish[1].c_str(), String(hum).c_str(), true);
         client.publish("IoT/lawn/airQuality", String(analogRead(AIRQUALITY_PIN)).c_str(), true);
+        client.publish("IoT/entrance/lightIntensity", String(analogRead(LDR)/4).c_str(), true);
+        
       }
     }
   }
@@ -161,6 +163,7 @@ void updateTempHum()
  */
 void setup()
 {
+  pinMode(LDR, INPUT);
   dht.setup(DHTPIN, DHTesp::DHT22);
   pinMode(AIRQUALITY_PIN, INPUT);
   // put your setup code here, to run once:
