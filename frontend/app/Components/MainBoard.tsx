@@ -77,7 +77,7 @@ const MainBoard = () => {
   useEffect(() => {
     fetchData();
 
-    const intervalId = setInterval(fetchData, 2000);
+    const intervalId = setInterval(fetchData, 5000);
 
     return () => clearInterval(intervalId);
   }, [ServerData, totalConsumption]);
