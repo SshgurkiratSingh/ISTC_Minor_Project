@@ -3,16 +3,9 @@ Author: Gurkirat Singh <gurkirat7092@yahoo.com>
 Date: Sept 28, 2023
 Description:
 This code establish connection as control panel to mqtt server to control nodes over wifi.
-- PushButton attached to pin 32,33,27
-- OLED attached to pin 22 (sda),21
-- DHT22 attached to pin 15
-- Fan attached to pin 18
-- Light attached to pin 23
-- Plug attached to pin 5
-- Brightness Led attached to pin 19
-- PIR attached to pin 2
-*/
 
+*/
+#include <ESP32Encoder.h>
 #include <Arduino.h>
 #include <Wire.h>
 #include <Adafruit_GFX.h>
@@ -24,20 +17,16 @@ This code establish connection as control panel to mqtt server to control nodes 
 #include <ArduinoJson.h>
 
 #define OLED_RESET 4
-// OUTPUT CONFIGS
-#define FAN 1
-#define PLUG 2
-#define LIGHT 3
-#define BRIGHTNESS 4
+#define AIRQUALITY 2
 
 Adafruit_SSD1306 display(128, 64, &Wire, -1);
 // Adafruit_SH1106 display(22, 21);
 DHTesp dht;
-#define MODE_BUTTON_CAP 1
+
 WiFiClient wifi;
 PubSubClient client(wifi);
 /* CONFIGURATION Parameters */
-#define MAX_ITEMS 5
+#define MAX_ITEMS 6
 #define DEBUG_MODE true
 /* OLED */
 #define SCREEN_WIDTH 128
@@ -51,30 +40,36 @@ const unsigned char light[] PROGMEM = {
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x03, 0x00, 0x04, 0x80, 0x08, 0x40, 0x10, 0x20, 0x10, 0x20,
     0x10, 0x20, 0x08, 0x40, 0x07, 0x80, 0x04, 0x80, 0x04, 0x80, 0x07, 0x80, 0x00, 0x00, 0x00, 0x00};
 // 'brightness', 16x16px
-const unsigned char brightness[] PROGMEM = {
-    0xff, 0xff, 0x80, 0x01, 0xbf, 0xfd, 0x80, 0x01, 0x80, 0x01, 0x8f, 0xf1, 0x80, 0x01, 0x80, 0x01,
-    0x83, 0xc1, 0x80, 0x01, 0x80, 0x01, 0x81, 0x81, 0x80, 0x01, 0x80, 0x01, 0x80, 0x01, 0xff, 0xff};
-// 'fan', 16x16px
-const unsigned char fan[] PROGMEM = {
-    0x00, 0x00, 0x01, 0x00, 0x01, 0x00, 0x01, 0x00, 0x01, 0x00, 0x03, 0x80, 0x04, 0x40, 0x7d, 0x7c,
-    0x04, 0x40, 0x03, 0x80, 0x01, 0x00, 0x01, 0x00, 0x01, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00};
-// 'plug', 16x16px
-const unsigned char plug[] PROGMEM = {
-    0x00, 0x00, 0x7f, 0xfe, 0x40, 0x02, 0x41, 0x82, 0x41, 0x82, 0x40, 0x02, 0x40, 0x02, 0x48, 0x12,
-    0x40, 0x02, 0x40, 0x02, 0x48, 0x12, 0x40, 0x02, 0x40, 0x02, 0x40, 0x02, 0x7f, 0xfe, 0x00, 0x00};
+
 // 'wifi', 16x16px
 const unsigned char epd_bitmap_wifi[] PROGMEM = {
     0x00, 0x00, 0x07, 0xe0, 0x08, 0x10, 0x09, 0x90, 0x12, 0x48, 0x12, 0x48, 0x24, 0x24, 0x25, 0xa4,
     0x00, 0x00, 0x41, 0x5d, 0x41, 0x51, 0x2a, 0x59, 0x3e, 0x51, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 
-// Array of all bitmaps for convenience. (Total bytes used to store images in PROGMEM = 240)
+const unsigned char blue [] PROGMEM = {
+	0x00, 0x00, 0x00, 0x00, 0x1f, 0xf0, 0x20, 0x08, 0x47, 0x84, 0x84, 0x42, 0x84, 0x42, 0x87, 0x82, 
+	0x84, 0x42, 0x84, 0x42, 0x47, 0x84, 0x20, 0x08, 0x1f, 0xf0, 0x10, 0x10, 0x08, 0x20, 0x07, 0xc0
+};
+// 'green', 16x16px
+const unsigned char green [] PROGMEM = {
+	0x00, 0x00, 0x00, 0x00, 0x1f, 0xf0, 0x20, 0x08, 0x47, 0xc4, 0x88, 0x02, 0x88, 0x02, 0x8b, 0x82, 
+	0x88, 0x42, 0x88, 0x42, 0x47, 0xc4, 0x20, 0x08, 0x1f, 0xf0, 0x10, 0x10, 0x08, 0x20, 0x07, 0xc0
+};
+// 'red', 16x16px
+const unsigned char red [] PROGMEM = {
+	0x00, 0x00, 0x00, 0x00, 0x1f, 0xf0, 0x20, 0x08, 0x47, 0x84, 0x84, 0x42, 0x84, 0x42, 0x87, 0x82, 
+	0x86, 0x02, 0x85, 0x02, 0x44, 0x84, 0x20, 0x08, 0x1f, 0xf0, 0x10, 0x10, 0x08, 0x20, 0x07, 0xc0
+};
+const unsigned char  gyser [] PROGMEM = {
+	0x00, 0x00, 0x7f, 0xfe, 0x40, 0x02, 0x43, 0xc2, 0x7e, 0x7e, 0x53, 0xca, 0x50, 0x0a, 0x53, 0xca, 
+	0x52, 0x0a, 0x52, 0xca, 0x52, 0x4a, 0x53, 0xca, 0x50, 0x0a, 0x7f, 0xfe, 0x0c, 0x30, 0x0c, 0x30
+};
+
 const int epd_bitmap_allArray_LEN = 5;
-const unsigned char *logoArray[5] = {
-    light,
-    light,
-    brightness,
-    fan,
-    plug};
+const unsigned char *logoArray[6] = {
+    red,
+    green,
+    blue,light,light,gyser};
 
 unsigned long debounceDelay = 300;
 unsigned long lastDebounceTime = 0;
@@ -87,26 +82,30 @@ float temp = 0;
 float hum = 0;
 // Items Configuration starts here
 const char selectableItems[MAX_ITEMS][15] = {
-    "Light 1",
-    "Light 2",
-    "Brightness",
-    "Fan",
-    "Plug 1",
+    "Kitchen Red",
+    "Kitchen Green",
+    "Kitchen Blue",
+    "Garage Light",
+    "Washroom Light",
+    "Geyser"
 };
-const bool toggleItems[MAX_ITEMS] = {true, true, false, false, true};
-int currentValue[MAX_ITEMS] = {0, 0, 0, 0, 0};
-const char topics[MAX_ITEMS][30] = {"IoT/room1/light1", "IoT/room1/light2", "IoT/room1/brightness1", "IoT/room1/fan1", "IoT/room1/switchBoard1"};
+const bool toggleItems[MAX_ITEMS] = {true, true, true, true, true};
+int currentValue[MAX_ITEMS] = {0, 0, 0, 0, 0,0};
+const char topics[MAX_ITEMS][30] = { "IoT/kitchen/light1","IoT/kitchen/light2","IoT/kitchen/switchBoard1","IoT/garage/light1","IoT/washroom/light1","IoT/washroom/gyser"};
 
-const uint8_t itemPin[MAX_ITEMS - 1] = {23, 19, 18, 5};
+const int pin_To_Control[6]={23,22,21,19,18,5};
 
-#define PIR 2
-
-const uint8_t maxValues[MAX_ITEMS] = {1, 1, 100, 100, 1};
+const uint8_t maxValues[MAX_ITEMS] = {1, 1, 1, 1, 1,1};
 bool needUpdate = true;
 
 
 char SSID[32] = "ConForNode1"; // Increased size for SSID
 char PASSWORD[64] = "12345678";       // Increased size for Password
+ int lastCount=0;
+
+ long lastPIR = 0;
+ESP32Encoder encoder;
+
 
 /**
  * Callback function that is called when a message is received.
@@ -117,30 +116,6 @@ char PASSWORD[64] = "12345678";       // Increased size for Password
  *
  * @throws None
  */
-unsigned long lastPIR = 0;
-bool pirFlag = false;
-
-void checkPIR(){
-int pirValue = digitalRead(PIR);
-
-    // Check if motion is detected
-    if (pirValue == HIGH) {
-        // Motion detected, update lastPIR with current time
-        lastPIR = millis();
-        pirFlag = true;
-    }
-if (pirFlag) {
-    // Check if motion was detected in the last 30 seconds
-    if (millis() - lastPIR <= 30000) {
-        // Set pirFlag to 1
-        client.publish(topics[0],String(1*currentValue[0]).c_str(),true);
-    } else {
-        // Reset pirFlag to 0
-       client.publish(topics[0],String(0*currentValue[0]).c_str(),true);
-    }}
-
-
-}
 void callback(char *topic, byte *payload, unsigned int length)
 {
 
@@ -196,7 +171,7 @@ String BottomText()
     }
     else
     {
-        return "T:" + String(temp) + " ROOM " + "H:" + String(hum);
+        return "T:" + String(temp) + " KWG " + "H:" + String(hum);
     }
 }
 /**
@@ -208,9 +183,11 @@ String BottomText()
  */
 void setup()
 {
-    pinMode(PIR,INPUT);
+
+    
     Serial.begin(115200);
-   
+   pinMode(AIRQUALITY,INPUT);
+
     dht.setup(15, DHTesp::DHT22);
     Serial.println(dht.getTemperature());
     display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
@@ -232,11 +209,7 @@ void setup()
         display.setTextSize(1);
         display.setCursor(5, 32);
         display.print("Connecting to WiFi..");
-        display.setCursor(18, 0);
-        display.print("Room Controller");
         display.drawBitmap(58, 14, epd_bitmap_wifi, 16, 16, WHITE);
-        display.setCursor(0, 52);
-        display.print("Temp:"+String(dht.getTemperature())+" Hum:"+String(dht.getHumidity()));
         display.display();
         delay(1000);
         i++;
@@ -246,7 +219,7 @@ void setup()
         }
     }
 
-    if (client.connect("ccc"))
+    if (client.connect("ssfsf"))
     {
 
 #if DEBUG_MODE
@@ -268,13 +241,15 @@ void setup()
 #endif
     }
 
-    pinMode(NEXT_BUTTON, INPUT_PULLUP);
-    pinMode(PREV_BUTTON, INPUT_PULLUP);
+    // Select Button
+    encoder.attachHalfQuad(PREV_BUTTON, NEXT_BUTTON);
+    encoder.setCount(0);
+  
     pinMode(SELECT_BUTTON, INPUT_PULLUP);
 
     for (int i = 0; i < MAX_ITEMS - 1; i++)
     {
-        pinMode(itemPin[i], OUTPUT);
+        pinMode(pin_To_Control[i], OUTPUT);
     }
 }
 
@@ -367,13 +342,7 @@ void checkButtons()
 
     // Check the next button
     // Check the next button
-    if (
-#if MODE_BUTTON_CAP
-        touchRead(NEXT_BUTTON) < 30
-#else
-        (digitalRead(NEXT_BUTTON) == LOW)
-#endif
-    )
+    if ( encoder.getCount() >lastCount)
     {
 #if DEBUG_MODE
         Serial.println("next");
@@ -398,16 +367,12 @@ void checkButtons()
                 }
             }
         }
+        lastCount=encoder.getCount();
+        delay(400);
     }
 
     // Check the previous button
-    if (
-#if MODE_BUTTON_CAP
-        touchRead(PREV_BUTTON) < 30
-#else
-        (digitalRead(PREV_BUTTON) == LOW)
-#endif
-    )
+    if ( encoder.getCount() < lastCount)
     {
 #if DEBUG_MODE
         Serial.println("prev");
@@ -433,16 +398,13 @@ void checkButtons()
                 }
             }
         }
+        lastCount=encoder.getCount();
+        delay(400);
+        Serial.println(lastCount);
     }
 
     // Check the select button
-    if (
-#if MODE_BUTTON_CAP
-        touchRead(SELECT_BUTTON) < 30
-#else
-        (digitalRead(SELECT_BUTTON) == LOW)
-#endif
-    )
+    if (digitalRead(SELECT_BUTTON) == LOW)
     {
 #if DEBUG_MODE
         Serial.println("select");
@@ -464,6 +426,7 @@ void checkButtons()
             Serial.println(payload);
 #endif
         }
+        delay(400);
     }
 }
 
@@ -473,33 +436,41 @@ void checkButtons()
  *
  * @return void
  */
-unsigned long lastUpdate = 0;
+unsigned long lastUpdateTime = 0;
+const unsigned long updateInterval = 12000;  // 15 seconds in milliseconds
+
 void updateTempHum()
 {
-    float t = dht.getTemperature();
-    float h = dht.getHumidity();
-
-    if (isnan(t) || isnan(h) || t == 0 || h == 0)
+    // Check if it's time for an update
+    if (millis() - lastUpdateTime >= updateInterval)
     {
-        return;
-    }
-    else
-    {
+        float t = dht.getTemperature();
+        float h = dht.getHumidity();
 
-        if (millis() - lastUpdate >= 6000) {
-            lastUpdate = millis();  // Update the last update time
-
-            if ((temp != t) || (hum != h)) {
+        if (isnan(t) || isnan(h) || t == 0 || h == 0)
+        {
+            return;
+        }
+        else
+        {
+            if ((temp != t) || (hum != h))
+            {
                 temp = t;
                 hum = h;
                 Serial.println("Update detected");
-                needUpdate = true;
-                client.publish("IoT/room1/temperature", String(temp).c_str(), true);
-                client.publish("IoT/room1/humidity", String(hum).c_str(), true);
+
+                client.publish("IoT/kitchen/temperature", String(temp).c_str(), true);
+                client.publish("IoT/kitchen/humidity", String(hum).c_str(), true);
+                client.publish("IoT/kitchen/airQuality",String(analogRead(AIRQUALITY)).c_str(),true);
+              
             }
+
+            // Update the last update time
+            lastUpdateTime = millis();
         }
     }
 }
+
 
 /**
  * Updates the output based on the current values.
@@ -510,12 +481,11 @@ void updateTempHum()
  *
  * @throws None
  */
-void updateOutput()
-{
-    digitalWrite(itemPin[0], currentValue[0]);
-    analogWrite(itemPin[1], currentValue[1 + 1] * 2.55 * currentValue[1]);
-    analogWrite(itemPin[2], currentValue[2 + 1] * 2.55);
-    digitalWrite(itemPin[3], currentValue[3 + 1]);
+void refreshOutput(){
+    for (int i = 0; i < 6; i++){
+      digitalWrite(pin_To_Control[i], currentValue[i]);
+
+    }
 }
 
 /**
@@ -529,8 +499,7 @@ void loop()
     fixNumbering();
     displayItems();
     checkButtons();
-    updateOutput();
-    checkPIR();
+  refreshOutput();
     updateTempHum();
     delay(100);
 }

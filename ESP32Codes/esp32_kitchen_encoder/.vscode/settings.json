@@ -1,0 +1,9 @@
+{
+    "cmake.configureOnOpen": false,
+    "editor.inlineSuggest.showToolbar": "onHover",
+    "files.associations": {
+        "*.embeddedhtml": "html",
+        "littlefs.h": "c"
+    },
+    "ros.distro": "foxy"
+}

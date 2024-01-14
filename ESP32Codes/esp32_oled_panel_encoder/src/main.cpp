@@ -12,7 +12,7 @@ This code establish connection as control panel to mqtt server to control nodes 
 - Brightness Led attached to pin 19
 - PIR attached to pin 2
 */
-
+#include <ESP32Encoder.h>
 #include <Arduino.h>
 #include <Wire.h>
 #include <Adafruit_GFX.h>
@@ -107,6 +107,7 @@ bool needUpdate = true;
 
 char SSID[32] = "ConForNode1"; // Increased size for SSID
 char PASSWORD[64] = "12345678";       // Increased size for Password
+ int lastCount=0;
 
 /**
  * Callback function that is called when a message is received.
@@ -117,8 +118,8 @@ char PASSWORD[64] = "12345678";       // Increased size for Password
  *
  * @throws None
  */
-unsigned long lastPIR = 0;
-bool pirFlag = false;
+ long lastPIR = 0;
+ESP32Encoder encoder;
 
 void checkPIR(){
 int pirValue = digitalRead(PIR);
@@ -127,9 +128,8 @@ int pirValue = digitalRead(PIR);
     if (pirValue == HIGH) {
         // Motion detected, update lastPIR with current time
         lastPIR = millis();
-        pirFlag = true;
     }
-if (pirFlag) {
+
     // Check if motion was detected in the last 30 seconds
     if (millis() - lastPIR <= 30000) {
         // Set pirFlag to 1
@@ -137,7 +137,7 @@ if (pirFlag) {
     } else {
         // Reset pirFlag to 0
        client.publish(topics[0],String(0*currentValue[0]).c_str(),true);
-    }}
+    }
 
 
 }
@@ -208,6 +208,7 @@ String BottomText()
  */
 void setup()
 {
+
     pinMode(PIR,INPUT);
     Serial.begin(115200);
    
@@ -232,11 +233,7 @@ void setup()
         display.setTextSize(1);
         display.setCursor(5, 32);
         display.print("Connecting to WiFi..");
-        display.setCursor(18, 0);
-        display.print("Room Controller");
         display.drawBitmap(58, 14, epd_bitmap_wifi, 16, 16, WHITE);
-        display.setCursor(0, 52);
-        display.print("Temp:"+String(dht.getTemperature())+" Hum:"+String(dht.getHumidity()));
         display.display();
         delay(1000);
         i++;
@@ -268,8 +265,10 @@ void setup()
 #endif
     }
 
-    pinMode(NEXT_BUTTON, INPUT_PULLUP);
-    pinMode(PREV_BUTTON, INPUT_PULLUP);
+    // Select Button
+    encoder.attachHalfQuad(PREV_BUTTON, NEXT_BUTTON);
+    encoder.setCount(0);
+  
     pinMode(SELECT_BUTTON, INPUT_PULLUP);
 
     for (int i = 0; i < MAX_ITEMS - 1; i++)
@@ -367,13 +366,7 @@ void checkButtons()
 
     // Check the next button
     // Check the next button
-    if (
-#if MODE_BUTTON_CAP
-        touchRead(NEXT_BUTTON) < 30
-#else
-        (digitalRead(NEXT_BUTTON) == LOW)
-#endif
-    )
+    if ( encoder.getCount() >lastCount)
     {
 #if DEBUG_MODE
         Serial.println("next");
@@ -398,16 +391,12 @@ void checkButtons()
                 }
             }
         }
+        lastCount=encoder.getCount();
+        delay(400);
     }
 
     // Check the previous button
-    if (
-#if MODE_BUTTON_CAP
-        touchRead(PREV_BUTTON) < 30
-#else
-        (digitalRead(PREV_BUTTON) == LOW)
-#endif
-    )
+    if ( encoder.getCount() < lastCount)
     {
 #if DEBUG_MODE
         Serial.println("prev");
@@ -433,16 +422,13 @@ void checkButtons()
                 }
             }
         }
+        lastCount=encoder.getCount();
+        delay(400);
+        Serial.println(lastCount);
     }
 
     // Check the select button
-    if (
-#if MODE_BUTTON_CAP
-        touchRead(SELECT_BUTTON) < 30
-#else
-        (digitalRead(SELECT_BUTTON) == LOW)
-#endif
-    )
+    if (digitalRead(SELECT_BUTTON) == LOW)
     {
 #if DEBUG_MODE
         Serial.println("select");
@@ -464,6 +450,7 @@ void checkButtons()
             Serial.println(payload);
 #endif
         }
+        delay(400);
     }
 }
 
@@ -473,7 +460,6 @@ void checkButtons()
  *
  * @return void
  */
-unsigned long lastUpdate = 0;
 void updateTempHum()
 {
     float t = dht.getTemperature();
@@ -486,17 +472,14 @@ void updateTempHum()
     else
     {
 
-        if (millis() - lastUpdate >= 6000) {
-            lastUpdate = millis();  // Update the last update time
-
-            if ((temp != t) || (hum != h)) {
-                temp = t;
-                hum = h;
-                Serial.println("Update detected");
-                needUpdate = true;
-                client.publish("IoT/room1/temperature", String(temp).c_str(), true);
-                client.publish("IoT/room1/humidity", String(hum).c_str(), true);
-            }
+        if ((temp != t) || (hum != h))
+        {
+            temp = t;
+            hum = h;
+            Serial.println("updatte detected");
+            needUpdate = true;
+            client.publish("IoT/room1/temperature", String(temp).c_str(), true);
+            client.publish("IoT/room1/humidity", String(hum).c_str(), true);
         }
     }
 }
@@ -530,7 +513,7 @@ void loop()
     displayItems();
     checkButtons();
     updateOutput();
-    checkPIR();
+    // checkPIR();
     updateTempHum();
     delay(100);
 }
