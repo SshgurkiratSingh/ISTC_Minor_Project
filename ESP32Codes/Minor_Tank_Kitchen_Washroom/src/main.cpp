@@ -14,6 +14,7 @@ const char *mqtt_server = "ec2-35-170-242-83.compute-1.amazonaws.com";
 
 const u_int8_t pin_To_Control[6]={23,22,21,19,18,5};
 bool status[6]={0,0,0,0,0,0};
+bool isInverted[6]={1,1,1,0,0,0};
 WiFiClient wifi;
 PubSubClient client(wifi);
 DHTesp dht;
@@ -66,8 +67,13 @@ void callback(char *topic, byte *payload, unsigned int length)
  */
 void refreshOutput(){
     for (int i = 0; i < 6; i++){
-      digitalWrite(pin_To_Control[i], status[i]);
+        if (isInverted[i]){
+digitalWrite(pin_To_Control[i], !status[i]);
 
+        }else {
+            digitalWrite(pin_To_Control[i], status[i]);
+        }
+      
     }
 }
 void setup() {   
