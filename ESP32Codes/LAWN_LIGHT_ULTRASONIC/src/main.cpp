@@ -9,7 +9,7 @@ int led_pin[4] = {21, 19, 18,5}; // Changed to pins that are general-purpose IO
 
 // Define ultrasonic sensors
 // North Ultrasonic Sensor
-NewPing northUltrasonic(`3, 22,500); // Pins 23 and 22 are general-purpose IO
+NewPing northUltrasonic(23, 22,500); // Pins 23 and 22 are general-purpose IO
 
 // South Ultrasonic Sensor
 NewPing southUltrasonic(25, 26,500); // Pins 25 and 26 are general-purpose IO
