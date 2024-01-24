@@ -20,13 +20,47 @@
   backdrop-filter: blur(15px);
   border: 1px solid rgba(255, 255, 255, 0.2); /* light border for more glass effect */
   border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 255, 255, 0.5), /* cyan glow */
-               0 0 20px rgba(0, 255, 255, 0.5), /* cyan glow */
-               0 0 30px rgba(0, 255, 255, 0.5), /* cyan glow */
-               0 0 40px rgba(0, 0, 255, 0.5),   /* blue glow */
-               0 0 70px rgba(0, 0, 255, 0.5),   /* blue glow */
-               0 0 80px rgba(0, 0, 255, 0.5);   /* blue glow */
+  /* box-shadow: 0 0 10px rgba(0, 255, 255, 0.5),
+               0 0 20px rgba(0, 255, 255, 0.5),
+               0 0 30px rgba(0, 255, 255, 0.5),
+               0 0 40px rgba(0, 0, 255, 0.5),   
+               0 0 70px rgba(0, 0, 255, 0.5),   
+               0 0 80px rgba(0, 0, 255, 0.5);   */
+ 
+  animation: animated-shadow 10s linear infinite;
+
 }
+@keyframes animated-shadow {
+  0% {
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.5),
+               0 0 20px rgba(0, 255, 255, 0.5),
+               0 0 30px rgba(0, 255, 255, 0.5),
+               0 0 40px rgba(0, 0, 255, 0.5),   
+               0 0 70px rgba(0, 0, 255, 0.5),   
+               0 0 80px rgba(0, 0, 255, 0.5);   
+
+  }
+  50% {
+    box-shadow: 0 0 10px rgba(255, 251, 0, 0.5),
+               0 0 20px rgba(255, 251, 0, 0.5),
+               0 0 30px rgba(255, 251, 0, 0.5),
+               0 0 40px rgb(255, 238, 4),   
+               0 0 70px rgb(255, 238, 4),  
+               0 0 80px rgb(255, 238, 4);   
+               
+  } 99% {
+    box-shadow: 0 0 10px rgba(255, 51, 0, 0.5),
+               0 0 20px rgba(255, 51, 0, 0.5),
+               0 0 30px rgba(255, 51, 0, 0.5),
+               0 0 40px rgba(248, 0, 0, 0.849),   
+               0 0 70px rgba(248, 0, 0, 0.849),   
+               0 0 80px rgba(248, 0, 0, 0.849);   
+
+  }
+} 
+
+
+
 @keyframes animated-border {
   0% {
     border-image: radial-gradient(circle farthest-corner at center center, #121FCF 49%, #CF1512 100%);

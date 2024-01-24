@@ -14,8 +14,8 @@ Program to monitor a water tank and fill it if it is below limit and limit can b
 #include <WiFi.h>
 #include <NewPing.h>
 //---------------------------------WiFi Config-----------------------
-#define SSID "Wokwi-GUEST"
-#define PASSWORD ""
+#define SSID "ConForNode1"
+#define PASSWORD "12345678"
 WiFiClient esp;
 String btnTopic = "maninder/tank/button";
 unsigned int lastBtnUpdate;

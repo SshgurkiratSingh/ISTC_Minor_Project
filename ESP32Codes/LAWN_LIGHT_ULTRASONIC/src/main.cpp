@@ -36,7 +36,7 @@ const String Topic_TO_Subscribe[MAX_TOPIC] = {
     "IoT/lawn/brightness2",
     "IoT/lawn/autonomousLighting",
 };
-int ValueOfSubScribedTopic[MAX_TOPIC] = {0, 0, 0, 0, 0, 0, 0};
+int ValueOfSubScribedTopic[MAX_TOPIC] = {1, 1, 1, 1, 100, 50, 1};
 #define NORTHVALUE ValueOfSubScribedTopic[0]
 #define SOUTHVALUE ValueOfSubScribedTopic[1]
 #define EASTVALUE ValueOfSubScribedTopic[2]
@@ -169,12 +169,23 @@ void setup()
   // put your setup code here, to run once:
   Serial.begin(115200);
   WiFi.begin(SSID, PASSWORD);
-  while (WiFi.status() != WL_CONNECTED)
-  {
-    Serial.println("Connecting to WiFi..");
-    delay(1000);
-  }
-  Serial.println("Connected to the WiFi network");
+ uint8_t i = 0;
+    while (WiFi.status() != WL_CONNECTED)
+    {
+
+#if DEBUG_MODE
+        Serial.println("Connecting to WiFi..");
+#endif
+     
+        delay(1000);
+        i++;
+        if (i > 12)
+        {
+            break;
+        }
+    }
+
+  // Serial.println("Connected to the WiFi network");
   client.setServer(mqtt_server, 1883);
   client.setCallback(callback);
   if (client.connect("lawnNode"))
