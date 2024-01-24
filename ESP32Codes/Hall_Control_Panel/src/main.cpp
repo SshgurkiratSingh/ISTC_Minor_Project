@@ -13,6 +13,7 @@ This code establish connection as control panel to mqtt server to control nodes 
 - Ambient Led attached to pin 2
 - Plug attached to pin 5
 - Brightness Led attached to pin 19
+- PIR attached to pin 14
 */
 
 #include <Arduino.h>
@@ -30,7 +31,7 @@ This code establish connection as control panel to mqtt server to control nodes 
 #define PLUG 2
 #define LIGHT 3
 #define BRIGHTNESS 4
-
+#define PIR 14
 // BUTTON CONFIG
 #define MODE_BUTTON_CAP 1
 
@@ -127,6 +128,7 @@ bool needUpdate = true;
 
 char SSID[32] = "ConForNode1"; // Increased size for SSID
 char PASSWORD[64] = "12345678";       // Increased size for Password
+unsigned long lastMotionTime = 0;
 
 
 /**
@@ -149,13 +151,7 @@ String BottomText()
     else
     {
         return "T:" + String(temp) + " Hall " + "H:" + String(hum);
-        //  display.print("  Hall");
-        // display.setCursor(10, 51);
-        // display.print("T:");
-        // display.print(temp);
-        // display.setCursor(90, 51);
-        // display.print("H:");
-        // display.print(int(hum));
+     
     }
 }
 /**
@@ -216,11 +212,10 @@ void callback(char *topic, byte *payload, unsigned int length)
 void setup()
 {
     Serial.begin(115200);
-    
+    pinMode(PIR, INPUT);
     dht.setup(15, DHTesp::DHT22);
     Serial.println(dht.getTemperature());
     display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
-    // display.begin(SH1106_SWITCHCAPVCC, 0x3C);
     display.clearDisplay();
     display.setTextSize(1);
     display.setTextColor(WHITE);
@@ -517,6 +512,71 @@ void updateOutput()
 
     digitalWrite(itemPin[3], currentValue[3 + 1]);
 }
+/**
+ * Reconnects to MQTT if not connected, and sets needUpdate to true.
+ *
+ * @param None
+ *
+ * @return None
+ *
+ * @throws None
+ */
+void reconnectMQTT() {
+    
+    if (!client.connected()) {
+        display.clearDisplay();
+        display.setTextSize(1);
+        display.setTextColor(WHITE);
+        display.setCursor(0, 0);
+        display.println("Attempting MQTT Reconnection...");
+        display.drawBitmap(58, 14, epd_bitmap_wifi, 16, 16, WHITE);
+        display.display();
+        Serial.print("Attempting MQTT connection...");
+        // Attempt to connect
+        if (client.connect("hallNode")) {
+            Serial.println("connected to MQTT");
+            // Subscribe to topics again
+            for (int i = 0; i < MAX_ITEMS; i++) {
+                client.subscribe(topics[i]);
+            }
+        } else {
+            Serial.print("failed, rc=");
+            Serial.print(client.state());
+            Serial.println(" try again in 5 seconds");
+            // Wait 5 seconds before retrying
+            delay(2000);
+
+        }
+    }
+    needUpdate = true;
+}
+
+void reconnectWiFi() {
+    // Loop until we're reconnected to WiFi
+    while (WiFi.status() != WL_CONNECTED) {
+        Serial.print("Attempting WiFi connection...");
+        // Attempt to connect to WiFi
+        WiFi.begin(SSID, PASSWORD);
+        // Wait 10 seconds for connection:
+        delay(3000);
+    }
+    Serial.println("Connected to WiFi");
+}
+void CheckPIR() {
+     if (digitalRead(PIR) == HIGH) {
+    Serial.println("Motion detected!");
+    lastMotionTime = millis();
+    client.publish(topics[0], "1", true);
+  } else if (millis() - lastMotionTime > 30000) {
+    client.publish("IoT/hall/automationTriggered", "1", true);
+    Serial.println("Motion stopped!");
+    client.publish(topics[0], "0", true);
+    client.publish(topics[1], "0", true);
+    client.publish(topics[4], "0", true);
+    client.publish(topics[5], "0", true);
+
+  }
+}
 
 /**
  * Performs the main loop of the program.
@@ -524,7 +584,13 @@ void updateOutput()
  * @return void
  */
 void loop()
-{
+{ 
+    if (WiFi.status() == WL_CONNECTED) {
+     if (!client.connected()) {
+        reconnectMQTT();
+    }
+}
+    CheckPIR();
     client.loop();
     fixNumbering();
     displayItems();
