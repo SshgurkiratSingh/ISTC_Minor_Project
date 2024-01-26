@@ -13,7 +13,7 @@ const MainScheduler = () => {
   return (
     <div className="flex justify-center gap-2 mt-5">
       <div
-        className="neon-glass-effect min-h-50 flex flex-col justify-center items-center"
+        className="xl:neon-glass-effect min-h-50 flex flex-col justify-center items-center"
         style={{ minWidth: "30%", minHeight: "100vh" }}
       >
         <div
@@ -44,7 +44,6 @@ const MainScheduler = () => {
               </Button>
               <AddTask />
               {/* Button For add new  */}
-             
             </div>
           </div>
           <div className="mt-5 flex flex-col gap-2">

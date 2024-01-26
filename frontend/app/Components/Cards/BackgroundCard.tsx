@@ -6,6 +6,7 @@ interface ClientOnlyProps {
   bodyChildren?: React.ReactNode;
   footerChildren?: React.ReactNode;
   darkMode?: boolean;
+  className?: string;
 }
 import {
   Card,
@@ -19,12 +20,17 @@ const BackGroundCard = ({
   bodyChildren,
   footerChildren,
   darkMode = false,
+  className = "",
 }: ClientOnlyProps) => {
   return (
     <Card
-      className={`min-w-[200px] max-w-[100%] min-h-[400px] ${
-        darkMode ? "dark" : ""
-      } ${darkMode ? "bg-gray-900" : "bg-gray-100"}`}
+      className={
+        `min-w-[200px] max-w-[100%] min-h-[400px] ${darkMode ? "dark" : ""} ${
+          darkMode ? "bg-gray-900" : "bg-gray-100"
+        }` +
+        " " +
+        className
+      }
     >
       <CardHeader className="flex gap-3">{headChildren}</CardHeader>
       <Divider />
