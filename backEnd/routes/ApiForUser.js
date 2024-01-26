@@ -286,17 +286,23 @@ async function startMqttLogging() {
     const stats = computeStatistics();
     const finalData = { ...data, ...stats };
 
+    console.log("Preparing to save data"); // Debug log
     fs.writeFile("mqttData.json", JSON.stringify(finalData, null, 2), (err) => {
-      if (err) throw err;
-      console.log("MQTT data saved to mqttData.json");
+      if (err) {
+        console.error("Error saving file:", err);
+      } else {
+        console.log("MQTT data saved to mqttData.json");
+      }
     });
     isLoggingActive = false;
-  }, 3600000); // 1 hour in milliseconds
+  }, 1000 * 60); // 1 hour in milliseconds
 }
-router.get("/getReport", async (req, res) => {
+
+
+router.get("/getReport", (req, res) => {
   try {
-    // Attempt to read file
-    const fileData = await fs.readFile("mqttData.json", "utf-8");
+    // Attempt to read file synchronously
+    const fileData = fs.readFileSync("mqttData.json", "utf-8");
 
     // Attempt to parse JSON
     const data = JSON.parse(fileData);
@@ -304,10 +310,7 @@ router.get("/getReport", async (req, res) => {
     // Send the parsed data as JSON response
     res.json(data);
   } catch (error) {
-    // Handle errors
     console.error("Error reading or parsing JSON file:", error);
-
-    // Send an error response
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
