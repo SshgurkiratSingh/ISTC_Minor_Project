@@ -201,23 +201,27 @@ topics.forEach((topic) => {
       lastChanged: null,
       onDuration: 0,
       offDuration: 0,
-      lastState: null,
+      lastState: false,
     };
   }
 });
-
-function calculateDuration(topic, state) {
+function calculateDuration(topic, isCurrentlyOn) {
   const now = new Date();
-  if (data.deviceDurations[topic].lastChanged !== null) {
-    const duration = (now - data.deviceDurations[topic].lastChanged) / 1000; // seconds
-    data.deviceDurations[topic][state ? "onDuration" : "offDuration"] +=
-      duration;
+  const device = data.deviceDurations[topic];
+
+  if (device.lastChanged) {
+    const duration = (now - new Date(device.lastChanged)) / 1000; // seconds
+    if (device.lastState) {
+      device.onDuration += duration;
+    } else {
+      device.offDuration += duration;
+    }
   }
-  data.deviceDurations[topic].lastChanged = now;
-  data.deviceDurations[topic].lastState = state;
+
+  device.lastChanged = now.toISOString();
+  device.lastState = isCurrentlyOn;
 }
 
-// Function to process MQTT messages
 function processMessage(topic, message) {
   if (topic.includes("temperature")) {
     data.temperatures.push(parseFloat(message));
@@ -225,78 +229,46 @@ function processMessage(topic, message) {
     data.humidities.push(parseFloat(message));
   } else if (topic.includes("automationTriggered")) {
     data.automationTriggersCount++;
-  } else if (topic.includes("light") || topic.includes("fan")) {
-    const state = message.toString() === "on";
-    calculateDuration(topic, state);
+  } else if (topic.includes("light")) {
+    const isOn = message === '1';
+    calculateDuration(topic, isOn);
+  } else if (topic.includes("fan")) {
+    const isOn = message !== '0';
+    calculateDuration(topic, isOn);
   }
 }
 
-// Compute statistics for temperatures and humidities
-function computeStatistics() {
-  const tempStats = data.temperatures.length
-    ? {
-        average:
-          data.temperatures.reduce((a, b) => a + b, 0) /
-          data.temperatures.length,
-        min: Math.min(...data.temperatures),
-        max: Math.max(...data.temperatures),
-      }
-    : {};
-
-  const humidityStats = data.humidities.length
-    ? {
-        average:
-          data.humidities.reduce((a, b) => a + b, 0) / data.humidities.length,
-        min: Math.min(...data.humidities),
-        max: Math.max(...data.humidities),
-      }
-    : {};
-
-  return { temperatureStats: tempStats, humidityStats: humidityStats };
-}
-
-// Function to start logging MQTT data
 async function startMqttLogging() {
   if (isLoggingActive) return;
   isLoggingActive = true;
 
-  // Subscribe to multiple topics
-  topics.forEach((topic) => {
-    mqttClient.subscribe(topic, (err) => {
+  topics.forEach(topic => {
+    mqttClient.subscribe(topic, err => {
       if (err) console.error(`Failed to subscribe to topic ${topic}`, err);
     });
   });
 
-  // MQTT message event
   mqttClient.on("message", (topic, message) => {
     processMessage(topic, message.toString());
   });
 
-  // Stop logging after an hour
   setTimeout(() => {
-    topics.forEach((topic) => {
+    topics.forEach(topic => {
       if (topic.includes("light") || topic.includes("fan")) {
-        // Final duration calculation for ongoing states
         calculateDuration(topic, data.deviceDurations[topic].lastState);
       }
       mqttClient.unsubscribe(topic);
     });
     mqttClient.removeAllListeners("message");
 
-    const stats = computeStatistics();
-    const finalData = { ...data, ...stats };
-
-    console.log("Preparing to save data"); // Debug log
-    fs.writeFile("mqttData.json", JSON.stringify(finalData, null, 2), (err) => {
-      if (err) {
-        console.error("Error saving file:", err);
-      } else {
-        console.log("MQTT data saved to mqttData.json");
-      }
+    fs.writeFile("mqttData.json", JSON.stringify(data, null, 2), err => {
+      if (err) console.error("Error saving file:", err);
+      console.log("MQTT data saved to mqttData.json");
     });
     isLoggingActive = false;
-  }, 1000 * 60*60); // 1 hour in milliseconds
+  }, 1000 * 60 * 60); // 1 hour
 }
+
 
 
 router.get("/getReport", (req, res) => {

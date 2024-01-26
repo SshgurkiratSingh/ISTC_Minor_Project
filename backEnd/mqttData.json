@@ -1,28 +1,28 @@
 {
   "deviceDurations": {
     "IoT/hall/light1": {
-      "lastChanged": "2024-01-26T04:55:09.349Z",
-      "onDuration": 0,
-      "offDuration": 59.996,
-      "lastState": false
+      "lastChanged": "2024-01-26T06:33:14.555Z",
+      "onDuration": 60,
+      "offDuration": 0,
+      "lastState": true
     },
     "IoT/hall/light2": {
-      "lastChanged": "2024-01-26T04:55:09.349Z",
-      "onDuration": 0,
-      "offDuration": 59.996,
+      "lastChanged": "2024-01-26T06:33:14.555Z",
+      "onDuration": 13.648,
+      "offDuration": 46.352,
       "lastState": false
     },
     "IoT/hall/fan1": {
-      "lastChanged": "2024-01-26T04:55:09.349Z",
-      "onDuration": 0,
-      "offDuration": 59.996,
+      "lastChanged": "2024-01-26T06:33:14.555Z",
+      "onDuration": 51.962,
+      "offDuration": 8.038,
       "lastState": false
     },
     "IoT/hall/fan2": {
-      "lastChanged": "2024-01-26T04:55:09.350Z",
-      "onDuration": 0,
-      "offDuration": 59.997,
-      "lastState": false
+      "lastChanged": "2024-01-26T06:33:14.555Z",
+      "onDuration": 60,
+      "offDuration": 0,
+      "lastState": true
     }
   },
   "temperatures": [
@@ -31,15 +31,5 @@
   "humidities": [
     94
   ],
-  "automationTriggersCount": 0,
-  "temperatureStats": {
-    "average": 25,
-    "min": 25,
-    "max": 25
-  },
-  "humidityStats": {
-    "average": 94,
-    "min": 94,
-    "max": 94
-  }
+  "automationTriggersCount": 0
 }
