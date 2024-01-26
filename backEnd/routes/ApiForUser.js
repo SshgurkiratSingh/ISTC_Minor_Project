@@ -191,6 +191,7 @@ let data = {
   deviceDurations: {},
   temperatures: [],
   humidities: [],
+  logs: [],
   automationTriggersCount: 0,
 };
 
@@ -223,6 +224,13 @@ function calculateDuration(topic, isCurrentlyOn) {
 }
 
 function processMessage(topic, message) {
+  if (topic.includes("light") || topic.includes("fan")) {
+    data.logs.push({
+      topic,
+      value: message,
+      lastUpdate: new Date().toISOString(),
+    });
+  }
   if (topic.includes("temperature")) {
     data.temperatures.push(parseFloat(message));
   } else if (topic.includes("humidity")) {
@@ -230,10 +238,10 @@ function processMessage(topic, message) {
   } else if (topic.includes("automationTriggered")) {
     data.automationTriggersCount++;
   } else if (topic.includes("light")) {
-    const isOn = message === '1';
+    const isOn = message === "1";
     calculateDuration(topic, isOn);
   } else if (topic.includes("fan")) {
-    const isOn = message !== '0';
+    const isOn = message !== "0";
     calculateDuration(topic, isOn);
   }
 }
@@ -242,8 +250,8 @@ async function startMqttLogging() {
   if (isLoggingActive) return;
   isLoggingActive = true;
 
-  topics.forEach(topic => {
-    mqttClient.subscribe(topic, err => {
+  topics.forEach((topic) => {
+    mqttClient.subscribe(topic, (err) => {
       if (err) console.error(`Failed to subscribe to topic ${topic}`, err);
     });
   });
@@ -253,7 +261,7 @@ async function startMqttLogging() {
   });
 
   setTimeout(() => {
-    topics.forEach(topic => {
+    topics.forEach((topic) => {
       if (topic.includes("light") || topic.includes("fan")) {
         calculateDuration(topic, data.deviceDurations[topic].lastState);
       }
@@ -261,15 +269,13 @@ async function startMqttLogging() {
     });
     mqttClient.removeAllListeners("message");
 
-    fs.writeFile("mqttData.json", JSON.stringify(data, null, 2), err => {
+    fs.writeFile("mqttData.json", JSON.stringify(data, null, 2), (err) => {
       if (err) console.error("Error saving file:", err);
       console.log("MQTT data saved to mqttData.json");
     });
     isLoggingActive = false;
   }, 1000 * 60 * 60); // 1 hour
 }
-
-
 
 router.get("/getReport", (req, res) => {
   try {

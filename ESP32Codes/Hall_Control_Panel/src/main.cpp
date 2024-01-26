@@ -565,6 +565,7 @@ void reconnectWiFi() {
 void CheckPIR() {
      if (digitalRead(PIR) == HIGH) {
     Serial.println("Motion detected!");
+    client.publish(topics[1], "1", true);
     lastMotionTime = millis();
     client.publish(topics[0], "1", true);
   } else if (millis() - lastMotionTime > 30000) {

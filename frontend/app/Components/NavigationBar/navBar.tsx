@@ -23,6 +23,7 @@ const NavBar = () => {
     { heading: "About", to: "/about" },
     { heading: "Low End Version ", to: "/lowEnd" },
     { heading: "Smart City Parking ", to: "/smartParking" },
+    { heading: "Analysis", to: "/analysis" },
   ];
 
   return (
@@ -96,7 +97,7 @@ const NavBar = () => {
             </Button>
           </Link>
         </NavbarItem>{" "}
-        <NavbarItem className="hidden xl:block">
+        {/* <NavbarItem className="hidden xl:block">
           <Link href="/smartParking">
             <Button
               as={Link}
@@ -104,6 +105,17 @@ const NavBar = () => {
               className="font-bold hover:border-white transition"
             >
               Smart Parking
+            </Button>
+          </Link>
+        </NavbarItem> */}
+        <NavbarItem className="hidden xl:block">
+          <Link href="/analysis">
+            <Button
+              as={Link}
+              variant="bordered"
+              className="font-bold hover:border-white transition"
+            >
+              Analysis
             </Button>
           </Link>
         </NavbarItem>
