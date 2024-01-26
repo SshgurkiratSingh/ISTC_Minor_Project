@@ -295,7 +295,7 @@ async function startMqttLogging() {
       }
     });
     isLoggingActive = false;
-  }, 1000 * 60); // 1 hour in milliseconds
+  }, 1000 * 60*60); // 1 hour in milliseconds
 }
 
 
