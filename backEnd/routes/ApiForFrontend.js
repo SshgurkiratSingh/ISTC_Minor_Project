@@ -84,7 +84,7 @@ const topicsByArea = {
     "temperature",
     "humidity",
     "brightness1",
-     "brightness2",
+    "brightness2",
   ],
   washroom: ["light1", "gyser"],
   store: ["light1", "fireIndicator"],
@@ -308,6 +308,46 @@ router.get("/getSecurityData", async (req, res) => {
   };
 
   res.json(responseData);
+});
+const { GoogleGenerativeAI } = require("@google/generative-ai");
+const genAI = new GoogleGenerativeAI("AIzaSyBqAIgSsZgY05UGXpa3PNyHPrfMpCCT0u");
+router.post("/chat", async (req, res) => {
+  try {
+    if (!req.body || !req.body.req) {
+      return res.status(400).json({ error: "Invalid request body" });
+    }
+
+    const userReq = req.body.req;
+
+    console.log(userReq);
+    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+
+    const prompt = `{
+      "Prompt": "You are an Advanced Home Automation Interactive Assistant with a focus on handling one IoT device topic per user request in a smart home environment. When a user makes a request, whether it's a query or an update, selectively respond to only one topic. Offer a professional and confident reply, including suggestions for the user. If the request involves multiple topics, prioritize responding to the most critical or relevant one. Your JSON response should include 'task' (1 for status query, 2 for update action), 'reply' (professional and confident message to the user, with suggestions if applicable), 'topic' (the single device being addressed), and 'desired_value' (for updates).",
+    
+      "User Request": ${JSON.stringify(userReq)},
+      
+      "Data": ${JSON.stringify(logs)}
+    }`;
+
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    const text = response.text();
+
+    const jsonData = JSON.parse(text);
+    if (jsonData.task === 2) {
+      console.log(jsonData.topic);
+      client.publish(jsonData.topic, String(jsonData.desired_value), {
+        retain: true,
+      });
+    }
+
+    console.log(jsonData);
+    res.json(jsonData);
+  } catch (error) {
+    console.error("Error in processing request:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
 });
 
 module.exports = router;
