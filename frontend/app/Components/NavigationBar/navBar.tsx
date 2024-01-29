@@ -24,6 +24,7 @@ const NavBar = () => {
     { heading: "Low End Version ", to: "/lowEnd" },
     { heading: "Smart City Parking ", to: "/smartParking" },
     { heading: "Analysis", to: "/analysis" },
+    { heading: "Chat", to: "/chat" },
   ];
 
   return (
@@ -116,6 +117,17 @@ const NavBar = () => {
               className="font-bold hover:border-white transition"
             >
               Analysis
+            </Button>
+          </Link>
+        </NavbarItem>
+        <NavbarItem className="hidden xl:block">
+          <Link href="/chat">
+            <Button
+              as={Link}
+              variant="bordered"
+              className="font-bold hover:border-white transition"
+            >
+              Chat With LLM
             </Button>
           </Link>
         </NavbarItem>
