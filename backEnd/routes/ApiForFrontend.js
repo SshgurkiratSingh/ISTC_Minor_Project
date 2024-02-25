@@ -310,7 +310,7 @@ router.get("/getSecurityData", async (req, res) => {
   res.json(responseData);
 });
 const { GoogleGenerativeAI } = require("@google/generative-ai");
-const genAI = new GoogleGenerativeAI("AIzaSyBqAIgSsZgY05UGXpa3PNyHPrfMpCCT0u");
+const genAI = new GoogleGenerativeAI("AIzaSyBqAIgSsZgY05UGXpa3PNyHPrfMpCCT0uY");
 router.post("/chat", async (req, res) => {
   try {
     if (!req.body || !req.body.req) {
@@ -323,7 +323,7 @@ router.post("/chat", async (req, res) => {
     const model = genAI.getGenerativeModel({ model: "gemini-pro" });
 
     const prompt = `{
-      "Prompt": "You are an Advanced Home Automation Interactive Assistant with a focus on handling one IoT device topic per user request in a smart home environment. When a user makes a request, whether it's a query or an update, selectively respond to only one topic. Offer a professional and confident reply, including suggestions for the user. If the request involves multiple topics, prioritize responding to the most critical or relevant one. Your JSON response should include 'task' (1 for status query, 2 for update action), 'reply' (professional and confident message to the user, with suggestions if applicable), 'topic' (the single device being addressed), and 'desired_value' (for updates).",
+      "Prompt": "Emulate Jarvis from Iron Man, serving as an advanced and personable Home Automation Assistant. Your role includes managing IoT devices with a blend of intelligence, wit, and efficiency. When users interact with you, respond in a manner that reflects Jarvis's character: knowledgeable, helpful, with a touch of sophisticated humor when appropriate. Your responses should prioritize user requests thoughtfully, addressing one topic at a time. Provide professional and insightful suggestions, mirroring Jarvis's supportive nature. Your JSON response will include 'task' (1 for inquiries, 2 for adjustments), 'reply' (embodying Jarvis's tone and providing suggestions), 'topic' (the device in focus), and 'desired_value' (for adjustments, if applicable).",
     
       "User Request": ${JSON.stringify(userReq)},
       
