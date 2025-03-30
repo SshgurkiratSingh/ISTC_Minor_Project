@@ -96,7 +96,7 @@ bool inItem = false;
 uint8_t selectedItem = 0;
 uint8_t upItem;
 uint8_t downItem;
-const char *mqtt_server = "ec2-35-170-242-83.compute-1.amazonaws.com";
+const char *mqtt_server = "192.168.1.100";
 float temp = 0;
 float hum = 0;
 // Items Configuration starts here
@@ -126,7 +126,7 @@ const uint8_t itemPin[MAX_ITEMS - 1] = {23, 19, 18, 5, 4, 2};
 const uint8_t maxValues[MAX_ITEMS] = {1, 1, 1, 1, 100, 100, 1};
 bool needUpdate = true;
 
-char SSID[32] = "ConForNode1"; // Increased size for SSID
+char SSID[32] = "Node"; // Increased size for SSID
 char PASSWORD[64] = "12345678";       // Increased size for Password
 unsigned long lastMotionTime = 0;
 
