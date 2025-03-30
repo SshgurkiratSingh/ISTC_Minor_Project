@@ -27,8 +27,14 @@ type MqttMessage = {
   timestamp: string;
 };
 
+const MQTT_SERVERS = [
+  { label: "Test Mosquitto", url: "ws://test.mosquitto.org:8080" },
+  { label: "EMQX", url: "ws://broker.emqx.io:8083/mqtt" },
+  { label: "HiveMQ", url: "ws://broker.hivemq.com:8000/mqtt" },
+  { label: "Custom", url: "" },
+];
+
 const MQTTPANEL = () => {
-  // Remove single topic and add multiple topics state
   const [mqttClient, setMqttClient] = useState<mqtt.MqttClient | null>(null);
   const [isConnected, setIsConnected] = useState(false);
   const [topicsInput, setTopicsInput] = useState(() => {
@@ -41,7 +47,12 @@ const MQTTPANEL = () => {
   });
   const [mqttServer, setMqttServer] = useState(() => {
     const savedServer = localStorage.getItem("mqttServer");
-    return savedServer || "ws://test.mosquitto.org:8080";
+    return savedServer || MQTT_SERVERS[0].url;
+  });
+  const [selectedServer, setSelectedServer] = useState(() => {
+    // If the saved mqttServer URL matches one of the predefined servers, select that option
+    const found = MQTT_SERVERS.find((srv) => srv.url === mqttServer);
+    return found ? found.label : "Custom";
   });
   const [messages, setMessages] = useState<MqttMessage[]>(() => {
     const savedMessages = localStorage.getItem("mqttMessages");
@@ -49,13 +60,11 @@ const MQTTPANEL = () => {
   });
 
   const [publishMessage, setPublishMessage] = useState("");
-  // New state for selecting publish topic
   const [publishTopic, setPublishTopic] = useState<string>("");
   const [searchTerm, setSearchTerm] = useState("");
   const [logs, setLogs] = useState<string[]>([]);
   const [retentionMinutes, setRetentionMinutes] = useState(60);
 
-  // Persist topics and server info
   useEffect(() => {
     localStorage.setItem("currentTopics", topicsInput);
   }, [topicsInput]);
@@ -115,7 +124,6 @@ const MQTTPANEL = () => {
       handleDisconnect();
     }
 
-    // Split comma-separated topics, trim whitespace, and filter out empty strings
     const topicsArray = topicsInput
       .split(",")
       .map((t) => t.trim())
@@ -130,7 +138,6 @@ const MQTTPANEL = () => {
     client.on("connect", () => {
       setIsConnected(true);
       addLog("Connected to MQTT broker");
-      // Subscribe to all topics in the array
       topicsArray.forEach((topic) => {
         client.subscribe(topic, (err) => {
           if (err) {
@@ -143,7 +150,6 @@ const MQTTPANEL = () => {
       });
       toast.success(`Connected and subscribed to topics`);
       setSubscribedTopics(topicsArray);
-      // Set publish topic default to first topic
       setPublishTopic(topicsArray[0]);
     });
 
@@ -208,6 +214,20 @@ const MQTTPANEL = () => {
     });
   };
 
+  // Handle changes from the server dropdown
+  const handleServerSelect = (label: string) => {
+    setSelectedServer(label);
+    const selected = MQTT_SERVERS.find((srv) => srv.label === label);
+    if (selected) {
+      // If Custom is selected, let the user edit the input. Otherwise, update the server URL immediately.
+      if (selected.label !== "Custom") {
+        setMqttServer(selected.url);
+      } else {
+        setMqttServer("");
+      }
+    }
+  };
+
   return (
     <div className="m-2">
       <Card className="flex flex-1 justify-center items-center dark">
@@ -217,14 +237,35 @@ const MQTTPANEL = () => {
         <Divider />
         <CardBody>
           <div className="flex flex-col gap-2 mb-4">
-            <Input
-              type="text"
-              label="MQTT Server URL"
-              value={mqttServer}
-              onChange={(e) => setMqttServer(e.target.value)}
-              className="w-full"
-              isDisabled={isConnected}
-            />
+            <Select className="dark "
+              label="Select MQTT Server"
+              value={selectedServer}
+              onChange={(e) => handleServerSelect(e.target.value)}
+            >
+              {MQTT_SERVERS.map((server) => (
+                <SelectItem key={server.label} value={server.label} className="bg-black">
+                  {server.label}
+                </SelectItem>
+              ))}
+            </Select>
+            {selectedServer === "Custom" && (
+              <Input
+                type="text"
+                label="MQTT Server URL"
+                value={mqttServer}
+                onChange={(e) => setMqttServer(e.target.value)}
+                className="w-full"
+              />
+            )}
+            {selectedServer !== "Custom" && (
+              <Input
+                type="text"
+                label="MQTT Server URL"
+                value={mqttServer}
+                className="w-full"
+                isDisabled
+              />
+            )}
             <Input
               type="text"
               label="MQTT Topics (comma separated)"
@@ -303,7 +344,6 @@ const MQTTPANEL = () => {
             <TableBody>
               {messages
                 .filter((msg) => {
-                  // Filter by search term and optionally by topics if specified
                   const matchesTopic =
                     subscribedTopics.length === 0 ||
                     subscribedTopics.includes(msg.topic);
