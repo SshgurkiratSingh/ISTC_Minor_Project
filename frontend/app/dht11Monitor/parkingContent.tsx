@@ -13,6 +13,8 @@ import {
   CardFooter,
   Button,
   Input,
+  Select,
+  SelectItem,
 } from "@nextui-org/react";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
@@ -25,15 +27,17 @@ type MqttMessage = {
   timestamp: string;
 };
 
-const ParkingContent = () => {
-  const [slotAvailable, setSlotAvailable] = useState(
-    Math.floor(Math.random() * 6)
-  );
+const MQTTPANEL = () => {
+  // Remove single topic and add multiple topics state
   const [mqttClient, setMqttClient] = useState<mqtt.MqttClient | null>(null);
   const [isConnected, setIsConnected] = useState(false);
-  const [currentTopic, setCurrentTopic] = useState(() => {
-    const savedTopic = localStorage.getItem("currentTopic");
+  const [topicsInput, setTopicsInput] = useState(() => {
+    const savedTopic = localStorage.getItem("currentTopics");
     return savedTopic || "";
+  });
+  const [subscribedTopics, setSubscribedTopics] = useState<string[]>(() => {
+    const savedTopics = localStorage.getItem("subscribedTopics");
+    return savedTopics ? JSON.parse(savedTopics) : [];
   });
   const [mqttServer, setMqttServer] = useState(() => {
     const savedServer = localStorage.getItem("mqttServer");
@@ -44,21 +48,30 @@ const ParkingContent = () => {
     return savedMessages ? JSON.parse(savedMessages) : [];
   });
 
-  // Save current topic and server to localStorage whenever they change
+  const [publishMessage, setPublishMessage] = useState("");
+  // New state for selecting publish topic
+  const [publishTopic, setPublishTopic] = useState<string>("");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [logs, setLogs] = useState<string[]>([]);
+  const [retentionMinutes, setRetentionMinutes] = useState(60);
+
+  // Persist topics and server info
   useEffect(() => {
-    localStorage.setItem("currentTopic", currentTopic);
-  }, [currentTopic]);
+    localStorage.setItem("currentTopics", topicsInput);
+  }, [topicsInput]);
+
+  useEffect(() => {
+    localStorage.setItem("subscribedTopics", JSON.stringify(subscribedTopics));
+  }, [subscribedTopics]);
 
   useEffect(() => {
     localStorage.setItem("mqttServer", mqttServer);
   }, [mqttServer]);
 
-  // Save messages to localStorage whenever they change
   useEffect(() => {
     localStorage.setItem("mqttMessages", JSON.stringify(messages));
   }, [messages]);
 
-  // Cleanup MQTT connection on component unmount
   useEffect(() => {
     return () => {
       if (mqttClient) {
@@ -67,9 +80,30 @@ const ParkingContent = () => {
     };
   }, [mqttClient]);
 
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setMessages((prevMessages) =>
+        prevMessages.filter((msg) => {
+          const messageTime = new Date(msg.timestamp).getTime();
+          const now = Date.now();
+          return now - messageTime < retentionMinutes * 60 * 1000;
+        })
+      );
+    }, 60000);
+
+    return () => clearInterval(intervalId);
+  }, [retentionMinutes]);
+
+  const addLog = (message: string) => {
+    setLogs((prevLogs) => [
+      new Date().toLocaleTimeString() + " - " + message,
+      ...prevLogs,
+    ]);
+  };
+
   const handleConnect = () => {
-    if (!currentTopic.trim()) {
-      toast.error("Please enter a topic");
+    if (!topicsInput.trim()) {
+      toast.error("Please enter at least one topic");
       return;
     }
     if (!mqttServer.trim()) {
@@ -81,19 +115,36 @@ const ParkingContent = () => {
       handleDisconnect();
     }
 
+    // Split comma-separated topics, trim whitespace, and filter out empty strings
+    const topicsArray = topicsInput
+      .split(",")
+      .map((t) => t.trim())
+      .filter(Boolean);
+    if (topicsArray.length === 0) {
+      toast.error("No valid topics provided");
+      return;
+    }
+
     const client = mqtt.connect(mqttServer);
 
     client.on("connect", () => {
       setIsConnected(true);
-      client.subscribe(currentTopic, (err) => {
-        if (err) {
-          toast.error("Failed to subscribe");
-          client.end();
-          setIsConnected(false);
-        } else {
-          toast.success(`Connected to ${currentTopic}`);
-        }
+      addLog("Connected to MQTT broker");
+      // Subscribe to all topics in the array
+      topicsArray.forEach((topic) => {
+        client.subscribe(topic, (err) => {
+          if (err) {
+            addLog("Failed to subscribe to " + topic);
+            toast.error("Failed to subscribe to " + topic);
+          } else {
+            addLog("Subscribed to " + topic);
+          }
+        });
       });
+      toast.success(`Connected and subscribed to topics`);
+      setSubscribedTopics(topicsArray);
+      // Set publish topic default to first topic
+      setPublishTopic(topicsArray[0]);
     });
 
     client.on("message", (topic, message) => {
@@ -105,7 +156,8 @@ const ParkingContent = () => {
       setMessages((prev) => [newMessage, ...prev]);
     });
 
-    client.on("error", () => {
+    client.on("error", (err) => {
+      addLog("Connection error: " + err.message);
       toast.error("Connection error");
       setIsConnected(false);
     });
@@ -117,8 +169,10 @@ const ParkingContent = () => {
     if (mqttClient) {
       mqttClient.end(() => {
         setIsConnected(false);
-        setCurrentTopic("");
+        setSubscribedTopics([]);
+        setPublishTopic("");
         toast.success("Disconnected");
+        addLog("Disconnected from MQTT broker");
       });
     }
   };
@@ -129,11 +183,36 @@ const ParkingContent = () => {
     toast.info("Message history cleared");
   };
 
+  const handlePublish = () => {
+    if (!publishMessage.trim()) {
+      toast.error("Please enter a message to publish");
+      return;
+    }
+    if (!isConnected || !mqttClient) {
+      toast.error("Not connected to any broker");
+      return;
+    }
+    if (!publishTopic.trim()) {
+      toast.error("Please select a topic to publish to");
+      return;
+    }
+    mqttClient.publish(publishTopic, publishMessage, {}, (err) => {
+      if (err) {
+        toast.error("Failed to publish message");
+        addLog("Failed to publish message: " + err.message);
+      } else {
+        toast.success("Message published successfully");
+        addLog("Message published to " + publishTopic + ": " + publishMessage);
+        setPublishMessage("");
+      }
+    });
+  };
+
   return (
     <div className="m-2">
       <Card className="flex flex-1 justify-center items-center dark">
         <CardHeader>
-          <h3 className="font-bold text-large">Smart City Parking</h3>
+          <h3 className="font-bold text-large">DHT11 Monitor</h3>
         </CardHeader>
         <Divider />
         <CardBody>
@@ -148,9 +227,9 @@ const ParkingContent = () => {
             />
             <Input
               type="text"
-              label="MQTT Topic"
-              value={currentTopic}
-              onChange={(e) => setCurrentTopic(e.target.value)}
+              label="MQTT Topics (comma separated)"
+              value={topicsInput}
+              onChange={(e) => setTopicsInput(e.target.value)}
               className="w-full"
               isDisabled={isConnected}
             />
@@ -167,6 +246,53 @@ const ParkingContent = () => {
             </div>
           </div>
 
+          <div className="flex flex-col gap-2 mb-4">
+            <Input
+              type="text"
+              label="Message to Publish"
+              value={publishMessage}
+              onChange={(e) => setPublishMessage(e.target.value)}
+              className="w-full"
+              isDisabled={!isConnected}
+            />
+            {isConnected && subscribedTopics.length > 0 && (
+              <Select
+                label="Select Publish Topic"
+                value={publishTopic}
+                onChange={(e) => setPublishTopic(e.target.value)}
+              >
+                {subscribedTopics.map((topic) => (
+                  <SelectItem key={topic} value={topic}>
+                    {topic}
+                  </SelectItem>
+                ))}
+              </Select>
+            )}
+            <Button
+              color="primary"
+              onClick={handlePublish}
+              isDisabled={!isConnected}
+            >
+              Publish
+            </Button>
+          </div>
+
+          <Input
+            type="text"
+            label="Search Messages"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full mb-4"
+          />
+
+          <Input
+            type="number"
+            label="Retention Period (minutes)"
+            value={retentionMinutes.toString()}
+            onChange={(e) => setRetentionMinutes(Number(e.target.value))}
+            className="w-full mb-4"
+          />
+
           <Table aria-label="MQTT Messages" className="mt-4">
             <TableHeader>
               <TableColumn>TOPIC</TableColumn>
@@ -176,11 +302,36 @@ const ParkingContent = () => {
             </TableHeader>
             <TableBody>
               {messages
-                .filter((msg) => !currentTopic || msg.topic === currentTopic)
+                .filter((msg) => {
+                  // Filter by search term and optionally by topics if specified
+                  const matchesTopic =
+                    subscribedTopics.length === 0 ||
+                    subscribedTopics.includes(msg.topic);
+                  const matchesSearch =
+                    !searchTerm ||
+                    msg.message
+                      .toLowerCase()
+                      .includes(searchTerm.toLowerCase()) ||
+                    msg.topic.toLowerCase().includes(searchTerm.toLowerCase());
+                  return matchesTopic && matchesSearch;
+                })
                 .map((msg, index) => (
                   <TableRow key={index}>
                     <TableCell>{msg.topic}</TableCell>
-                    <TableCell>{msg.message}</TableCell>
+                    <TableCell>
+                      {(() => {
+                        try {
+                          const parsed = JSON.parse(msg.message);
+                          return (
+                            <pre className="whitespace-pre-wrap">
+                              {JSON.stringify(parsed, null, 2)}
+                            </pre>
+                          );
+                        } catch (e) {
+                          return msg.message;
+                        }
+                      })()}
+                    </TableCell>
                     <TableCell>
                       {new Date(msg.timestamp).toLocaleString()}
                     </TableCell>
@@ -195,13 +346,22 @@ const ParkingContent = () => {
                 ))}
             </TableBody>
           </Table>
+
+          <div className="mt-4 p-2 bg-gray-100 rounded h-40 overflow-y-auto">
+            <h4 className="font-bold mb-2">Connection Logs</h4>
+            {logs.map((log, idx) => (
+              <div key={idx} className="text-sm text-gray-700">
+                {log}
+              </div>
+            ))}
+          </div>
         </CardBody>
         <Divider />
         <CardFooter className="flex justify-between">
           <div className="text-sm text-gray-500">
-            {!currentTopic
+            {subscribedTopics.length === 0
               ? "Showing all stored messages"
-              : `Showing messages for topic: ${currentTopic}`}
+              : `Showing messages for topics: ${subscribedTopics.join(", ")}`}
           </div>
         </CardFooter>
       </Card>
@@ -209,5 +369,4 @@ const ParkingContent = () => {
   );
 };
 
-export default ParkingContent;
-// This code is a React component that connects to an MQTT broker, subscribes to a topic, and displays messages in a table format. It also allows the user to connect/disconnect from the broker, clear message history, and manage MQTT server and topic settings.
+export default MQTTPANEL;

@@ -4,7 +4,8 @@ import { Bounce, ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import MainNavbar from "../Components/NavigationBar/mainNavbar";
 import { Metadata } from "next";
-import ParkingContent from "./parkingContent";
+import MQTTPANEL from "./parkingContent";
+
 
 export const metadata: Metadata = {
   title: "DHT11 Monitor",
@@ -16,7 +17,7 @@ export default function Home() {
     <div>
       <MainNavbar />
       <ToastContainer theme="dark" closeOnClick transition={Bounce} />
-      <ParkingContent />
+      <MQTTPANEL/>
     </div>
   );
 }
