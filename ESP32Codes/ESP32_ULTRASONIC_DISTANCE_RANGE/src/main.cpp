@@ -10,6 +10,10 @@ Path Will be named in this format
 3. Bravo Boulevard,
 4. Charlie Lane,
 */
+// Pump configuration
+NewPing TankSensor(12, 13, 200);
+#define SONAR_TOTAL_SIZE 200
+
 // -----------# For direction Alpha Avenue #----------- //
 NewPing Alpha(23,22, 200);
 #define ALPHA_TOTAL_SIZE 200
@@ -44,6 +48,10 @@ const String Topic_TO_Subscribe[MAX_TOPIC] = {
     "IoT/lawn/autonomousLighting",
 };
 int ValueOfSubScribedTopic[MAX_TOPIC] = {1, 1, 1, 1, 100, 50, 1};
+#define MAXIMUM_BRIGHTNESS ValueOfSubScribedTopic[4]
+#define MINIMUM_BRIGHTNESS ValueOfSubScribedTopic[5]
+#define AUTONOMOUSLIGHTING ValueOfSubScribedTopic[6]
+
 const char *mqtt_server = "ec2-35-170-242-83.compute-1.amazonaws.com";
 //----------------------------Wifi Config --------------------------------
 char SSID[15] = "ConForNode1";
@@ -52,7 +60,25 @@ char PASSWORD[15] = "12345678";
 WiFiClient wifi;
 PubSubClient client(wifi);
 #define DEBUG_MODE 1
+unsigned long lastTime = 0;
+unsigned long timerDelay = 8000;
+int waterLevel = 0;
+#define TANKSIZE 15 //in cm
 
+void updateWaterLevel() {
+  int distanceToWater = TankSensor.ping_cm();
+  int waterDepth = TANKSIZE - distanceToWater;
+  waterLevel = (waterDepth * 100) / TANKSIZE;
+  Serial.print("Water Level: ");
+    Serial.println(waterLevel);
+    // publish every 5 seconds
+if (millis() - lastTime >= timerDelay) {
+    lastTime = millis();
+    client.publish("IoT/auxiliary/tankLevel", String(waterLevel).c_str(), true);
+  }
+   
+    
+}
 
 /**
  * Refreshes the current distance measurements from multiple sensors and updates the CURRENT_DISTANCE array. 
@@ -172,10 +198,38 @@ Serial.begin(115200);
   }
 }
 void MakeDecision(){
-  if (CURRENT_DISTANCE[0]
+  if (AUTONOMOUSLIGHTING){
+  for (int i = 0; i < 8; i++) {
+    if (CURRENT_DISTANCE[i] < DISTANCE_TO_TRIGGER[i]) {
+      currentValue[i] = MAXIMUM_BRIGHTNESS*2.55;
+    } else {
+      currentValue[i] = MINIMUM_BRIGHTNESS*2.55;
+    }
+  }}
+  else {
+    for (int i = 0; i < 4; i++) {
+      currentValue[i*2] = ValueOfSubScribedTopic[i]*2.55*MAXIMUM_BRIGHTNESS;
+      currentValue[i*2+1] = ValueOfSubScribedTopic[i]*2.55*MINIMUM_BRIGHTNESS;
+  }
+  }
 }
 
 void loop() {
- 
+  client.loop();  
+  RefreshCurrentDistance();
+  MakeDecision();
+  updateWaterLevel();
+  
+  RefreshOutput();
+  delay(100);
+#if DEBUG_MODE
+Serial.println("Current Brightness");
+for (int i = 0; i < 8; i++) {
+    Serial.print(currentValue[i]);
+    Serial.print(" ");
+  }
+  Serial.println("");
+#endif
 }
+
 

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # MQTT broker address
-MQTT_BROKER="ec2-3-88-49-62.compute-1.amazonaws.com"
+MQTT_BROKER="localhost"
 # MQTT_BROKER="localhost"
 
 # List of topics

@@ -310,7 +310,7 @@ router.get("/getSecurityData", async (req, res) => {
   res.json(responseData);
 });
 const { GoogleGenerativeAI } = require("@google/generative-ai");
-const genAI = new GoogleGenerativeAI("AIzaSyBqAIgSsZgY05UGXpa3PNyHPrfMpCCT0uY");
+const genAI = new GoogleGenerativeAI("AIzaSyCkOFCTWIcuRI2di_EmukrRdb1openGsAw");
 router.post("/chat", async (req, res) => {
   try {
     if (!req.body || !req.body.req) {

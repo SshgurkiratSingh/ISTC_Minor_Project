@@ -1,35 +1,419 @@
 {
   "deviceDurations": {
     "IoT/hall/light1": {
-      "lastChanged": "2024-01-26T06:33:14.555Z",
-      "onDuration": 60,
-      "offDuration": 0,
+      "lastChanged": "2024-09-14T13:41:27.195Z",
+      "onDuration": 2253.333,
+      "offDuration": 1346.671,
       "lastState": true
     },
     "IoT/hall/light2": {
-      "lastChanged": "2024-01-26T06:33:14.555Z",
-      "onDuration": 13.648,
-      "offDuration": 46.352,
-      "lastState": false
+      "lastChanged": "2024-09-14T13:41:27.195Z",
+      "onDuration": 1892.984,
+      "offDuration": 1707.0200000000002,
+      "lastState": true
     },
     "IoT/hall/fan1": {
-      "lastChanged": "2024-01-26T06:33:14.555Z",
-      "onDuration": 51.962,
-      "offDuration": 8.038,
-      "lastState": false
+      "lastChanged": "2024-09-14T13:41:27.195Z",
+      "onDuration": 3419.834,
+      "offDuration": 180.17,
+      "lastState": true
     },
     "IoT/hall/fan2": {
-      "lastChanged": "2024-01-26T06:33:14.555Z",
-      "onDuration": 60,
+      "lastChanged": "2024-09-14T13:41:27.195Z",
+      "onDuration": 3582.649,
       "offDuration": 0,
       "lastState": true
     }
   },
   "temperatures": [
-    25
+    8,
+    15,
+    11,
+    21,
+    3,
+    41,
+    1,
+    4,
+    38,
+    16,
+    48,
+    36,
+    38,
+    36,
+    49,
+    19,
+    24,
+    9,
+    8,
+    23,
+    18,
+    46
   ],
   "humidities": [
-    94
+    81,
+    18,
+    32,
+    3,
+    35,
+    64,
+    72,
+    100,
+    79,
+    92,
+    65,
+    73,
+    46,
+    29,
+    70,
+    86,
+    82,
+    74,
+    26,
+    97,
+    15,
+    51
+  ],
+  "logs": [
+    {
+      "topic": "IoT/hall/light1",
+      "value": "1",
+      "lastUpdate": "2024-09-14T12:41:27.191Z"
+    },
+    {
+      "topic": "IoT/hall/light2",
+      "value": "1",
+      "lastUpdate": "2024-09-14T12:41:27.191Z"
+    },
+    {
+      "topic": "IoT/hall/fan1",
+      "value": "9",
+      "lastUpdate": "2024-09-14T12:41:27.191Z"
+    },
+    {
+      "topic": "IoT/hall/fan2",
+      "value": "90",
+      "lastUpdate": "2024-09-14T12:41:44.546Z"
+    },
+    {
+      "topic": "IoT/hall/fan1",
+      "value": "100",
+      "lastUpdate": "2024-09-14T12:41:45.411Z"
+    },
+    {
+      "topic": "IoT/hall/light1",
+      "value": "0",
+      "lastUpdate": "2024-09-14T12:41:53.973Z"
+    },
+    {
+      "topic": "IoT/hall/light2",
+      "value": "0",
+      "lastUpdate": "2024-09-14T12:41:53.975Z"
+    },
+    {
+      "topic": "IoT/hall/fan1",
+      "value": "6",
+      "lastUpdate": "2024-09-14T12:41:53.986Z"
+    },
+    {
+      "topic": "IoT/hall/light1",
+      "value": "1",
+      "lastUpdate": "2024-09-14T12:43:19.450Z"
+    },
+    {
+      "topic": "IoT/hall/light2",
+      "value": "0",
+      "lastUpdate": "2024-09-14T12:43:19.452Z"
+    },
+    {
+      "topic": "IoT/hall/fan1",
+      "value": "7",
+      "lastUpdate": "2024-09-14T12:43:19.460Z"
+    },
+    {
+      "topic": "IoT/hall/light1",
+      "value": "1",
+      "lastUpdate": "2024-09-14T12:46:19.636Z"
+    },
+    {
+      "topic": "IoT/hall/light2",
+      "value": "0",
+      "lastUpdate": "2024-09-14T12:46:19.637Z"
+    },
+    {
+      "topic": "IoT/hall/fan1",
+      "value": "9",
+      "lastUpdate": "2024-09-14T12:46:19.637Z"
+    },
+    {
+      "topic": "IoT/hall/light1",
+      "value": "0",
+      "lastUpdate": "2024-09-14T12:49:19.794Z"
+    },
+    {
+      "topic": "IoT/hall/light2",
+      "value": "0",
+      "lastUpdate": "2024-09-14T12:49:19.796Z"
+    },
+    {
+      "topic": "IoT/hall/fan1",
+      "value": "4",
+      "lastUpdate": "2024-09-14T12:49:19.804Z"
+    },
+    {
+      "topic": "IoT/hall/light1",
+      "value": "1",
+      "lastUpdate": "2024-09-14T12:52:19.963Z"
+    },
+    {
+      "topic": "IoT/hall/light2",
+      "value": "0",
+      "lastUpdate": "2024-09-14T12:52:19.965Z"
+    },
+    {
+      "topic": "IoT/hall/fan1",
+      "value": "1",
+      "lastUpdate": "2024-09-14T12:52:19.973Z"
+    },
+    {
+      "topic": "IoT/hall/light1",
+      "value": "0",
+      "lastUpdate": "2024-09-14T12:55:20.136Z"
+    },
+    {
+      "topic": "IoT/hall/light2",
+      "value": "1",
+      "lastUpdate": "2024-09-14T12:55:20.137Z"
+    },
+    {
+      "topic": "IoT/hall/fan1",
+      "value": "2",
+      "lastUpdate": "2024-09-14T12:55:20.146Z"
+    },
+    {
+      "topic": "IoT/hall/light1",
+      "value": "0",
+      "lastUpdate": "2024-09-14T12:58:20.306Z"
+    },
+    {
+      "topic": "IoT/hall/light2",
+      "value": "1",
+      "lastUpdate": "2024-09-14T12:58:20.309Z"
+    },
+    {
+      "topic": "IoT/hall/fan1",
+      "value": "9",
+      "lastUpdate": "2024-09-14T12:58:20.317Z"
+    },
+    {
+      "topic": "IoT/hall/light1",
+      "value": "0",
+      "lastUpdate": "2024-09-14T13:01:20.478Z"
+    },
+    {
+      "topic": "IoT/hall/light2",
+      "value": "1",
+      "lastUpdate": "2024-09-14T13:01:20.480Z"
+    },
+    {
+      "topic": "IoT/hall/fan1",
+      "value": "7",
+      "lastUpdate": "2024-09-14T13:01:20.489Z"
+    },
+    {
+      "topic": "IoT/hall/light1",
+      "value": "1",
+      "lastUpdate": "2024-09-14T13:04:20.648Z"
+    },
+    {
+      "topic": "IoT/hall/light2",
+      "value": "1",
+      "lastUpdate": "2024-09-14T13:04:20.650Z"
+    },
+    {
+      "topic": "IoT/hall/fan1",
+      "value": "5",
+      "lastUpdate": "2024-09-14T13:04:20.658Z"
+    },
+    {
+      "topic": "IoT/hall/light1",
+      "value": "1",
+      "lastUpdate": "2024-09-14T13:07:20.818Z"
+    },
+    {
+      "topic": "IoT/hall/light2",
+      "value": "0",
+      "lastUpdate": "2024-09-14T13:07:20.820Z"
+    },
+    {
+      "topic": "IoT/hall/fan1",
+      "value": "5",
+      "lastUpdate": "2024-09-14T13:07:20.829Z"
+    },
+    {
+      "topic": "IoT/hall/light1",
+      "value": "1",
+      "lastUpdate": "2024-09-14T13:10:20.989Z"
+    },
+    {
+      "topic": "IoT/hall/light2",
+      "value": "0",
+      "lastUpdate": "2024-09-14T13:10:20.992Z"
+    },
+    {
+      "topic": "IoT/hall/fan1",
+      "value": "2",
+      "lastUpdate": "2024-09-14T13:10:21.000Z"
+    },
+    {
+      "topic": "IoT/hall/light1",
+      "value": "0",
+      "lastUpdate": "2024-09-14T13:13:21.162Z"
+    },
+    {
+      "topic": "IoT/hall/light2",
+      "value": "1",
+      "lastUpdate": "2024-09-14T13:13:21.163Z"
+    },
+    {
+      "topic": "IoT/hall/fan1",
+      "value": "5",
+      "lastUpdate": "2024-09-14T13:13:21.171Z"
+    },
+    {
+      "topic": "IoT/hall/light1",
+      "value": "1",
+      "lastUpdate": "2024-09-14T13:16:21.331Z"
+    },
+    {
+      "topic": "IoT/hall/light2",
+      "value": "0",
+      "lastUpdate": "2024-09-14T13:16:21.333Z"
+    },
+    {
+      "topic": "IoT/hall/fan1",
+      "value": "1",
+      "lastUpdate": "2024-09-14T13:16:21.341Z"
+    },
+    {
+      "topic": "IoT/hall/light1",
+      "value": "1",
+      "lastUpdate": "2024-09-14T13:19:21.502Z"
+    },
+    {
+      "topic": "IoT/hall/light2",
+      "value": "0",
+      "lastUpdate": "2024-09-14T13:19:21.505Z"
+    },
+    {
+      "topic": "IoT/hall/fan1",
+      "value": "7",
+      "lastUpdate": "2024-09-14T13:19:21.513Z"
+    },
+    {
+      "topic": "IoT/hall/light1",
+      "value": "1",
+      "lastUpdate": "2024-09-14T13:22:21.674Z"
+    },
+    {
+      "topic": "IoT/hall/light2",
+      "value": "1",
+      "lastUpdate": "2024-09-14T13:22:21.676Z"
+    },
+    {
+      "topic": "IoT/hall/fan1",
+      "value": "3",
+      "lastUpdate": "2024-09-14T13:22:21.684Z"
+    },
+    {
+      "topic": "IoT/hall/light1",
+      "value": "0",
+      "lastUpdate": "2024-09-14T13:25:21.844Z"
+    },
+    {
+      "topic": "IoT/hall/light2",
+      "value": "0",
+      "lastUpdate": "2024-09-14T13:25:21.847Z"
+    },
+    {
+      "topic": "IoT/hall/fan1",
+      "value": "10",
+      "lastUpdate": "2024-09-14T13:25:21.855Z"
+    },
+    {
+      "topic": "IoT/hall/light1",
+      "value": "1",
+      "lastUpdate": "2024-09-14T13:28:22.016Z"
+    },
+    {
+      "topic": "IoT/hall/light2",
+      "value": "1",
+      "lastUpdate": "2024-09-14T13:28:22.019Z"
+    },
+    {
+      "topic": "IoT/hall/fan1",
+      "value": "2",
+      "lastUpdate": "2024-09-14T13:28:22.027Z"
+    },
+    {
+      "topic": "IoT/hall/light1",
+      "value": "1",
+      "lastUpdate": "2024-09-14T13:31:22.189Z"
+    },
+    {
+      "topic": "IoT/hall/light2",
+      "value": "1",
+      "lastUpdate": "2024-09-14T13:31:22.191Z"
+    },
+    {
+      "topic": "IoT/hall/fan1",
+      "value": "2",
+      "lastUpdate": "2024-09-14T13:31:22.199Z"
+    },
+    {
+      "topic": "IoT/hall/light1",
+      "value": "1",
+      "lastUpdate": "2024-09-14T13:34:22.358Z"
+    },
+    {
+      "topic": "IoT/hall/light2",
+      "value": "1",
+      "lastUpdate": "2024-09-14T13:34:22.360Z"
+    },
+    {
+      "topic": "IoT/hall/fan1",
+      "value": "5",
+      "lastUpdate": "2024-09-14T13:34:22.368Z"
+    },
+    {
+      "topic": "IoT/hall/light1",
+      "value": "0",
+      "lastUpdate": "2024-09-14T13:37:22.529Z"
+    },
+    {
+      "topic": "IoT/hall/light2",
+      "value": "1",
+      "lastUpdate": "2024-09-14T13:37:22.532Z"
+    },
+    {
+      "topic": "IoT/hall/fan1",
+      "value": "0",
+      "lastUpdate": "2024-09-14T13:37:22.540Z"
+    },
+    {
+      "topic": "IoT/hall/light1",
+      "value": "1",
+      "lastUpdate": "2024-09-14T13:40:22.701Z"
+    },
+    {
+      "topic": "IoT/hall/light2",
+      "value": "1",
+      "lastUpdate": "2024-09-14T13:40:22.703Z"
+    },
+    {
+      "topic": "IoT/hall/fan1",
+      "value": "5",
+      "lastUpdate": "2024-09-14T13:40:22.710Z"
+    }
   ],
   "automationTriggersCount": 0
 }
