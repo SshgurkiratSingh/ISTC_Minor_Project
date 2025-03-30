@@ -13,7 +13,7 @@ import {
   Legend,
 } from "chart.js";
 import "chartjs-adapter-date-fns";
-import { TopicData } from "../services/mqttService";
+import { TopicData } from "./services/mqttService";
 
 ChartJS.register(
   LineElement,
