@@ -83,11 +83,13 @@ const MQTTPANEL = () => {
   const [topicData, setTopicData] = useState<TopicData>({});
   const [selectedPlotTopic, setSelectedPlotTopic] = useState("");
   const [showPlot, setShowPlot] = useState(false);
+  const [hasLoaded, setHasLoaded] = useState(false); // Add this line
 
   // Load saved data from localStorage
   useEffect(() => {
     const loadSavedData = () => {
       try {
+        console.log("Loading saved data from localStorage");
         const savedTopics = localStorage.getItem("currentTopics");
         if (savedTopics) setTopicsInput(savedTopics);
 
@@ -123,6 +125,8 @@ const MQTTPANEL = () => {
       } catch (error) {
         console.error("Error loading saved data:", error);
         toast.error("Error loading saved data. Check console for details.");
+      } finally {
+        setHasLoaded(true);
       }
     };
 
@@ -130,7 +134,10 @@ const MQTTPANEL = () => {
   }, []);
   // Save data to localStorage
   useEffect(() => {
+    if (!hasLoaded) return; // Add this guard clause
+
     try {
+      console.log("Saving data to localStorage");
       localStorage.setItem("currentTopics", topicsInput);
       localStorage.setItem(
         "subscribedTopics",
@@ -680,4 +687,3 @@ const MQTTPANEL = () => {
 };
 
 export default MQTTPANEL;
-
