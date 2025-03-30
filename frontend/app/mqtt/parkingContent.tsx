@@ -87,47 +87,63 @@ const MQTTPANEL = () => {
   // Load saved data from localStorage
   useEffect(() => {
     const loadSavedData = () => {
-      const savedTopics = localStorage.getItem("currentTopics");
-      const savedSubscriptions = localStorage.getItem("subscribedTopics");
-      const savedServer = localStorage.getItem("mqttServer");
-      const savedMessages = localStorage.getItem("mqttMessages");
-      const savedTopicData = localStorage.getItem("topicData");
+      try {
+        const savedTopics = localStorage.getItem("currentTopics");
+        if (savedTopics) setTopicsInput(savedTopics);
 
-      if (savedTopics) setTopicsInput(savedTopics);
-      if (savedSubscriptions)
-        setSubscribedTopics(JSON.parse(savedSubscriptions));
-      if (savedServer) {
-        setMqttServer(savedServer);
-        const found = MQTT_SERVERS.find((srv) => srv.url === savedServer);
-        setSelectedServer(found ? found.label : "Custom");
-      }
-      if (savedMessages) setMessages(JSON.parse(savedMessages));
-      if (savedTopicData) {
-        const parsedData = JSON.parse(savedTopicData);
-        // Convert string timestamps back to Date objects
-        const convertedData: TopicData = {};
-        Object.keys(parsedData).forEach((topic) => {
-          convertedData[topic] = parsedData[topic].map((point: any) => ({
-            timestamp: new Date(point.timestamp),
-            value: point.value,
-          }));
-        });
-        setTopicData(convertedData);
+        const savedSubscriptions = localStorage.getItem("subscribedTopics");
+        if (savedSubscriptions) {
+          setSubscribedTopics(JSON.parse(savedSubscriptions));
+        }
+
+        const savedServer = localStorage.getItem("mqttServer");
+        if (savedServer) {
+          setMqttServer(savedServer);
+          const found = MQTT_SERVERS.find((srv) => srv.url === savedServer);
+          setSelectedServer(found ? found.label : "Custom");
+        }
+
+        const savedMessages = localStorage.getItem("mqttMessages");
+        if (savedMessages) {
+          setMessages(JSON.parse(savedMessages));
+        }
+
+        const savedTopicData = localStorage.getItem("topicData");
+        if (savedTopicData) {
+          const parsedData = JSON.parse(savedTopicData);
+          const convertedData: TopicData = {};
+          Object.keys(parsedData).forEach((topic) => {
+            convertedData[topic] = parsedData[topic].map((point: any) => ({
+              timestamp: new Date(point.timestamp),
+              value: point.value,
+            }));
+          });
+          setTopicData(convertedData);
+        }
+      } catch (error) {
+        console.error("Error loading saved data:", error);
+        toast.error("Error loading saved data. Check console for details.");
       }
     };
 
     loadSavedData();
   }, []);
-
   // Save data to localStorage
   useEffect(() => {
-    localStorage.setItem("currentTopics", topicsInput);
-    localStorage.setItem("subscribedTopics", JSON.stringify(subscribedTopics));
-    localStorage.setItem("mqttServer", mqttServer);
-    localStorage.setItem("mqttMessages", JSON.stringify(messages));
-    localStorage.setItem("topicData", JSON.stringify(topicData));
+    try {
+      localStorage.setItem("currentTopics", topicsInput);
+      localStorage.setItem(
+        "subscribedTopics",
+        JSON.stringify(subscribedTopics)
+      );
+      localStorage.setItem("mqttServer", mqttServer);
+      localStorage.setItem("mqttMessages", JSON.stringify(messages));
+      localStorage.setItem("topicData", JSON.stringify(topicData));
+    } catch (error) {
+      console.error("Failed to save data to localStorage:", error);
+      toast.error("Failed to save data. Check console for details.");
+    }
   }, [topicsInput, subscribedTopics, mqttServer, messages, topicData]);
-
   // Cleanup on unmount
   useEffect(() => {
     return () => {
@@ -390,7 +406,7 @@ const MQTTPANEL = () => {
         maintainAspectRatio: false,
         scales: {
           x: {
-            type: "time",
+            type: "time" as const,
             time: {
               tooltipFormat: "PPpp",
               displayFormats: {
@@ -653,6 +669,7 @@ const MQTTPANEL = () => {
             {messages.length} | Retention: {retentionMinutes} min
           </div>
           <div>
+            {messages.length}
             {subscribedTopics.length > 0 &&
               `Subscribed to: ${subscribedTopics.join(", ")}`}
           </div>
@@ -663,3 +680,4 @@ const MQTTPANEL = () => {
 };
 
 export default MQTTPANEL;
+
